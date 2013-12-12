@@ -1,4 +1,10 @@
-# Build and Release Folders
+.DS_Store
+.metadata/
+build/
+asdoc-output/
+dumped-config.xml
+
+# FlashBuilder Build and Release Folders
 bin/
 bin-debug/
 bin-release/

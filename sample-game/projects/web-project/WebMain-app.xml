@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/3.9">
+    <id>com.tatsuyakoyama.krewshoot</id>
+    <versionNumber>1.0</versionNumber>
+    <filename>KrewShoot</filename>
+    <initialWindow>
+        <content>krewshoot.swf</content>
+        <aspectRatio>portrait</aspectRatio>  <!-- or landscape -->
+        <autoOrients>false</autoOrients>
+        <fullScreen>true</fullScreen>
+        <renderMode>direct</renderMode>
+        <depthAndStencil>false</depthAndStencil>
+    </initialWindow>
+    <supportedProfiles>mobileDevice</supportedProfiles>
+</application>

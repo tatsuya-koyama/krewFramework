@@ -1,0 +1,6 @@
+<TextureAtlas imagePath='atlas_game.png'>
+  <SubTexture name='interlace_filter' x='0' y='0' width='320.0' height='480.0'/>
+  <SubTexture name='go_button' x='322' y='0' width='200.0' height='100.0'/>
+  <SubTexture name='back_button' x='322' y='102' width='100.0' height='100.0'/>
+  <SubTexture name='white' x='424' y='102' width='32.0' height='32.0'/>
+</TextureAtlas>

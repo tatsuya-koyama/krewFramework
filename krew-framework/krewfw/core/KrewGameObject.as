@@ -71,12 +71,6 @@ package krewfw.core {
         public function getXml    (fileName:String):XML     { return sharedObj.resourceManager.getXml    (fileName); }
         public function getObject (fileName:String):Object  { return sharedObj.resourceManager.getObject (fileName); }
 
-        // public function getGlobalTexture(fileName:String):Texture { return sharedObj.resourceManager.getGlobalTexture(fileName); }
-        // public function getGlobalImage  (fileName:String):Image   { return sharedObj.resourceManager.getGlobalImage  (fileName); }
-        // public function getGlobalSound  (fileName:String):Sound   { return sharedObj.resourceManager.getGlobalSound  (fileName); }
-        // public function getGlobalXml    (fileName:String):XML     { return sharedObj.resourceManager.getGlobalXml    (fileName); }
-        // public function getGlobalObject (fileName:String):Object  { return sharedObj.resourceManager.getGlobalObject (fileName); }
-
         //----- Sound Control
 
         public function playBgm(bgmId:String):void {

@@ -20,8 +20,8 @@ package com.tatsuyakoyama.krewfw.core_internal {
         public function StageLayerManager() {}
 
         /**
-         * displayOrder で指定したレイヤー名の順に奥から並ぶよ
-         * 例えば ['back', 'middle', 'front'] を渡すと back レイヤーが一番奥になる
+         * displayOrder で指定したレイヤー名の順に奥から並ぶ.
+         * 例えば ['back', 'middle', 'front'] を渡すと back レイヤーが一番奥になる。
          * そして暗黙で最前面に '_system_' レイヤーが足されるので
          * _system_ という名前は使わないように注意
          */

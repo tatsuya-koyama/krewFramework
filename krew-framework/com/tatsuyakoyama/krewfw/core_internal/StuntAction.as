@@ -74,7 +74,7 @@ package com.tatsuyakoyama.krewfw.core_internal {
             return this.and(action);
         }
 
-        // １回だけ実行して、duration 秒待つ。コールバックの引数には StuntAction を渡す
+        /** １回だけ実行して、duration 秒待つ。コールバックの引数には StuntAction を渡す */
         public function doit(duration:Number, aUpdater:Function):StuntAction {
             var action:StuntAction = new StuntAction(duration);
             action.updater = function(_action:StuntAction):void {
@@ -84,8 +84,10 @@ package com.tatsuyakoyama.krewfw.core_internal {
             return this.and(action);
         }
 
-        // １回だけ実行して、duration 秒待つ。引数に何も渡さない
-        // ToDo: AS3 はコールバックの引数の型の扱いがようわからん
+        /**
+         * １回だけ実行して、duration 秒待つ。引数に何も渡さない.
+         * ToDo: AS3 のコールバックの引数の型の扱いよくわかってない
+         */
         public function justdoit(duration:Number, aUpdater:Function):StuntAction {
             var action:StuntAction = new StuntAction(duration);
             action.updater = function(_action:StuntAction):void {
@@ -95,7 +97,7 @@ package com.tatsuyakoyama.krewfw.core_internal {
             return this.and(action);
         }
 
-        // 関数を duration 秒間、実行し続ける
+        /** 関数を duration 秒間、実行し続ける */
         public function goon(duration:Number, aUpdater:Function):StuntAction {
             var action:StuntAction = new StuntAction(duration);
             action.updater = function(_action:StuntAction):void {
@@ -231,8 +233,10 @@ package com.tatsuyakoyama.krewfw.core_internal {
         }
 
         //------------------------------------------------------------
-        // KrewActor を殺すためのショートカット
-        // KrewActor 以外に使うと何も起こらない
+        /**
+         * KrewActor を殺すためのショートカット。
+         * KrewActor 以外に使うと何も起こらない
+         */
         public function kill():StuntAction {
             var action:StuntAction = new StuntAction(0);
             action.updater = function(_action:StuntAction):void {
@@ -245,7 +249,7 @@ package com.tatsuyakoyama.krewfw.core_internal {
             return this.and(action);
         }
 
-        // １回暗くなって明るくなる
+        /** １回暗くなって明るくなる */
         public function blink(displayObj:DisplayObject,
                               duration:Number=0.25, alphaMin:Number=0.3):StuntAction {
             var action:StuntAction = new StuntAction(duration);

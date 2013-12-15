@@ -2,8 +2,8 @@ package krewshoot.scene {
 
     import starling.text.TextField;
 
-    import com.tatsuyakoyama.krewfw.core.KrewScene;
-    import com.tatsuyakoyama.krewfw.builtin_actor.ScreenCurtain;
+    import krewfw.core.KrewScene;
+    import krewfw.builtin_actor.ScreenCurtain;
 
     import krewshoot.GameEvent;
     import krewshoot.actor.common.InterlaceFilter;

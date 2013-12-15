@@ -2,8 +2,8 @@ package krewshoot.actor.common {
 
     import starling.display.Image;
 
-    import com.tatsuyakoyama.krewfw.core.KrewActor;
-    import com.tatsuyakoyama.krewfw.core.KrewBlendMode;
+    import krewfw.core.KrewActor;
+    import krewfw.core.KrewBlendMode;
 
     import krewshoot.GameConst;
 

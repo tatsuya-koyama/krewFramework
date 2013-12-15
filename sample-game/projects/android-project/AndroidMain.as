@@ -1,8 +1,8 @@
 package {
 
     import flash.display.Sprite;
-    import com.tatsuyakoyama.krewfw.KrewConfig;
-    import com.tatsuyakoyama.krewfw.utility.KrewUtil;
+    import krewfw.KrewConfig;
+    import krewfw.utility.KrewUtil;
 
     /**
      * Customize options or components for Android publishing.

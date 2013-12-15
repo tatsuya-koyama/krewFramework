@@ -1,7 +1,7 @@
 package {
 
-    import com.tatsuyakoyama.krewfw.core.KrewScene;
-    import com.tatsuyakoyama.krewfw.core.KrewGameDirector;
+    import krewfw.core.KrewScene;
+    import krewfw.core.KrewGameDirector;
 
     import krewshoot.scene.TitleScene;
 

@@ -4,11 +4,11 @@ package krewshoot.actor.title {
     import starling.text.TextField;
     import starling.animation.Transitions;
 
-    import com.tatsuyakoyama.krewfw.core.KrewActor;
-    import com.tatsuyakoyama.krewfw.core.KrewBlendMode;
-    import com.tatsuyakoyama.krewfw.starling_utility.TextFactory;
-    import com.tatsuyakoyama.krewfw.utility.KrewUtil;
-    import com.tatsuyakoyama.krewfw.builtin_actor.TextButton;
+    import krewfw.core.KrewActor;
+    import krewfw.core.KrewBlendMode;
+    import krewfw.starling_utility.TextFactory;
+    import krewfw.utility.KrewUtil;
+    import krewfw.builtin_actor.TextButton;
 
     import krewshoot.GameEvent;
 

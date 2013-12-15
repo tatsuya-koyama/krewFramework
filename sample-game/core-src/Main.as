@@ -10,8 +10,8 @@ package {
 
     import starling.core.Starling;
 
-    import com.tatsuyakoyama.krewfw.KrewConfig;
-    import com.tatsuyakoyama.krewfw.NativeStageAccessor;
+    import krewfw.KrewConfig;
+    import krewfw.NativeStageAccessor;
 
     /**
      * The entry point of the game.

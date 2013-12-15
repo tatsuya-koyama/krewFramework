@@ -2,8 +2,8 @@ package krewshoot.actor.game {
 
     import starling.display.Image;
 
-    import com.tatsuyakoyama.krewfw.core.KrewActor;
-    import com.tatsuyakoyama.krewfw.builtin_actor.SimpleButton;
+    import krewfw.core.KrewActor;
+    import krewfw.builtin_actor.SimpleButton;
 
     import krewshoot.GameEvent;
 

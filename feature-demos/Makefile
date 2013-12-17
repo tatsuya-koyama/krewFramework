@@ -21,9 +21,13 @@ flash:
 	      -source-path+="core-src/" \
 	      -source-path+="../krew-framework/" \
 	      -swf-version=22 \
-	      -output="build/krewshoot.swf" \
+	      -output="build/krewdemo.swf" \
 	      -debug=true \
 	      projects/web-project/WebMain.as
+
+flash_run:
+	make flash
+	make run
 
 # [Note]
 # Embed している場合はどうやら incremental な compile がうまくいかないようで、
@@ -33,12 +37,12 @@ flash:
 
 # AIR for Android のもとになる swf をつくる
 air-android:
-	rm -f build/krewshoot-AIR.swf
+	rm -f build/krewdemo-AIR.swf
 	amxmlc -library-path+="../lib/" \
 	       -source-path+="core-src/" \
 	       -source-path+="../krew-framework/" \
 	       -swf-version=22 \
-	       -output="build/krewshoot-AIR.swf" \
+	       -output="build/krewdemo-AIR.swf" \
 	       -debug=false \
 	       projects/android-project/AndroidMain.as
 
@@ -54,16 +58,16 @@ android:
 	    -storetype pkcs12 \
 	    -keystore krewSampleCert.p12 \
 	    -storepass krewsamplepassword \
-	    build/krewshoot.apk \
+	    build/krewdemo.apk \
 	    projects/android-project/AndroidMain-app.xml \
-	    build/krewshoot-AIR.swf \
+	    build/krewdemo-AIR.swf \
 	    asset
 
 # USB 接続状態の実機にビルドした apk をインストールする。
 # make install-android 実行後にやること。
 # adb はパスが通っている必要がある
 install-android:
-	adb install -r build/krewshoot.apk
+	adb install -r build/krewdemo.apk
 
 
 # Using Ruby script from Sparrow framework
@@ -82,7 +86,7 @@ install-android:
 #    are generated into /asset/image/.
 #
 atlas:
-	script/atlas_generator/generate_atlas.rb --padding 2 --maxsize 1024x1024 \
+	../sample-game/script/atlas_generator/generate_atlas.rb --padding 2 --maxsize 1024x1024 \
 	asset/image_src/$(p)/*.png asset/image/atlas_$(p).xml
 
 clean:

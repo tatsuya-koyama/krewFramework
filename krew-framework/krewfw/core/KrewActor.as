@@ -3,6 +3,7 @@ package krewfw.core {
     import flash.display.Bitmap;
     import flash.geom.Rectangle;
 
+    import starling.display.DisplayObject;
     import starling.display.Image;
     import starling.textures.Texture;
     import starling.text.TextField;
@@ -30,10 +31,11 @@ package krewfw.core {
         protected var _cachedWidth :Number;
         protected var _cachedHeight:Number;
 
-        private var _initFuncList:Vector.<Function>  = new Vector.<Function>();
-        private var _imageList   :Vector.<Image>     = new Vector.<Image>();
-        private var _textList    :Vector.<TextField> = new Vector.<TextField>();
-        private var _childActors :Vector.<KrewActor> = new Vector.<KrewActor>();
+        private var _initFuncList  :Vector.<Function>      = new Vector.<Function>();
+        private var _imageList     :Vector.<Image>         = new Vector.<Image>();
+        private var _displayObjList:Vector.<DisplayObject> = new Vector.<DisplayObject>();
+        private var _textList      :Vector.<TextField>     = new Vector.<TextField>();
+        private var _childActors   :Vector.<KrewActor>     = new Vector.<KrewActor>();
 
         private var _color:uint = 0xffffff;
         public  var applyForNewActor:Function;
@@ -145,8 +147,9 @@ package krewfw.core {
             removeChildren(0, -1, true);
             removeCollision();
             removeTweens();
-            _disposeImageTexture();
-            _disposeText();
+            _disposeImageTextures();
+            _disposeTexts();
+            _disposeDisplayObjs();
             _timeKeeper.dispose();
 
             _imageList         = null;
@@ -160,7 +163,7 @@ package krewfw.core {
         }
 
         /** @private */
-        protected function _disposeImageTexture():void {
+        protected function _disposeImageTextures():void {
             for (var i:uint=0;  i < _imageList.length;  ++i) {
                 _imageList[i].texture.dispose();
                 _imageList[i].dispose();
@@ -168,9 +171,16 @@ package krewfw.core {
         }
 
         /** @private */
-        protected function _disposeText():void {
+        protected function _disposeTexts():void {
             for each (var text:TextField in _textList) {
                 text.dispose();
+            }
+        }
+
+        /** @private */
+        protected function _disposeDisplayObjs():void {
+            for each (var obj:DisplayObject in _displayObjList) {
+                obj.dispose();
             }
         }
 
@@ -200,22 +210,17 @@ package krewfw.core {
             onUpdate(passedTime);
             _updateAction(passedTime);
             _timeKeeper.update(passedTime);
-            disappearInOutside();
+            _disappearInOutside();
         }
 
         //------------------------------------------------------------
-        /**
-         * このメソッドは非推奨。アトラス作ってないプロト開発用.
-         * これは同じ画像でも texture が複製されてしまうので
-         * メモリ効率がよくない。KrewResourceManager から取得したものを
-         * this.addImage の方に渡して使うことを推奨する
-         */
-        public function addImageByBitmap(bitmap:Bitmap):void {
-            var image:Image = Image.fromBitmap(bitmap);
-            addChild(image);
-            _imageList.push(image);
-        }
+        // public interface
+        //------------------------------------------------------------
 
+        /**
+         * addChild の代わりに addImage を呼ぶことで破棄時に Image.texture の dispose が
+         * 呼ばれるようになる。また、KrewActor.color の指定で全 Image に色がかかるようになる
+         */
         public function addImage(image:Image,
                                  width:Number=NaN, height:Number=NaN,
                                  x:Number=0, y:Number=0,
@@ -235,7 +240,7 @@ package krewfw.core {
             _cachedWidth  = width;
             _cachedHeight = height;
 
-            addChild(image);
+            super.addChild(image);
             _imageList.push(image);
         }
 
@@ -245,12 +250,24 @@ package krewfw.core {
             image.texture = newTexture;
         }
 
+        /**
+         * Actor 全体の color に影響させたい場合は addChild ではなく addText で足す
+         */
         public function addText(text:TextField, x:Number=NaN, y:Number=NaN):void {
             if (!isNaN(x)) { text.x = x; }
             if (!isNaN(y)) { text.y = y; }
 
-            addChild(text);
+            super.addChild(text);
             _textList.push(text);
+        }
+
+        /**
+         * addChild したものは Actor 破棄時に勝手に dispose が呼ばれる
+         */
+        public override function addChild(child:DisplayObject):DisplayObject {
+            super.addChild(child);
+            _displayObjList.push(child);
+            return child;
         }
 
         public function addActor(actor:KrewActor, putOnDisplayList:Boolean=true):void {
@@ -384,7 +401,7 @@ package krewfw.core {
          * つまるところ、数が多く画像のアンカーが中央にあるような Actor を
          * _checkDisplayArea = true にすればよい
          */
-        public function disappearInOutside():void {
+        private function _disappearInOutside():void {
             if (!_checkDisplayArea) { return; }
 
             // starling.display.DisplayObjectContainer の width / height は

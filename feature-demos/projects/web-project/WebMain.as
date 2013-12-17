@@ -12,7 +12,11 @@ package {
         public function WebMain() {
             KrewUtil.log("Kicked from WebMain");
 
+            // for local test
             KrewConfig.ASSET_URL_SCHEME = "";
+
+            // for publish
+            //KrewConfig.ASSET_URL_SCHEME = "http://docs.tatsuya-koyama.com/assets/media/swf/krewdemo/";
 
             var main:Main = new Main(this);
         }

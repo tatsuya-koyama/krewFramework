@@ -17,8 +17,8 @@ package krewdemo.actor.menu {
         private var _buttonImage:Image;
 
         //------------------------------------------------------------
-        public function BackButton(x:Number=160, y:Number=300,
-                                   width:Number=100, height:Number=100) {
+        public function BackButton(x:Number=450, y:Number=290,
+                                   width:Number=50, height:Number=50) {
             touchable = true;
 
             addInitializer(function():void {

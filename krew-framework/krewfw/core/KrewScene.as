@@ -186,6 +186,7 @@ package krewfw.core {
         private function _loadGlobalAssets(doneCallback:Function):void {
             // hook onLoadCompleteGlobal
             var _onLoadComplete:Function = function():void {
+                _servantActor.sendMessage(KrewSystemEventType.COMPLETE_GLOBAL_ASSET_LOAD);
                 onLoadCompleteGlobal();
                 doneCallback();
             };
@@ -211,6 +212,7 @@ package krewfw.core {
         private function _loadSceneScopeAssets(doneCallback:Function):void {
             // hook onLoadComplete
             var _onLoadComplete:Function = function():void {
+                _servantActor.sendMessage(KrewSystemEventType.COMPLETE_ASSET_LOAD);
                 onLoadComplete();
                 doneCallback();
             };

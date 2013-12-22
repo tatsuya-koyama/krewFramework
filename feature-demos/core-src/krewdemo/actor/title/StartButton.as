@@ -47,8 +47,8 @@ package krewdemo.actor.title {
             button.x = -button.width  * 0.5;
             button.y = -button.height * 0.5;
             trace(button.width);
-            x = 160;
-            y = 300;
+            x = 240;
+            y = 220;
 
             button.addEventListener(Event.TRIGGERED, function(event:Event):void {
                 touchable = false;

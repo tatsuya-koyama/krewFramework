@@ -5,7 +5,7 @@
     <filename>KrewDemo</filename>
     <initialWindow>
         <content>krewdemo.swf</content>
-        <aspectRatio>portrait</aspectRatio>  <!-- or landscape -->
+        <aspectRatio>landscape</aspectRatio>  <!-- or portrait -->
         <autoOrients>false</autoOrients>
         <fullScreen>true</fullScreen>
         <renderMode>direct</renderMode>

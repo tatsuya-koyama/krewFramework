@@ -1,5 +1,10 @@
 <TextureAtlas imagePath='atlas_game.png'>
   <SubTexture name='go_button' x='0' y='0' width='200.0' height='100.0'/>
-  <SubTexture name='back_button' x='0' y='102' width='100.0' height='100.0'/>
-  <SubTexture name='white' x='202' y='0' width='32.0' height='32.0'/>
+  <SubTexture name='man' x='0' y='102' width='128.0' height='128.0'/>
+  <SubTexture name='star' x='202' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='back_button' x='202' y='130' width='100.0' height='100.0'/>
+  <SubTexture name='info_icon' x='130' y='102' width='70.0' height='70.0'/>
+  <SubTexture name='invader' x='130' y='174' width='32.0' height='32.0'/>
+  <SubTexture name='pyramid' x='164' y='174' width='32.0' height='32.0'/>
+  <SubTexture name='white' x='130' y='208' width='32.0' height='32.0'/>
 </TextureAtlas>

@@ -18,8 +18,8 @@ package krewdemo {
         public static const ASSET_MANAGER_VERBOSE:Boolean = true;
 
         // game screen's virtual resolution
-        public static const SCREEN_WIDTH:int    = 320;
-        public static const SCREEN_HEIGHT:int   = 480;
+        public static const SCREEN_WIDTH:int    = 480;
+        public static const SCREEN_HEIGHT:int   = 320;
         public static const ASPECT_RATIO:Number = SCREEN_HEIGHT / SCREEN_WIDTH;
 
     }

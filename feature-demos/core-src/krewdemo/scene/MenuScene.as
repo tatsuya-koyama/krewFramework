@@ -4,14 +4,13 @@ package krewdemo.scene {
 
     import krewfw.core.KrewScene;
     import krewfw.builtin_actor.ScreenCurtain;
+    import krewfw.builtin_actor.SimpleLoadingScreen;
 
     import krewdemo.GameEvent;
     import krewdemo.actor.menu.*;
 
     //------------------------------------------------------------
     public class MenuScene extends KrewScene {
-
-        private var _loadingBg:ScreenCurtain;
 
         //------------------------------------------------------------
         public override function getRequiredAssets():Array {
@@ -26,13 +25,7 @@ package krewdemo.scene {
         }
 
         public override function initLoadingView():void {
-            var color:int = 0x000000;
-            _loadingBg = new ScreenCurtain(color, color, color, color);
-            setUpActor('l-back', _loadingBg);
-        }
-
-        public override function onLoadComplete():void {
-            _loadingBg.passAway();
+            setUpActor('l-back', new SimpleLoadingScreen(0x000000));
         }
 
         public override function initAfterLoad():void {
@@ -40,7 +33,7 @@ package krewdemo.scene {
             setUpActor('l-back', new ScreenCurtain(color, color, color, color));
 
             setUpActor('l-front', new FeatureMenuList());
-            setUpActor('l-ui',    new BackButton(160, 440, 50, 50));
+            setUpActor('l-ui',    new BackButton());
 
             blackIn(0.3);
 

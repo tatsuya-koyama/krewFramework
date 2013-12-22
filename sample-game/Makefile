@@ -8,12 +8,9 @@
 list:
 	grep "^[^#].*:$$" Makefile
 
-# [Note]
-# adl の -screensize 320x480:320x480 みたいなオプションが
-# AIR 3.9 に上げたらエラーになるようになってしまった
 run:
 	ln -s -f ../asset ./build/
-	adl projects/web-project/WebMain-app.xml build/
+	adl projects/web-project/WebMain-app.xml build/ -screensize 320x480:320x480
 
 flash:
 	mxmlc -incremental=true \

@@ -8,15 +8,13 @@
 list:
 	grep "^[^#].*:$$" Makefile
 
-# [Note]
-# adl の -screensize 320x480:320x480 みたいなオプションが
-# AIR 3.9 に上げたらエラーになるようになってしまった
 run:
 	ln -s -f ../asset ./build/
-	adl projects/web-project/WebMain-app.xml build/
+	adl projects/web-project/WebMain-app.xml build/ -screensize 480x720:480x720
 
 flash:
 	mxmlc -incremental=true \
+	      -library-path+="lib/" \
 	      -library-path+="../lib/" \
 	      -source-path+="core-src/" \
 	      -source-path+="../krew-framework/" \
@@ -38,7 +36,8 @@ flash_run:
 # AIR for Android のもとになる swf をつくる
 air-android:
 	rm -f build/krewdemo-AIR.swf
-	amxmlc -library-path+="../lib/" \
+	amxmlc -library-path+="lib/" \
+	       -library-path+="../lib/" \
 	       -source-path+="core-src/" \
 	       -source-path+="../krew-framework/" \
 	       -swf-version=22 \

@@ -26,6 +26,9 @@ package krewfw.core {
          */
         public static const PROGRESS_ASSET_LOAD:String = 'krew.progressAssetLoad';
 
+        /** Dispatched when scene-scope assets are loaded. */
+        public static const COMPLETE_ASSET_LOAD:String = 'krew.completeAssetLoad';
+
         /**
          * Dispatched during global-scope assets load process
          * (hooked KrewScene.onLoadProgressGlobal,)
@@ -34,6 +37,9 @@ package krewfw.core {
          *     Expected args: {loadRatio: Number}
          */
         public static const PROGRESS_GLOBAL_ASSET_LOAD:String = 'krew.progressGlobalAssetLoad';
+
+        /** Dispatched when global-scope assets are loaded. */
+        public static const COMPLETE_GLOBAL_ASSET_LOAD:String = 'krew.completeGlobalAssetLoad';
 
         /** Expected args: {x:Number, y:Number} */
         public static const SCREEN_TOUCH_ANYWAY:String = 'krew.screenTouchAnyway';

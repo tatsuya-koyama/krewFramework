@@ -2,8 +2,8 @@
     <use-network>false</use-network>
 
     <default-size>
-        <width>320</width>
-        <height>480</height>
+        <width>480</width>
+        <height>320</height>
     </default-size>
     <default-background-color>0x000000</default-background-color>
     <default-frame-rate>60</default-frame-rate>

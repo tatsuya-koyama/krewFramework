@@ -11,7 +11,6 @@ package krewfw.builtin_actor {
         protected var _movieImage:Image;
 
         private var _movieInfoList:Array = null;
-        private var _atlasName:String;
         private var _frameCount:int       = 0;
         private var _framePlayTime:Number = 0;
 
@@ -22,7 +21,6 @@ package krewfw.builtin_actor {
          * Set up frame animation info.
          * Please call after init().
          *
-         * @param atlasName Sprite sheet name.
          * @param infoList List of [imageName, durationSec]. Example:
          * [
          *     ['frame_1', 0.1],
@@ -31,9 +29,9 @@ package krewfw.builtin_actor {
          *     ...
          * ]
          */
-        public function setupMovieClip(atlasName:String, infoList:Array,
-                                       width:Number, height:Number, x:Number=0, y:Number=0):void {
-            _atlasName     = atlasName;
+        public function setupMovieClip(infoList:Array, width:Number, height:Number,
+                                       x:Number=0, y:Number=0):void
+        {
             _movieInfoList = infoList;
 
             var imageName:String = _movieInfoList[0][0];

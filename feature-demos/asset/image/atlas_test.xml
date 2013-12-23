@@ -1,0 +1,3 @@
+<TextureAtlas imagePath='atlas_test.png'>
+  <SubTexture name='coord_test_texture' x='0' y='0' width='512.0' height='512.0'/>
+</TextureAtlas>

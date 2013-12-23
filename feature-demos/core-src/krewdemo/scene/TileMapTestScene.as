@@ -1,0 +1,42 @@
+package krewdemo.scene {
+
+    import starling.text.TextField;
+
+    import krewfw.core.KrewScene;
+    import krewfw.builtin_actor.ScreenCurtain;
+    import krewfw.builtin_actor.SimpleLoadingScreen;
+
+    import krewdemo.GameEvent;
+    import krewdemo.actor.menu.BackButton;
+    import krewdemo.actor.feature_test.*;
+
+    //------------------------------------------------------------
+    public class TileMapTestScene extends FeatureTestSceneBase {
+
+        //------------------------------------------------------------
+        public override function getRequiredAssets():Array {
+            return [
+                 "image/atlas_game.png"
+                ,"image/atlas_game.xml"
+                ,"image/atlas_test.png"
+                ,"image/atlas_test.xml"
+                ,"tilemap/testmap_001.json"
+                ,"tilemap/atlas_gbism.png"
+            ];
+        }
+
+        public override function initAfterLoad():void {
+            _bgColor = 0x223322;
+            super.initAfterLoad();
+            setUpActor('l-front', new TileMapTester());
+            setUpActor('l-ui',    new VirtualJoystick());
+
+            setUpActor('l-ui', new InfoPopUp(
+                  "- First step of Tile Map test\n"
+                + "- Simply displays small QuadBatch. It's not scalable yet.",
+                "info_icon", "tk_courier", 400
+            ));
+        }
+
+    }
+}

@@ -10,8 +10,24 @@ list:
 
 run:
 	ln -s -f ../asset ./build/
-	adl projects/web-project/WebMain-app.xml build/ -screensize 480x720:480x720
+	adl projects/debug-project/DebugMain-app.xml build/ -screensize 480x720:480x720
 
+debug:
+	mxmlc -incremental=true \
+	      -library-path+="lib/" \
+	      -library-path+="../lib/" \
+	      -source-path+="core-src/" \
+	      -source-path+="../krew-framework/" \
+	      -swf-version=22 \
+	      -output="build/krewdemo-debug.swf" \
+	      -debug=true \
+	      projects/debug-project/DebugMain.as
+
+debug_run:
+	make flash
+	make run
+
+# web での公開用
 flash:
 	mxmlc -incremental=true \
 	      -library-path+="lib/" \
@@ -20,12 +36,8 @@ flash:
 	      -source-path+="../krew-framework/" \
 	      -swf-version=22 \
 	      -output="build/krewdemo.swf" \
-	      -debug=true \
+	      -debug=false \
 	      projects/web-project/WebMain.as
-
-flash_run:
-	make flash
-	make run
 
 # [Note]
 # Embed している場合はどうやら incremental な compile がうまくいかないようで、

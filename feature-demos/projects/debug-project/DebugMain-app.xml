@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/3.9">
+    <id>com.tatsuyakoyama.krewdemo</id>
+    <versionNumber>1.0</versionNumber>
+    <filename>KrewDemo</filename>
+    <initialWindow>
+        <content>krewdemo-debug.swf</content>
+        <aspectRatio>landscape</aspectRatio>  <!-- or portrait -->
+        <autoOrients>false</autoOrients>
+        <fullScreen>true</fullScreen>
+        <renderMode>direct</renderMode>
+        <depthAndStencil>false</depthAndStencil>
+    </initialWindow>
+    <supportedProfiles>mobileDevice</supportedProfiles>
+</application>

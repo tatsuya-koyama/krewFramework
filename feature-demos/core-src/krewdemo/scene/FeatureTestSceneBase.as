@@ -12,6 +12,7 @@ package krewdemo.scene {
     //------------------------------------------------------------
     public class FeatureTestSceneBase extends KrewScene {
 
+        protected var _bgColor:int = 0x555555;
         private var _loadingBg:ScreenCurtain;
 
         //------------------------------------------------------------
@@ -31,8 +32,7 @@ package krewdemo.scene {
         }
 
         public override function initAfterLoad():void {
-            var color:int = 0x555555;
-            setUpActor('l-back',  new ScreenCurtain(color, color, color, color));
+            setUpActor('l-back',  new ScreenCurtain(_bgColor, _bgColor, _bgColor, _bgColor));
             setUpActor('l-ui',    new BackButton());
 
             blackIn(0.3);

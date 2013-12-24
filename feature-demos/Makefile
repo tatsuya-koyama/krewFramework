@@ -24,7 +24,7 @@ debug:
 	      projects/debug-project/DebugMain.as
 
 debug_run:
-	make flash
+	make debug
 	make run
 
 # web での公開用

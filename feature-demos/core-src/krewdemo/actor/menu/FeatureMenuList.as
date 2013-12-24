@@ -43,8 +43,8 @@ package krewdemo.actor.menu {
                 ,{ text: "2.QuadBatch Test (360 tiles)",  scene: QuadBatchTestScene1 }
                 ,{ text: "3.QB Test (Stable 1060 tiles)", scene: QuadBatchTestScene3 }
                 ,{ text: "4.Sprite Tile (1060 tiles)",    scene: SpriteTileTestScene }
-                ,{ text: "5.Simple Tile Map Display",     scene: TileMapTestScene }
-                ,{ text: "6.----",  scene: null }
+                ,{ text: "5.Simple Tile Map Display",     scene: TileMapTestScene1 }
+                ,{ text: "6.Large Tile Map Display",      scene: TileMapTestScene2 }
                 ,{ text: "7.----",  scene: null }
                 ,{ text: "8.----",  scene: null }
                 ,{ text: "9.----",  scene: null }

@@ -4,6 +4,8 @@ package krewfw.starling_utility {
     import starling.display.Image;
     import starling.textures.Texture;
 
+    import krewfw.utility.KrewUtil;
+
     /**
      * Tiled Map Editor (http://www.mapeditor.org/) の tmx ファイルから
      * 出力した json をもとに各マスの Image を返すユーティリティ
@@ -13,6 +15,20 @@ package krewfw.starling_utility {
 
         // avoid instantiation cost
         private static var _point:Point = new Point(0, 0);
+
+        /**
+         * Tiled Map Editor で出力した json の Object から、
+         * 名前でレイヤーのデータを取得する。名前がヒットしなかった場合は null を返す
+         */
+        public static function getLayerByName(tileMapInfo:Object, layerName:String):Object {
+            for each (var layerData:Object in tileMapInfo.layers) {
+                if (layerData.name == layerName) {
+                    return layerData;
+                }
+            }
+            KrewUtil.fwlog("[TileMapHelpr] Layer not found: " + layerName);
+            return null;
+        }
 
         /**
          * Tiled Map Editor で出力した json による Object を使って、

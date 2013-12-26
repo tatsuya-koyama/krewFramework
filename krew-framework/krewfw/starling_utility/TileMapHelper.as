@@ -5,8 +5,8 @@ package krewfw.starling_utility {
     import starling.textures.Texture;
 
     /**
-     * Tiled Map Editor (http://www.mapeditor.org/) $B$N(B tmx $B%U%!%$%k$+$i(B
-     * $B=PNO$7$?(B json $B$r$b$H$K3F%^%9$N(B Image $B$rJV$9%f!<%F%#%j%F%#(B
+     * Tiled Map Editor (http://www.mapeditor.org/) の tmx ファイルから
+     * 出力した json をもとに各マスの Image を返すユーティリティ
      */
     //------------------------------------------------------------
     public class TileMapHelper {
@@ -15,11 +15,15 @@ package krewfw.starling_utility {
         private static var _point:Point = new Point(0, 0);
 
         /**
-         * Tiled Map Editor $B$G$O6u%?%$%k$O(B 0 $B$HI=8=$5$l$k!#(B
-         * $B%=!<%9$N%?%$%k2hA|$N0lHV:8>e$O(B 1 $B$+$i;O$^$k!#(B
-         * $B;XDj$7$?%^%9$,(B 0 $B$N>l9g$O(B null $B$rJV$9(B.
+         * Tiled Map Editor で出力した json による Object を使って、
+         * 指定されたマスに対応するテクスチャを持つ Image を返す。
+         * orientation: "orthogonal" 専用。spacing に対応.
          *
-         * [Note] $B0J2<$N%?%$%k2hA|$N%U%)!<%^%C%H$G%F%9%H!'(B
+         * Tiled Map Editor では空タイルは 0 と表現される。
+         * ソースのタイル画像の一番左上は 1 から始まる。
+         * 指定したマスが 0 の場合は null を返す.
+         *
+         * [Note] 以下のタイル画像のフォーマットでテスト：
          * <pre>
          *     - Canvas size: 512 x 512
          *     - Tile size: 32 x 32
@@ -57,7 +61,7 @@ package krewfw.starling_utility {
             _point.setTo(uvLeft,          uvTop + uvSize);  image.setTexCoords(2, _point);
             _point.setTo(uvLeft + uvSize, uvTop + uvSize);  image.setTexCoords(3, _point);
 
-            var padding:Number = 0.0005;  // $B$=$N$^$^(B UV $B;XDj$9$k$H%?%$%k4V$K$o$:$+$J7d4V$,8+$($F$7$^$C$?$N$G(B
+            var padding:Number = 0.0005;  // そのまま UV 指定するとタイル間にわずかな隙間が見えてしまったので
             _setUv(image, 0, uvLeft         , uvTop         ,  padding,  padding);
             _setUv(image, 1, uvLeft + uvSize, uvTop         , -padding,  padding);
             _setUv(image, 2, uvLeft         , uvTop + uvSize,  padding, -padding);

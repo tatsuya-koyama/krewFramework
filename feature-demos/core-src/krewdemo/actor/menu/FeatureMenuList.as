@@ -4,6 +4,7 @@ package krewdemo.actor.menu {
     import feathers.controls.renderers.DefaultListItemRenderer;
     import feathers.controls.renderers.IListItemRenderer;
 
+    import starling.display.DisplayObject;
     import starling.display.Image;
     import starling.events.Event;
 
@@ -17,6 +18,7 @@ package krewdemo.actor.menu {
     import krewfw.utility.KrewUtil;
 
     import krewdemo.GameEvent;
+    import krewdemo.GameRecord;
     import krewdemo.scene.*;
 
     //------------------------------------------------------------
@@ -49,7 +51,7 @@ package krewdemo.actor.menu {
                 ,{ text: "8.Nape Physics basic",          scene: NapePhysicsTestScene1 }
                 ,{ text: "9.Nape Physics stress test",    scene: NapePhysicsTestScene2 }
                 ,{ text: "10.Box2D Physics basic",        scene: Box2DPhysicsTestScene1 }
-                ,{ text: "11.----", scene: null }
+                ,{ text: "11.Box2D Physics stress test",  scene: Box2DPhysicsTestScene2 }
                 ,{ text: "12.----", scene: null }
                 ,{ text: "13.----", scene: null }
                 ,{ text: "14.----", scene: null }
@@ -67,6 +69,8 @@ package krewdemo.actor.menu {
                 sendMessage(GameEvent.NEXT_SCENE, {nextScene: new item.scene});
                 touchable = false;
             }
+
+            GameRecord.featureListScrollY = list.verticalScrollPosition;
         }
 
         private function _getBlankImageWithColor(color:uint):Image {
@@ -95,6 +99,7 @@ package krewdemo.actor.menu {
                 renderer.defaultSkin         = _getBlankImageWithColor(0xcccccc);
                 renderer.downSkin            = _getBlankImageWithColor(0x9999aa);
                 renderer.defaultSelectedSkin = _getBlankImageWithColor(0xccaa55);
+
                 renderer.defaultLabelProperties.textFormat = new BitmapFontTextFormat(
                     "tk_courier", 18, 0x1a1816, "center"
                 );
@@ -119,6 +124,8 @@ package krewdemo.actor.menu {
                 scrollBar.direction = ScrollBar.DIRECTION_VERTICAL;
                 return scrollBar;
             };
+
+            list.verticalScrollPosition = GameRecord.featureListScrollY;
 
             return list;
         }

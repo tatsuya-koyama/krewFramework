@@ -3,14 +3,15 @@ package {
     import krewfw.core.KrewScene;
     import krewfw.core.KrewGameDirector;
 
-    import krewdemo.scene.TitleScene;
+    import krewdemo.scene.*;
 
     //------------------------------------------------------------
     public class KrewDemoDirector extends KrewGameDirector {
 
         //------------------------------------------------------------
         public function KrewDemoDirector() {
-            var firstScene:KrewScene = new TitleScene();
+            //var firstScene:KrewScene = new TitleScene();
+            var firstScene:KrewScene = new Box2DPhysicsTestScene1();
             startGame(firstScene);
         }
 

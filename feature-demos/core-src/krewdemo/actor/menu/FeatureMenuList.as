@@ -45,10 +45,10 @@ package krewdemo.actor.menu {
                 ,{ text: "4.Sprite Tile (1060 tiles)",    scene: SpriteTileTestScene }
                 ,{ text: "5.Simple Tile Map Display",     scene: TileMapTestScene1 }
                 ,{ text: "6.Large Tile Map Display",      scene: TileMapTestScene2 }
-                ,{ text: "7.----",  scene: null }
-                ,{ text: "8.----",  scene: null }
-                ,{ text: "9.----",  scene: null }
-                ,{ text: "10.----", scene: null }
+                ,{ text: "7.createActor test",            scene: CreateActorTestScene }
+                ,{ text: "8.Nape Physics basic",          scene: NapePhysicsTestScene1 }
+                ,{ text: "9.Nape Physics stress test",    scene: NapePhysicsTestScene2 }
+                ,{ text: "10.Box2D Physics basic",        scene: Box2DPhysicsTestScene1 }
                 ,{ text: "11.----", scene: null }
                 ,{ text: "12.----", scene: null }
                 ,{ text: "13.----", scene: null }

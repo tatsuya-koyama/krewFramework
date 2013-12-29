@@ -18,8 +18,6 @@ package krewdemo.scene {
             return [
                  "image/atlas_game.png"
                 ,"image/atlas_game.xml"
-                ,"image/atlas_test.png"
-                ,"image/atlas_test.xml"
                 ,"tilemap/testmap_001.json"
                 ,"tilemap/atlas_gbism.png"
             ];

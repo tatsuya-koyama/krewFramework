@@ -365,5 +365,6 @@ package krewfw.utility {
         public static function max(a:Number, b:Number):Number {
             return (a > b) ? a : b;
         }
+
     }
 }

@@ -11,6 +11,7 @@ package krewfw.core {
     import krewfw.core_internal.IdGenerator;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.StageLayer;
+    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class KrewGameObject extends Sprite {

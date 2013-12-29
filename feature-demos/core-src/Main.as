@@ -38,7 +38,8 @@ package {
             KrewConfig.SCREEN_WIDTH          = GameConst.SCREEN_WIDTH;
             KrewConfig.SCREEN_HEIGHT         = GameConst.SCREEN_HEIGHT;
 
-            NativeStageAccessor.stage = _rootSprite.stage;
+            NativeStageAccessor.stage      = _rootSprite.stage;
+            NativeStageAccessor.rootSprite = _rootSprite;
         }
 
         /**

@@ -11,7 +11,7 @@ package {
         //------------------------------------------------------------
         public function KrewDemoDirector() {
             var firstScene:KrewScene = new TitleScene();
-            //var firstScene:KrewScene = new Box2DPhysicsTestScene1();
+            //var firstScene:KrewScene = new TileMapTestScene4();
             startGame(firstScene);
         }
 

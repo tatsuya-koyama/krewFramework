@@ -52,8 +52,8 @@ package krewdemo.actor.menu {
                 ,{ text: "9.Nape Physics stress test",    scene: NapePhysicsTestScene2 }
                 ,{ text: "10.Box2D Physics basic",        scene: Box2DPhysicsTestScene1 }
                 ,{ text: "11.Box2D Physics stress test",  scene: Box2DPhysicsTestScene2 }
-                ,{ text: "12.----", scene: null }
-                ,{ text: "13.----", scene: null }
+                ,{ text: "12.Tile Map with collision",    scene: TileMapTestScene3 }
+                ,{ text: "13.Tiled Platformer",           scene: TileMapTestScene4 }
                 ,{ text: "14.----", scene: null }
                 ,{ text: "15.----", scene: null }
                 ,{ text: "16.----", scene: null }

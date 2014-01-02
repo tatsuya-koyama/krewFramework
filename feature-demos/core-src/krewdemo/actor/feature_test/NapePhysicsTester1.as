@@ -11,6 +11,7 @@ package krewdemo.actor.feature_test {
     import nape.phys.Material;
     import nape.shape.Circle;
     import nape.shape.Polygon;
+    import nape.shape.Shape;
     import nape.space.Space;
     import nape.util.BitmapDebug;
     import nape.util.Debug;
@@ -64,7 +65,25 @@ package krewdemo.actor.feature_test {
              *        できればシーン遷移のタイミングで解放できるものはしてしまいたい…
              *        Nape のオブジェクトのプーリングと関係しているかもしれない。
              */
-             _physicsSpace.clear();
+            _physicsSpace.bodies.foreach(function(body:Body):void {
+                _removeBody(body);
+            });
+            _physicsSpace.bodies.clear();
+
+            _physicsSpace.clear();
+            _physicsSpace = null;
+        }
+
+        private function _removeBody(body:Body):void {
+            _physicsSpace.bodies.remove(body);
+
+            body.shapes.foreach(function(shape:Shape):void {
+                shape.body = null;
+                shape = null;
+            });
+            body.shapes.clear();
+            body.space = null;
+            body = null;
         }
 
         private function _initMyBox():void {
@@ -125,7 +144,7 @@ package krewdemo.actor.feature_test {
             var body:Body = new Body(BodyType.DYNAMIC);
 
             var size:Number = KrewUtil.randArea(minSize, maxSize);
-            var vertices:Array = Polygon.box(size * 0.97, size * 0.97);
+            var vertices:Array = Polygon.box(size * 0.97, size * 0.97, true);
 
             var shape:Polygon = new Polygon(vertices);
             shape.material = Material.glass();
@@ -205,7 +224,7 @@ package krewdemo.actor.feature_test {
 
                 // kill
                 if (body.position.y > 340) {
-                    _physicsSpace.bodies.remove(body);
+
                     var image:Image = body.userData.displayObject;
                     removeChild(image);
                     image.texture.dispose();
@@ -213,6 +232,8 @@ package krewdemo.actor.feature_test {
 
                     _objects.splice(i, 1);
                     --i;
+
+                    _removeBody(body);
                 }
             }
         }

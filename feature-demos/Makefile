@@ -20,7 +20,7 @@ debug:
 	      -source-path+="../krew-framework/" \
 	      -swf-version=22 \
 	      -output="build/krewdemo-debug.swf" \
-	      -debug=false \
+	      -debug=true \
 	      projects/debug-project/DebugMain.as
 
 debug_run:

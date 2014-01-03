@@ -15,5 +15,7 @@ package krewdemo {
         // expected args: {nextScene:KrewScene}
         public static const NEXT_SCENE:String = 'nextScene';
 
+        public static const TRIGGER_JUMP:String = 'triggerJump';
+
     }
 }

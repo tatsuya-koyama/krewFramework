@@ -6,10 +6,11 @@
   <SubTexture name='rectangle_taro' x='182' y='102' width='128.0' height='128.0'/>
   <SubTexture name='joystick_ball' x='182' y='232' width='128.0' height='128.0'/>
   <SubTexture name='man' x='182' y='362' width='128.0' height='128.0'/>
-  <SubTexture name='back_button' x='384' y='0' width='100.0' height='100.0'/>
-  <SubTexture name='long_bar' x='486' y='0' width='256.0' height='32.0'/>
+  <SubTexture name='red_button' x='384' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='back_button' x='384' y='130' width='100.0' height='100.0'/>
+  <SubTexture name='long_bar' x='514' y='0' width='256.0' height='32.0'/>
   <SubTexture name='info_icon' x='0' y='442' width='70.0' height='70.0'/>
-  <SubTexture name='invader' x='130' y='182' width='32.0' height='32.0'/>
-  <SubTexture name='pyramid' x='130' y='216' width='32.0' height='32.0'/>
+  <SubTexture name='pyramid' x='130' y='182' width='32.0' height='32.0'/>
+  <SubTexture name='invader' x='130' y='216' width='32.0' height='32.0'/>
   <SubTexture name='white' x='130' y='250' width='32.0' height='32.0'/>
 </TextureAtlas>

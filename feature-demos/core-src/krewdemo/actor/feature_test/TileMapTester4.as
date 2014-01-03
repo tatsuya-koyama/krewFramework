@@ -7,6 +7,10 @@ package krewdemo.actor.feature_test {
     import nape.callbacks.InteractionType;
     import nape.phys.Body;
 
+    import krewfw.builtin_actor.ImageButton;
+
+    import krewdemo.GameEvent;
+
     //------------------------------------------------------------
     public class TileMapTester4 extends TileMapTester3 {
 
@@ -15,7 +19,6 @@ package krewdemo.actor.feature_test {
         private var _heroCbType:CbType = new CbType();
 
         private var _jumpLife:int = 2;
-        private var _jumpKeyReady:Boolean = true;
 
         //------------------------------------------------------------
         public function TileMapTester4():void {
@@ -29,6 +32,8 @@ package krewdemo.actor.feature_test {
             addInitializer(function():void {
                 _hero.cbTypes.add(_heroCbType);
                 _physicsSpace.listeners.add(_interactionListener);
+
+                listen(GameEvent.TRIGGER_JUMP, _onTriggerJump);
             });
         }
 
@@ -40,7 +45,7 @@ package krewdemo.actor.feature_test {
             var hero:Body = cb.int1.castBody;
             var wall:Body = cb.int2.castBody;
 
-            // $BCeCOH=Dj(B
+            // 着地判定（ToDo: これだとまだ甘い。地上近くの側面との接触でジャンプ繰り返せちゃう）
             if (hero.position.y < wall.position.y - wall.userData.height/2) {
                 _onHeroLanding();
             }
@@ -52,16 +57,13 @@ package krewdemo.actor.feature_test {
 
         protected override function _onUpdateJoystick(args:Object):void {
             _velocityX = args.velocityX * 300;
+        }
 
-            // jump
-            if (_jumpLife > 0  &&  _jumpKeyReady  &&  args.velocityY < -0.5) {
-                --_jumpLife;
-                _jumpKeyReady = false;
-                _hero.velocity.y = -430;
-            }
-            if (args.velocityY > -0.5) {
-                _jumpKeyReady = true;
-            }
+        private function _onTriggerJump(args:Object):void {
+            if (_jumpLife == 0) { return; }
+
+            --_jumpLife;
+            _hero.velocity.y = -430;
         }
 
         public override function onUpdate(passedTime:Number):void {

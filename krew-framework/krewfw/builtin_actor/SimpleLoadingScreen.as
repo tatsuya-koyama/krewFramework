@@ -16,7 +16,7 @@ package krewfw.builtin_actor {
      *     public override function initLoadingView():void {
      *           setUpActor('l-back', new SimpleLoadingScreen(0x000000));
      *     }
-     * <pre>
+     * </pre>
      */
     //------------------------------------------------------------
     public class SimpleLoadingScreen extends KrewActor {

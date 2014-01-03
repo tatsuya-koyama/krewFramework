@@ -3,6 +3,7 @@ package krewfw.builtin_actor {
     import flash.display.Stage;
     import flash.events.KeyboardEvent;
     import flash.geom.Point;
+    import flash.ui.Keyboard;
     import flash.utils.Dictionary;
 
     import starling.display.DisplayObject;
@@ -133,10 +134,6 @@ package krewfw.builtin_actor {
         //------------------------------------------------------------
         // Keyboard Event
         //------------------------------------------------------------
-        public static const LEFT :uint = 37;
-        public static const UP   :uint = 38;
-        public static const RIGHT:uint = 39;
-        public static const DOWN :uint = 40;
 
         private function _initKeyboardEventListener():void {
             var stage:Stage = NativeStageAccessor.stage;
@@ -174,10 +171,10 @@ package krewfw.builtin_actor {
 
             var keyVelocityX:Number = 0;
             var keyVelocityY:Number = 0;
-            if (_keyDowns[SimpleVirtualJoystick.LEFT ]) { keyVelocityX -= 1.0; }
-            if (_keyDowns[SimpleVirtualJoystick.RIGHT]) { keyVelocityX += 1.0; }
-            if (_keyDowns[SimpleVirtualJoystick.UP   ]) { keyVelocityY -= 1.0; }
-            if (_keyDowns[SimpleVirtualJoystick.DOWN ]) { keyVelocityY += 1.0; }
+            if (_keyDowns[Keyboard.LEFT ]) { keyVelocityX -= 1.0; }
+            if (_keyDowns[Keyboard.RIGHT]) { keyVelocityX += 1.0; }
+            if (_keyDowns[Keyboard.UP   ]) { keyVelocityY -= 1.0; }
+            if (_keyDowns[Keyboard.DOWN ]) { keyVelocityY += 1.0; }
 
             sendMessage(UPDATE_JOYSTICK, {
                 velocityX: keyVelocityX,

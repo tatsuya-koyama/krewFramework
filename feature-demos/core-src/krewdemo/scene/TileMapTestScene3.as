@@ -31,7 +31,7 @@ package krewdemo.scene {
 
             setUpActor('l-ui', new InfoPopUp(
                   "- Tile Map Collision Test\n"
-                + "- You can also use keyboard.",
+                + "- You can also use keyboard. Arrow keys to move.",
                 "info_icon", "tk_courier", 400
             ));
         }

@@ -9,8 +9,8 @@ list:
 	grep "^[^#].*:$$" Makefile
 
 run:
-	ln -s -f ../asset ./build/
-	adl projects/debug-project/DebugMain-app.xml build/ -screensize 480x720:480x720
+	ln -s -f ../asset/asset ./build/
+	adl projects/debug-project/src/DebugMain-app.xml build/ -screensize 480x720:480x720
 
 debug:
 	mxmlc -incremental=true \
@@ -19,9 +19,9 @@ debug:
 	      -source-path+="core-src/" \
 	      -source-path+="../krew-framework/" \
 	      -swf-version=22 \
-	      -output="build/krewdemo-debug.swf" \
+	      -output="build/DebugMain.swf" \
 	      -debug=true \
-	      projects/debug-project/DebugMain.as
+	      projects/debug-project/src/DebugMain.as
 
 debug_run:
 	make debug
@@ -37,7 +37,7 @@ flash:
 	      -swf-version=22 \
 	      -output="build/krewdemo.swf" \
 	      -debug=false \
-	      projects/web-project/WebMain.as
+	      projects/web-project/src/WebMain.as
 
 # [Note]
 # Embed している場合はどうやら incremental な compile がうまくいかないようで、
@@ -53,26 +53,27 @@ air-android:
 	       -source-path+="core-src/" \
 	       -source-path+="../krew-framework/" \
 	       -swf-version=22 \
-	       -output="build/krewdemo-AIR.swf" \
+	       -output="build/AndroidMain.swf" \
 	       -debug=false \
-	       projects/android-project/AndroidMain.as
+	       projects/android-project/src/AndroidMain.as
 
 # パッケージングするための証明書の作成
 cert:
-	adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA krewSampleCert.p12 krewsamplepassword
+	adt -certificate -validityPeriod 25 -cn SelfSigned 1024-RSA build/krewSampleCert.p12 krewsamplepassword
 
 # Android 用の apk を作成。
 # make air-android 実行後にやること
 # (make cert も一度実行しておく必要がある)
 android:
+	cd build/; \
 	adt -package -target apk-captive-runtime \
 	    -storetype pkcs12 \
 	    -keystore krewSampleCert.p12 \
 	    -storepass krewsamplepassword \
-	    build/krewdemo.apk \
-	    projects/android-project/AndroidMain-app.xml \
-	    build/krewdemo-AIR.swf \
-	    asset
+	    krewdemo.apk \
+	    ../projects/android-project/src/AndroidMain-app.xml \
+	    AndroidMain.swf \
+	    -C ../asset asset
 
 # USB 接続状態の実機にビルドした apk をインストールする。
 # make install-android 実行後にやること。
@@ -98,7 +99,7 @@ install-android:
 #
 atlas:
 	../sample-game/script/atlas_generator/generate_atlas.rb --padding 2 --maxsize 1024x1024 \
-	asset/image_src/$(p)/*.png asset/image/atlas_$(p).xml
+	asset/asset/image_src/$(p)/*.png asset/asset/image/atlas_$(p).xml
 
 clean:
 	rm -f build/*

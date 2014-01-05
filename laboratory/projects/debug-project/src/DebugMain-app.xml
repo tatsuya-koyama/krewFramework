@@ -4,7 +4,7 @@
     <versionNumber>1.0</versionNumber>
     <filename>KrewDemo</filename>
     <initialWindow>
-        <content>build/krewdemo-AIR.swf</content>
+        <content>DebugMain.swf</content>
         <aspectRatio>landscape</aspectRatio>  <!-- or portrait -->
         <autoOrients>false</autoOrients>
         <fullScreen>true</fullScreen>
@@ -12,13 +12,4 @@
         <depthAndStencil>false</depthAndStencil>
     </initialWindow>
     <supportedProfiles>mobileDevice</supportedProfiles>
-
-    <!-- SD カードに保存できるように -->
-    <android>
-      <manifestAdditions>
-        <![CDATA[
-                 <manifest android:installLocation="preferExternal"/>
-        ]]>
-      </manifestAdditions>
-    </android>
 </application>

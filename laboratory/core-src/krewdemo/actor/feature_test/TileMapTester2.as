@@ -11,7 +11,6 @@ package krewdemo.actor.feature_test {
     import krewfw.core.KrewActor;
     import krewfw.starling_utility.TextFactory;
     import krewfw.starling_utility.TileMapHelper;
-    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class TileMapTester2 extends KrewActor {

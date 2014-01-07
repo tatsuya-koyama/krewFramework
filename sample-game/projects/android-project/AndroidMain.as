@@ -2,7 +2,7 @@ package {
 
     import flash.display.Sprite;
     import krewfw.KrewConfig;
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
 
     /**
      * Customize options or components for Android publishing.
@@ -10,7 +10,7 @@ package {
     public class AndroidMain extends Sprite {
 
         public function AndroidMain() {
-            KrewUtil.log("Kicked from AndroidMain");
+            krew.log("Kicked from AndroidMain");
 
             KrewConfig.ASSET_URL_SCHEME = "app:/";
 

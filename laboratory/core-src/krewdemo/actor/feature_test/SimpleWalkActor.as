@@ -8,7 +8,6 @@ package krewdemo.actor.feature_test {
     import krewfw.builtin_actor.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
     import krewfw.starling_utility.TileMapHelper;
-    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class SimpleWalkActor extends KrewActor {
@@ -18,13 +17,13 @@ package krewdemo.actor.feature_test {
 
         //------------------------------------------------------------
         public override function init():void {
-            _depth = KrewUtil.randArea(0.5, 1.0);
+            _depth = krew.randArea(0.5, 1.0);
             var size:Number = 40 * _depth;
             var image:Image = getImage('rectangle_taro');
             addImage(image, size, size);
 
-            x = KrewUtil.randArea(  0, 480);
-            y = KrewUtil.randArea(-40, 320);
+            x = krew.randArea(  0, 480);
+            y = krew.randArea(-40, 320);
         }
 
         public override function onUpdate(passedTime:Number):void {

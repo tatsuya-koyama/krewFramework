@@ -2,7 +2,7 @@ package {
 
     import flash.display.Sprite;
     import krewfw.KrewConfig;
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
 
     /**
      * Customize options or components for local debug.
@@ -10,7 +10,7 @@ package {
     public class DebugMain extends Sprite {
 
         public function DebugMain() {
-            KrewUtil.log("Kicked from DebugMain");
+            krew.log("Kicked from DebugMain");
 
             KrewConfig.ASSET_URL_SCHEME = "";
 

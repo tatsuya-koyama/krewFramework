@@ -6,7 +6,6 @@ package krewdemo.actor.feature_test {
 
     import krewfw.builtin_actor.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
-    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class VirtualJoystick extends KrewActor {

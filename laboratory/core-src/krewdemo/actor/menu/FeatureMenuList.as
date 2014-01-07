@@ -15,7 +15,6 @@ package krewdemo.actor.menu {
     import feathers.data.ListCollection;
 
     import krewfw.core.KrewActor;
-    import krewfw.utility.KrewUtil;
 
     import krewdemo.GameEvent;
     import krewdemo.GameRecord;
@@ -62,7 +61,7 @@ package krewdemo.actor.menu {
 
         private function _onChangeItem(event:Event):void {
             var list:List = List(event.currentTarget);
-            KrewUtil.log("   *** selectedIndex:", list.selectedIndex);
+            krew.log("   *** selectedIndex:", list.selectedIndex);
 
             var item:Object = list.selectedItem;
             if (item.scene) {

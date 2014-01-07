@@ -19,7 +19,6 @@ package krewdemo.actor.feature_test {
     import krewfw.builtin_actor.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
     import krewfw.starling_utility.TileMapHelper;
-    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class NapePhysicsTester1 extends KrewActor {
@@ -127,7 +126,7 @@ package krewdemo.actor.feature_test {
             floorShape.material = Material.wood();
             _slope.shapes.add(floorShape);
             _slope.position.setxy(-30, 80);
-            _slope.rotation = KrewUtil.deg2rad(30);
+            _slope.rotation = krew.deg2rad(30);
             _physicsSpace.bodies.add(_slope);
 
             // starling display
@@ -143,17 +142,17 @@ package krewdemo.actor.feature_test {
             // nape physics body
             var body:Body = new Body(BodyType.DYNAMIC);
 
-            var size:Number = KrewUtil.randArea(minSize, maxSize);
+            var size:Number = krew.randArea(minSize, maxSize);
             var vertices:Array = Polygon.box(size * 0.97, size * 0.97, true);
 
             var shape:Polygon = new Polygon(vertices);
             shape.material = Material.glass();
             body.shapes.add(shape);
 
-            var x:Number = KrewUtil.randArea(50, 430);
+            var x:Number = krew.randArea(50, 430);
             var y:Number = -100;
             body.position.setxy(x, y);
-            body.rotation = KrewUtil.randArea(0, 6.28);
+            body.rotation = krew.randArea(0, 6.28);
             _physicsSpace.bodies.add(body);
 
             // starling display
@@ -168,7 +167,7 @@ package krewdemo.actor.feature_test {
             // nape physics body
             var body:Body = new Body(BodyType.DYNAMIC);
 
-            var size:Number = KrewUtil.randArea(minSize, maxSize);
+            var size:Number = krew.randArea(minSize, maxSize);
             var shape:Circle = new Circle(size * 0.485);
             shape.material = Material.steel();
             body.shapes.add(shape);
@@ -176,7 +175,7 @@ package krewdemo.actor.feature_test {
             var x:Number = -50
             var y:Number = 0;
             body.position.setxy(x, y);
-            body.rotation = KrewUtil.randArea(0, 6.28);
+            body.rotation = krew.randArea(0, 6.28);
             _physicsSpace.bodies.add(body);
 
             // starling display

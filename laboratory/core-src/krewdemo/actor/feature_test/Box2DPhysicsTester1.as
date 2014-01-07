@@ -15,7 +15,6 @@ package krewdemo.actor.feature_test {
     import krewfw.builtin_actor.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
     import krewfw.starling_utility.TileMapHelper;
-    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class Box2DPhysicsTester1 extends KrewActor {
@@ -136,7 +135,7 @@ package krewdemo.actor.feature_test {
             var bodyDef:b2BodyDef = new b2BodyDef();
             bodyDef.type = b2Body.b2_staticBody;
             bodyDef.position.Set(-30 / P2M, 80 / P2M);
-            bodyDef.angle = KrewUtil.deg2rad(30);
+            bodyDef.angle = krew.deg2rad(30);
 
             var boxShape:b2PolygonShape = new b2PolygonShape();
             boxShape.SetAsBox(
@@ -162,15 +161,15 @@ package krewdemo.actor.feature_test {
         }
 
         protected function _addRandomBox(minSize:Number=10, maxSize:Number=70):void {
-            var size:Number = KrewUtil.randArea(minSize, maxSize);
+            var size:Number = krew.randArea(minSize, maxSize);
 
             // Box2D physics body
             var bodyDef:b2BodyDef = new b2BodyDef();
             bodyDef.type = b2Body.b2_dynamicBody;
-            var x:Number = KrewUtil.randArea(50, 430);
+            var x:Number = krew.randArea(50, 430);
             var y:Number = -100;
             bodyDef.position.Set(x / P2M, y / P2M);
-            bodyDef.angle = KrewUtil.randArea(0, 6.28);
+            bodyDef.angle = krew.randArea(0, 6.28);
 
             var boxShape:b2PolygonShape = new b2PolygonShape();
             boxShape.SetAsBox(
@@ -198,7 +197,7 @@ package krewdemo.actor.feature_test {
         }
 
         protected function _addRandomBall(minSize:Number=10, maxSize:Number=50):void {
-            var size:Number = KrewUtil.randArea(minSize, maxSize);
+            var size:Number = krew.randArea(minSize, maxSize);
 
             // Box2D physics body
             var bodyDef:b2BodyDef = new b2BodyDef();
@@ -206,7 +205,7 @@ package krewdemo.actor.feature_test {
             var x:Number = -50;
             var y:Number = 0;
             bodyDef.position.Set(x / P2M, y / P2M);
-            bodyDef.angle = KrewUtil.randArea(0, 6.28);
+            bodyDef.angle = krew.randArea(0, 6.28);
 
             var ballShape:b2CircleShape = new b2CircleShape(size / 2 / P2M * 0.97);
 

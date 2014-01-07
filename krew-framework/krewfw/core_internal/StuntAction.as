@@ -4,7 +4,7 @@ package krewfw.core_internal {
     import starling.animation.Tween;
     import starling.animation.Transitions;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
     import krewfw.core.KrewActor;
 
     /**
@@ -200,7 +200,7 @@ package krewfw.core_internal {
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 _action.actor.enchant(duration, transition)
-                    .animate("rotation", _action.actor.rotation + KrewUtil.deg2rad(rotation));
+                    .animate("rotation", _action.actor.rotation + krew.deg2rad(rotation));
             };
             return this.and(action);
         }
@@ -219,7 +219,7 @@ package krewfw.core_internal {
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 _action.actor.enchant(duration, transition)
-                    .animate("rotation", KrewUtil.deg2rad(rotation));
+                    .animate("rotation", krew.deg2rad(rotation));
             };
             return this.and(action);
         }

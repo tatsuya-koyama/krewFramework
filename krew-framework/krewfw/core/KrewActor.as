@@ -12,7 +12,6 @@ package krewfw.core {
 
     import krewfw.KrewConfig;
     import krewfw.builtin_actor.ColorRect;
-    import krewfw.utility.KrewUtil;
     import krewfw.utility.KrewTimeKeeper;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.ProfileData;
@@ -109,7 +108,7 @@ package krewfw.core {
         public function setUp(sharedObj:KrewSharedObjects, applyForNewActor:Function,
                               layer:StageLayer, layerName:String):void {
             if (_hasInitialized) {
-                KrewUtil.fwlog('[Warning] KrewActor has initialized twice.');
+                krew.fwlog('[Warning] KrewActor has initialized twice.');
                 return;
             }
             _hasInitialized = true;
@@ -309,7 +308,7 @@ package krewfw.core {
         //------------------------------------------------------------
         public function addTween(tween:Tween):void {
             if (!layer) {
-                KrewUtil.fwlog('[Error] This actor does not belong to any layer.');
+                krew.fwlog('[Error] This actor does not belong to any layer.');
                 return;
             }
 
@@ -318,7 +317,7 @@ package krewfw.core {
 
         public function removeTweens():void {
             if (!layer) {
-                KrewUtil.fwlog('[Error] This actor does not belong to any layer.');
+                krew.fwlog('[Error] This actor does not belong to any layer.');
                 return;
             }
 

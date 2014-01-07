@@ -2,7 +2,7 @@ package krewfw.core_internal {
 
     import krewfw.core_internal.collision.CollisionShape;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
     import krewfw.core.KrewActor;
 
     //------------------------------------------------------------
@@ -49,7 +49,7 @@ package krewfw.core_internal {
                 }
             }
 
-            KrewUtil.fwlog('Shape not registered. [owner id: ' + owner.id + ']');
+            krew.fwlog('Shape not registered. [owner id: ' + owner.id + ']');
             return false;
         }
 

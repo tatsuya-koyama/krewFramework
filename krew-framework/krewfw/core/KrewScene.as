@@ -5,7 +5,6 @@ package krewfw.core {
     import starling.events.Event;
 
     import krewfw.core.KrewSystemEventType;
-    import krewfw.utility.KrewUtil;
     import krewfw.utility.KrewTimeKeeper;
     import krewfw.core_internal.SceneServantActor;
     import krewfw.core_internal.StageLayer;
@@ -84,7 +83,7 @@ package krewfw.core {
          * ここでセットする Actor はグローバルに保持しているリソースを使う必要がある
          */
         public function initLoadingView():void {
-            KrewUtil.fwlog(' - default initLoadingView called.');
+            krew.fwlog(' - default initLoadingView called.');
         }
 
         /**
@@ -92,7 +91,7 @@ package krewfw.core {
          * アセットの指定があれば最低 1 回は呼ばれ、最後の呼び出しでは loadRatio = 1 となる
          */
         public function onLoadProgressGlobal(loadRatio:Number):void {
-            KrewUtil.fwlog(' - - default onLoadProgressGlobal called: ' + loadRatio);
+            krew.fwlog(' - - default onLoadProgressGlobal called: ' + loadRatio);
         }
 
         /**
@@ -100,7 +99,7 @@ package krewfw.core {
          * （これの直後に getRequiredAssets で指定したアセットの読み込みが始まる）
          */
         public function onLoadCompleteGlobal():void {
-            KrewUtil.fwlog(' - - - default onLoadCompleteGlobal called.');
+            krew.fwlog(' - - - default onLoadCompleteGlobal called.');
         }
 
         /**
@@ -108,7 +107,7 @@ package krewfw.core {
          * アセットの指定があれば最低 1 回は呼ばれ、最後の呼び出しでは loadRatio = 1 となる
          */
         public function onLoadProgress(loadRatio:Number):void {
-            KrewUtil.fwlog(' - - - - default onLoadProgress called: ' + loadRatio);
+            krew.fwlog(' - - - - default onLoadProgress called: ' + loadRatio);
         }
 
         /**
@@ -116,7 +115,7 @@ package krewfw.core {
          * （これの直後に initAfterLoad が呼ばれる）
          */
         public function onLoadComplete():void {
-            KrewUtil.fwlog(' - - - - - default onLoadComplete called.');
+            krew.fwlog(' - - - - - default onLoadComplete called.');
         }
 
         /**
@@ -124,7 +123,7 @@ package krewfw.core {
          * ここから requiredAssets で指定したアセットが使える
          */
         public function initAfterLoad():void {
-            KrewUtil.fwlog(' - - - - - - default initAfterLoad called.');
+            krew.fwlog(' - - - - - - default initAfterLoad called.');
         }
 
         /**
@@ -261,7 +260,7 @@ package krewfw.core {
             }
             if (count > 0) {
                 _newActorPool = [];
-                //KrewUtil.fwlog(count + ' new actor joined');
+                //krew.fwlog(count + ' new actor joined');
             }
         }
 

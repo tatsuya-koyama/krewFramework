@@ -33,6 +33,13 @@ package krewfw.core {
             _sharedObj = sharedObj;
         }
 
+        /**
+         * よく使う utility への簡易アクセス
+         */
+        public function get krew():KrewUtil {
+            return KrewUtil.instance;
+        }
+
         //------------------------------------------------------------
         public function KrewGameObject() {
             _id = IdGenerator.generateId();

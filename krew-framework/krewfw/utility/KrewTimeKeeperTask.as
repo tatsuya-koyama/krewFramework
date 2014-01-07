@@ -1,6 +1,6 @@
 package krewfw.utility {
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
 
     //------------------------------------------------------------
     public class KrewTimeKeeperTask {
@@ -18,7 +18,7 @@ package krewfw.utility {
             _times    = times;
 
             if (_interval <= 0) {
-                KrewUtil.fwlog('[Error] interval should not be 0 or less.');
+                krew.fwlog('[Error] interval should not be 0 or less.');
                 _interval = 0.1;
             }
         }

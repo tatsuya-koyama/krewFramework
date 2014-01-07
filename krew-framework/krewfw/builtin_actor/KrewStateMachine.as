@@ -1,6 +1,5 @@
 package krewfw.builtin_actor {
 
-    import krewfw.utility.KrewUtil;
     import krewfw.core.KrewActor;
 
     /**
@@ -73,7 +72,7 @@ package krewfw.builtin_actor {
          *     }
          */
         public function initWithObj(stateTree:Object):void {
-            _states = KrewUtil.flattenObject(stateTree);
+            _states = krew.flattenObject(stateTree);
         }
 
         public function switchState(state:String):void {

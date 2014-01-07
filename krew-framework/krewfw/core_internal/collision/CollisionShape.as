@@ -2,7 +2,7 @@ package krewfw.core_internal.collision {
 
     import krewfw.core.KrewActor;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
 
     /**
      * Shape data for collision detection.
@@ -106,7 +106,7 @@ package krewfw.core_internal.collision {
                 return HitTest.hitTestAABBVsOBB(other, this);
             }
 
-            KrewUtil.fwlog('[Error] This shape combination is not supported.');
+            krew.fwlog('[Error] This shape combination is not supported.');
             return false;
         }
     }

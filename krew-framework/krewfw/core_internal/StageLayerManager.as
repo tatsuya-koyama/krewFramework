@@ -5,7 +5,7 @@ package krewfw.core_internal {
     import starling.display.DisplayObject;
 
     import krewfw.builtin_actor.ScreenFader;
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
     import krewfw.core.KrewActor;
     import krewfw.core.KrewScene;
 
@@ -62,7 +62,7 @@ package krewfw.core_internal {
             layer.layer     = layer
             layer.layerName = layerName;
             scene.addLayer(layer);
-            KrewUtil.fwlog('+++ addLayer: ' + layerName);
+            krew.fwlog('+++ addLayer: ' + layerName);
         }
 
         private function _removeAllLayers():void {
@@ -71,13 +71,13 @@ package krewfw.core_internal {
                 delete _layers[layerName];
             }
             _displayOrder = new Array(); // clear array
-            KrewUtil.fwlog('--- removeAllLayers');
+            krew.fwlog('--- removeAllLayers');
         }
 
         public function addActor(layerName:String, actor:KrewActor,
                                  putOnDisplayList:Boolean=true):Boolean {
             if (!_layers[layerName]) {
-                KrewUtil.fwlog('[Error] layer not found: ' + layerName);
+                krew.fwlog('[Error] layer not found: ' + layerName);
                 return false;
             }
 
@@ -87,7 +87,7 @@ package krewfw.core_internal {
 
         public function addChild(layerName:String, displayObj:DisplayObject):Boolean {
             if (!_layers[layerName]) {
-                KrewUtil.fwlog('[Error] layer not found: ' + layerName);
+                krew.fwlog('[Error] layer not found: ' + layerName);
                 return false;
             }
 
@@ -97,7 +97,7 @@ package krewfw.core_internal {
 
         public function getLayer(layerName:String):StageLayer {
             if (!_layers[layerName]) {
-                KrewUtil.fwlog('[Error] layer not found: ' + layerName);
+                krew.fwlog('[Error] layer not found: ' + layerName);
                 return null;
             }
 
@@ -113,7 +113,7 @@ package krewfw.core_internal {
 
         public function setTimeScale(layerName:String, timeScale:Number):Boolean {
             if (!_layers[layerName]) {
-                KrewUtil.fwlog('[Error] layer not found: ' + layerName);
+                krew.fwlog('[Error] layer not found: ' + layerName);
                 return false;
             }
 
@@ -136,7 +136,7 @@ package krewfw.core_internal {
         public function setEnabled(layerName:String, enabled:Boolean):Boolean {
             if (layerName == '_system_') { return false; }
             if (!_layers[layerName]) {
-                KrewUtil.fwlog('[Error] layer not found: ' + layerName);
+                krew.fwlog('[Error] layer not found: ' + layerName);
                 return false;
             }
 

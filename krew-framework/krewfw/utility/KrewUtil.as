@@ -3,13 +3,31 @@ package krewfw.utility {
     import flash.utils.getQualifiedClassName;
     import krewfw.KrewConfig;
 
+    /**
+     * Singleton Army knife for game coding.
+     */
     //------------------------------------------------------------
     public class KrewUtil {
+
+        private static var _instance:KrewUtil;
+
+        public function KrewUtil() {
+            if (_instance) {
+                throw new Error("[KrewUtil] Cannot instantiate singleton.");
+            }
+        }
+
+        public static function get instance():KrewUtil {
+            if (!_instance) {
+                _instance = new KrewUtil();
+            }
+            return _instance;
+        }
 
         //------------------------------------------------------------
         // Logging
         //------------------------------------------------------------
-        public static function log(msg:String, traceLevel:int=1):void {
+        public function log(msg:String, traceLevel:int=1):void {
             if (KrewConfig.GAME_LOG_VERBOSE == 0) { return; }
 
             if (KrewConfig.GAME_LOG_VERBOSE == 1) {
@@ -25,7 +43,7 @@ package krewfw.utility {
          * フレームワーク利用者はこちらではなく log を利用してほしい。
          * （そうすれば、フレームワーク側とゲーム側でログの出力レベルを個別に変えることができる）
          */
-        public static function fwlog(msg:String, traceLevel:int=1):void {
+        public function fwlog(msg:String, traceLevel:int=1):void {
             if (KrewConfig.FW_LOG_VERBOSE == 0) { return; }
 
             if (KrewConfig.FW_LOG_VERBOSE == 1) {
@@ -36,14 +54,14 @@ package krewfw.utility {
             _log(msg, traceLevel + 1);
         }
 
-        private static function _log(msg:String, traceLevel:int=1):void {
+        private function _log(msg:String, traceLevel:int=1):void {
             var error:Error = new Error();
             var functionName:String = _getFunctionName(error, traceLevel);
             var lineNumber:String   = _getLineNumber(error, traceLevel);
             trace(functionName + ' ::: ' + lineNumber + ' >>> ' + msg);
         }
 
-        private static function _getFunctionName(e:Error, traceBackLevel:int=0):String {
+        private function _getFunctionName(e:Error, traceBackLevel:int=0):String {
             var stackTrace:String = e.getStackTrace();
             var traceLines:Array  = stackTrace.split('\n');
             var targetLine:String = traceLines[traceBackLevel + 1];
@@ -54,7 +72,7 @@ package krewfw.utility {
             return targetLine.substring(startIndex + 3, endIndex);
         }
 
-        private static function _getLineNumber(e:Error, traceBackLevel:int=0):String {
+        private function _getLineNumber(e:Error, traceBackLevel:int=0):String {
             var stackTrace:String = e.getStackTrace();
             var traceLines:Array  = stackTrace.split('\n');
             var targetLine:String = traceLines[traceBackLevel + 1];
@@ -65,12 +83,12 @@ package krewfw.utility {
             return targetLine.substring(startIndex + 4, endIndex);
         }
 
-        public static function logClassName(obj:Object, traceLevel:int=2):void {
+        public function logClassName(obj:Object, traceLevel:int=2):void {
             var className:String = getQualifiedClassName(obj);
             log('[ClassName] ' + className, traceLevel);
         }
 
-        public static function dump(obj:Object):void {
+        public function dump(obj:Object):void {
             trace('');
             var printKeyAndValue:Function = function(key:String, value:*, depth:int):void {
                 log(repeatStr('    ', depth) + key + ': ' + value, 4);
@@ -80,7 +98,7 @@ package krewfw.utility {
         }
 
         // なんか mx.utils.StringUtil.repeat 使ってると asdoc 失敗するのが直せなかったから…
-        public static function repeatStr(strUnit:String, count:int):String {
+        public function repeatStr(strUnit:String, count:int):String {
             var resultStr:String = strUnit;
             for (var i:int = 1;  i < count;  ++i) {
                 resultStr += strUnit;
@@ -95,7 +113,7 @@ package krewfw.utility {
          * Traverse Object and apply function for each key-values.
          * @param callback Function that accepts (key:String, value:*, depth:int) as its parameter.
          */
-        public static function traverse(obj:Object, callback:Function, depth:int=0):void {
+        public function traverse(obj:Object, callback:Function, depth:int=0):void {
             for (var key:String in obj) {
                 var value:* = obj[key];
                 callback(key, value, depth);
@@ -105,7 +123,7 @@ package krewfw.utility {
             }
         }
 
-        public static function traverseSortedWithKey(obj:Object, callback:Function, depth:int=0):void {
+        public function traverseSortedWithKey(obj:Object, callback:Function, depth:int=0):void {
             var keys:Array = [];
             var key:String;
             for (key in obj) { keys.push(key); }
@@ -138,7 +156,7 @@ package krewfw.utility {
          *
          * @param callback Function that accepts (key:String, value:*, path:String) as its parameter.
          */
-        public static function traverseWithAbsPath(obj:Object, callback:Function, path:String=''):void {
+        public function traverseWithAbsPath(obj:Object, callback:Function, path:String=''):void {
             for (var key:String in obj) {
                 var value:* = obj[key];
                 if (getQualifiedClassName(value) == 'Object'  &&  value != null) {
@@ -169,7 +187,7 @@ package krewfw.utility {
          * </pre>
          * This method is non-destructive.
          */
-        public static function flattenObject(obj:Object):Object {
+        public function flattenObject(obj:Object):Object {
             var flattenedObj:Object = new Object();
             var addToFlatObj:Function = function(key:String, value:*, path:String):void {
                 flattenedObj[path] = value;
@@ -190,7 +208,7 @@ package krewfw.utility {
          *     ]
          * </pre>
          */
-        public static function selectFunc(candidates:Array):void {
+        public function selectFunc(candidates:Array):void {
             var totalWeight:Number = 0;
             var data:Object;
             for each (data in candidates) {
@@ -223,7 +241,7 @@ package krewfw.utility {
          *     but smaller than 300.
          *
          */
-        public static function selectValue(targetThreshold:int, thresholds:Array):Number {
+        public function selectValue(targetThreshold:int, thresholds:Array):Number {
             var result:int = 0;
             for each (var data:Object in thresholds) {
                 if (targetThreshold >= data[0]) {
@@ -236,19 +254,19 @@ package krewfw.utility {
         //------------------------------------------------------------
         // Color utils
         //------------------------------------------------------------
-        public static function getAlpha(color:uint):int { return (color >> 24) & 0xff; }
-        public static function getRed  (color:uint):int { return (color >> 16) & 0xff; }
-        public static function getGreen(color:uint):int { return (color >>  8) & 0xff; }
-        public static function getBlue (color:uint):int { return  color        & 0xff; }
+        public function getAlpha(color:uint):int { return (color >> 24) & 0xff; }
+        public function getRed  (color:uint):int { return (color >> 16) & 0xff; }
+        public function getGreen(color:uint):int { return (color >>  8) & 0xff; }
+        public function getBlue (color:uint):int { return  color        & 0xff; }
 
         /**
          * convert 24bit interger to RGB array (0xffffff -> [256, 256, 256])
          */
-        public static function int2rgb(color:uint):Array {
+        public function int2rgb(color:uint):Array {
             return [getRed(color), getGreen(color), getBlue(color)];
         }
 
-        public static function rgb2int(red:int, green:int, blue:int):uint {
+        public function rgb2int(red:int, green:int, blue:int):uint {
             return (red << 16) | (green << 8) | blue;
         }
 
@@ -273,7 +291,7 @@ package krewfw.utility {
          *     0: 黒（最も暗い）
          *     1: 最も明るい（彩度が 0 なら白）
          */
-        public static function hsv2int(hue:Number, saturation:Number, val:Number):uint {
+        public function hsv2int(hue:Number, saturation:Number, val:Number):uint {
             hue %= 360;
             if (saturation <= 0) {
                 return rgb2int(val, val, val);
@@ -301,7 +319,7 @@ package krewfw.utility {
             return 0xffffff;
         }
 
-        public static function hsv2intWithRand(hMin:Number, hMax:Number,
+        public function hsv2intWithRand(hMin:Number, hMax:Number,
                                                sMin:Number, sMax:Number,
                                                vMin:Number, vMax:Number):uint {
             return hsv2int(
@@ -314,55 +332,55 @@ package krewfw.utility {
         //------------------------------------------------------------
         // Math utils
         //------------------------------------------------------------
-        public static function rand(max:Number):Number {
+        public function rand(max:Number):Number {
             return Math.random() * max;
         }
 
-        public static function randInt(max:int):int {
+        public function randInt(max:int):int {
             return int(rand(max));
         }
 
-        public static function randArea(min:Number, max:Number):Number {
+        public function randArea(min:Number, max:Number):Number {
             return min + rand(max - min);
         }
 
-        public static function randPlusOrMinus(min:Number, max:Number):Number {
+        public function randPlusOrMinus(min:Number, max:Number):Number {
             var val:Number = min + rand(max - min);
             if (rand(100) < 50) { val = -val; }
             return val;
         }
 
-        public static function rad2deg(rad:Number):Number {
+        public function rad2deg(rad:Number):Number {
             return rad / Math.PI * 180.0;
         }
 
-        public static function deg2rad(deg:Number):Number {
+        public function deg2rad(deg:Number):Number {
             return deg / 180.0 * Math.PI;
         }
 
-        public static function within(value:Number, min:Number, max:Number):Number {
+        public function within(value:Number, min:Number, max:Number):Number {
             if (value < min) { return min; }
             if (value > max) { return max; }
             return value;
         }
 
-        public static function getDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
+        public function getDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
             return Math.sqrt(getSquaredDistance(x1, y1, x2, y2));
         }
 
-        public static function getSquaredDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
+        public function getSquaredDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
             var dx:Number = (x2 - x1);
             var dy:Number = (y2 - y1);
             return (dx * dx) + (dy * dy);
         }
 
         // ToDo: 可変長引数で書きなおす
-        public static function min(a:Number, b:Number):Number {
+        public function min(a:Number, b:Number):Number {
             return (a < b) ? a : b;
         }
 
         // ToDo: 可変長引数で書きなおす
-        public static function max(a:Number, b:Number):Number {
+        public function max(a:Number, b:Number):Number {
             return (a > b) ? a : b;
         }
 

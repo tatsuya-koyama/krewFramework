@@ -43,7 +43,7 @@ package krewfw {
         //------------------------------------------------------------
 
         /**
-         * KrewFramework のログ (KrewUtil.fwlog) のレベル.
+         * KrewFramework のログ (krew.fwlog) のレベル.
          * <ul>
          *   <li>0 にすると吐かない</li>
          *   <li>1 で普通に trace</li>

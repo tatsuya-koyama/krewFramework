@@ -2,7 +2,7 @@ package krewfw.core_internal {
 
     import flash.utils.Dictionary;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
     import krewfw.core.KrewGameObject;
 
     //------------------------------------------------------------
@@ -21,7 +21,7 @@ package krewfw.core_internal {
                                     eventType:String, callback:Function):void {
             if (!_publishers[eventType]) {
                 _publishers[eventType] = new NotificationPublisher(eventType);
-                KrewUtil.fwlog('+++ create publisher: ' + eventType);
+                krew.fwlog('+++ create publisher: ' + eventType);
             }
 
             _publishers[eventType].addListener(listener, callback);
@@ -29,14 +29,14 @@ package krewfw.core_internal {
 
         public function removeListener(listener:KrewGameObject, eventType:String):Boolean {
             if (!_publishers[eventType]) {
-                KrewUtil.fwlog('[Error] Event publisher is absent: ' + eventType);
+                krew.fwlog('[Error] Event publisher is absent: ' + eventType);
                 return false;
             }
 
             _publishers[eventType].removeListener(listener);
             if (_publishers[eventType].numListener == 0) {
                 delete _publishers[eventType];
-                KrewUtil.fwlog('--- delete publisher: ' + eventType);
+                krew.fwlog('--- delete publisher: ' + eventType);
             }
             return true;
         }

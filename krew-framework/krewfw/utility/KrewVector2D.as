@@ -60,7 +60,7 @@ package krewfw.utility {
         public function normalize():KrewVector2D {
             var length:Number = this.length;
             if (length == 0) {
-                KrewUtil.fwlog('[Warning] Vector length is zero.');
+                krew.fwlog('[Warning] Vector length is zero.');
                 return null;
             }
 

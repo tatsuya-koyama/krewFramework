@@ -1,7 +1,6 @@
 package krewfw.builtin_actor {
 
     import krewfw.core.KrewActor;
-    import krewfw.utility.KrewUtil;
 
     /**
      * Fade color represented by interger smoothly.
@@ -15,20 +14,20 @@ package krewfw.builtin_actor {
 
         //------------------------------------------------------------
         public function get colorInt():int {
-            return KrewUtil.rgb2int(red, green, blue);
+            return krew.rgb2int(red, green, blue);
         }
 
         //------------------------------------------------------------
         public function ColorActor(color:int) {
-            red   = KrewUtil.getRed  (color);
-            green = KrewUtil.getGreen(color);
-            blue  = KrewUtil.getBlue (color);
+            red   = krew.getRed  (color);
+            green = krew.getGreen(color);
+            blue  = krew.getBlue (color);
         }
 
         public function fadeTo(color:int, fadeTime:Number=1.0):void {
-            enchant(fadeTime).animate('red'  , KrewUtil.getRed  (color))
-            enchant(fadeTime).animate('green', KrewUtil.getGreen(color))
-            enchant(fadeTime).animate('blue' , KrewUtil.getBlue (color))
+            enchant(fadeTime).animate('red'  , krew.getRed  (color))
+            enchant(fadeTime).animate('green', krew.getGreen(color))
+            enchant(fadeTime).animate('blue' , krew.getBlue (color))
         }
     }
 }

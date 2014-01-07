@@ -15,7 +15,6 @@ package krewfw.builtin_actor {
 
     import krewfw.NativeStageAccessor;
     import krewfw.core.KrewActor;
-    import krewfw.utility.KrewUtil;
 
     /**
      * いわゆるバーチャルジョイスティック。
@@ -104,7 +103,7 @@ package krewfw.builtin_actor {
             var stickX:Number = localPos.x;
             var stickY:Number = localPos.y;
 
-            var fingerDistance:Number = KrewUtil.getDistance(0, 0, stickX, stickY);
+            var fingerDistance:Number = krew.getDistance(0, 0, stickX, stickY);
             var scaleToFingerLimit:Number = fingerDistance / maxFingerMove;
             if (scaleToFingerLimit > 1) {
                 stickX /= scaleToFingerLimit;

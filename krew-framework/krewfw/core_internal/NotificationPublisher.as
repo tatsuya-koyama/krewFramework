@@ -2,7 +2,7 @@ package krewfw.core_internal {
 
     import flash.utils.Dictionary;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
     import krewfw.core.KrewGameObject;
 
     //------------------------------------------------------------
@@ -26,21 +26,21 @@ package krewfw.core_internal {
         public function addListener(listener:KrewGameObject, callback:Function):void {
             _listeners[listener.id] = callback;
             ++_numListener;
-            // KrewUtil.fwlog('+++ add listener: [id ' + listener.id + '] '
-            //                 + _eventType + ' (total ' + _numListener + ')');
+            // krew.fwlog('+++ add listener: [id ' + listener.id + '] '
+            //             + _eventType + ' (total ' + _numListener + ')');
         }
 
         public function removeListener(listener:KrewGameObject):Boolean {
             if (!_listeners[listener.id]) {
-                KrewUtil.fwlog('[Error] Listener is not listening: [id '
+                krew.fwlog('[Error] Listener is not listening: [id '
                                + listener.id + ']');
                 return false;
             }
 
             delete _listeners[listener.id];
             --_numListener;
-            // KrewUtil.fwlog('--- remove listener: [id ' + listener.id + '] '
-            //                 + _eventType + ' (total ' + _numListener + ')');
+            // krew.fwlog('--- remove listener: [id ' + listener.id + '] '
+            //             + _eventType + ' (total ' + _numListener + ')');
             return true;
         }
 

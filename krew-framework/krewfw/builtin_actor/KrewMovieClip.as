@@ -3,7 +3,6 @@ package krewfw.builtin_actor {
     import starling.display.Image;
 
     import krewfw.core.KrewActor;
-    import krewfw.utility.KrewUtil;
 
     //------------------------------------------------------------
     public class KrewMovieClip extends KrewActor {
@@ -44,7 +43,7 @@ package krewfw.builtin_actor {
             if (!_movieInfoList) { return; }
             if (_movieInfoList.length == 0) { return; }
 
-            _frameCount = KrewUtil.randInt(_movieInfoList.length);
+            _frameCount = krew.randInt(_movieInfoList.length);
         }
 
         public override function update(passedTime:Number):void {

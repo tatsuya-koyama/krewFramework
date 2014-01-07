@@ -4,7 +4,7 @@ package krewfw.starling_utility {
     import starling.display.Image;
     import starling.textures.Texture;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
 
     /**
      * Tiled Map Editor (http://www.mapeditor.org/) の tmx ファイルから
@@ -26,7 +26,7 @@ package krewfw.starling_utility {
                     return layerData;
                 }
             }
-            KrewUtil.fwlog("[TileMapHelpr] Layer not found: " + layerName);
+            krew.fwlog("[TileMapHelpr] Layer not found: " + layerName);
             return null;
         }
 

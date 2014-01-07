@@ -6,7 +6,7 @@ package krewfw.core_internal {
     import starling.textures.Texture;
     import starling.utils.AssetManager;
 
-    import krewfw.utility.KrewUtil;
+    import krewfw.utility.krew;
     import krewfw.KrewConfig;
 
     //------------------------------------------------------------
@@ -104,7 +104,7 @@ package krewfw.core_internal {
             var texture:Texture = getTexture(fileName);
             if (texture) { return new Image(texture); }
 
-            KrewUtil.fwlog('[KRM] Image not found: ' + fileName);
+            krew.fwlog('[KRM] Image not found: ' + fileName);
             return null;
         }
 
@@ -115,7 +115,7 @@ package krewfw.core_internal {
             texture = _globalScopeAssets.getTexture(fileName);
             if (texture) { return texture; }
 
-            KrewUtil.fwlog('[KRM] Texture not found: ' + fileName);
+            krew.fwlog('[KRM] Texture not found: ' + fileName);
             return null;
         }
 
@@ -126,7 +126,7 @@ package krewfw.core_internal {
             sound = _globalScopeAssets.getSound(fileName);
             if (sound) { return sound; }
 
-            KrewUtil.fwlog('[KRM] Sound not found: ' + fileName);
+            krew.fwlog('[KRM] Sound not found: ' + fileName);
             return null;
         }
 
@@ -137,7 +137,7 @@ package krewfw.core_internal {
             xml = _globalScopeAssets.getXml(fileName);
             if (xml) { return xml; }
 
-            KrewUtil.fwlog('[KRM] XML not found: ' + fileName);
+            krew.fwlog('[KRM] XML not found: ' + fileName);
             return null;
         }
 
@@ -148,7 +148,7 @@ package krewfw.core_internal {
             obj = _globalScopeAssets.getObject(fileName);
             if (obj) { return obj; }
 
-            KrewUtil.fwlog('[KRM] Object not found: ' + fileName);
+            krew.fwlog('[KRM] Object not found: ' + fileName);
             return null;
 
 

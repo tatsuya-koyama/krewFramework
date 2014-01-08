@@ -4,7 +4,7 @@ package krewfw.core_internal {
     import starling.animation.Tween;
     import starling.animation.Transitions;
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
     import krewfw.core.KrewActor;
 
     /**

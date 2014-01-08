@@ -1,6 +1,6 @@
 package krewfw.core_internal {
 
-    import krewfw.utility.KrewSoundPlayer;
+    import krewfw.utils.as3.KrewSoundPlayer;
 
     //------------------------------------------------------------
     public class KrewSharedObjects {

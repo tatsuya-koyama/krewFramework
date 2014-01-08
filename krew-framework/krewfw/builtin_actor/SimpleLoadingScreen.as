@@ -5,7 +5,7 @@ package krewfw.builtin_actor {
 
     import krewfw.core.KrewActor;
     import krewfw.core.KrewSystemEventType;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     /**
      * テクスチャなどを使わずに、取り急ぎローディング画面を出すための Actor.

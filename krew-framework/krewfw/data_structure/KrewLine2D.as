@@ -1,4 +1,4 @@
-package krewfw.utility {
+package krewfw.data_structure {
 
     //------------------------------------------------------------
     public class KrewLine2D {

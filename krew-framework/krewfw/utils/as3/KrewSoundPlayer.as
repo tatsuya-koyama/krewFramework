@@ -1,4 +1,4 @@
-﻿package krewfw.utility {
+﻿package krewfw.utils.as3 {
 
     /**
      * これは小山が 19 歳くらいの頃に書いたソース

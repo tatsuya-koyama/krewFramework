@@ -5,7 +5,7 @@ package krewfw.core {
     import starling.events.Event;
 
     import krewfw.core.KrewSystemEventType;
-    import krewfw.utility.KrewTimeKeeper;
+    import krewfw.utils.as3.KrewTimeKeeper;
     import krewfw.core_internal.SceneServantActor;
     import krewfw.core_internal.StageLayer;
     import krewfw.core_internal.StuntAction;
@@ -297,7 +297,7 @@ package krewfw.core {
         private function _onEnterFrame(event:EnterFrameEvent):void {
             if (_hasDisposed) { return; }
 
-            var passedTime:Number = KrewTimeKeeper.getReasonablePassedTime(event);
+            var passedTime:Number = KrewTimeKeeper.getReasonablePassedTime(event.passedTime);
 
             if (_servantActor.isSystemActivated) {
                 // update actors

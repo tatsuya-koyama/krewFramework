@@ -1,6 +1,4 @@
-package krewfw.utility {
-
-    import starling.events.EnterFrameEvent;
+package krewfw.utils.as3 {
 
     import krewfw.KrewConfig;
 
@@ -34,8 +32,8 @@ package krewfw.utility {
          * キャラがワープするみたいな悲惨なことになるので、一定以上は
          * 単純な処理落ちにするような、ゲーム的に妥当な経過時間 [秒] を返す
          */
-        public static function getReasonablePassedTime(event:EnterFrameEvent):Number {
-            var originalPassedTime:Number = event.passedTime;
+        public static function getReasonablePassedTime(passedTime:Number):Number {
+            var originalPassedTime:Number = passedTime;
             var acceptableTime:Number = 1.0 / KrewConfig.ALLOW_DELAY_FPS;
             if (originalPassedTime > acceptableTime) {
                 return acceptableTime;

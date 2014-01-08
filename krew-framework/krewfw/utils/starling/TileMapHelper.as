@@ -1,10 +1,10 @@
-package krewfw.starling_utility {
+package krewfw.utils.starling {
 
     import flash.geom.Point;
     import starling.display.Image;
     import starling.textures.Texture;
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
 
     /**
      * Tiled Map Editor (http://www.mapeditor.org/) の tmx ファイルから

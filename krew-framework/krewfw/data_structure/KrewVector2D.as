@@ -1,4 +1,5 @@
-package krewfw.utility {
+package krewfw.data_structure {
+    import krewfw.utils.krew;
 
     /**
      * Yes, I know flash.geom.Point, but...

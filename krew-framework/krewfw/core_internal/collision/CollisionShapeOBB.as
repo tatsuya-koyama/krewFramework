@@ -1,7 +1,7 @@
 package krewfw.core_internal.collision {
 
     import krewfw.core.KrewActor;
-    import krewfw.utility.KrewVector2D;
+    import krewfw.data_structure.KrewVector2D;
 
     //------------------------------------------------------------
     public class CollisionShapeOBB extends CollisionShape {

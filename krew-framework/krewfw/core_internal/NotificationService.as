@@ -2,7 +2,7 @@ package krewfw.core_internal {
 
     import flash.utils.Dictionary;
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
     import krewfw.core.KrewGameObject;
 
     //------------------------------------------------------------

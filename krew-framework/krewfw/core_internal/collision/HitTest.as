@@ -1,7 +1,7 @@
 package krewfw.core_internal.collision {
 
-    import krewfw.utility.KrewPoint2D;
-    import krewfw.utility.KrewVector2D;
+    import krewfw.data_structure.KrewPoint2D;
+    import krewfw.data_structure.KrewVector2D;
 
     /**
      * Collision detection algorithm library

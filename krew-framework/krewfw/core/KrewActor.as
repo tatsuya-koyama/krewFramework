@@ -12,7 +12,7 @@ package krewfw.core {
 
     import krewfw.KrewConfig;
     import krewfw.builtin_actor.ColorRect;
-    import krewfw.utility.KrewTimeKeeper;
+    import krewfw.utils.as3.KrewTimeKeeper;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.ProfileData;
     import krewfw.core_internal.StageLayer;

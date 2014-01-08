@@ -2,7 +2,7 @@ package krewfw.core_internal {
 
     import krewfw.core_internal.collision.CollisionShape;
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
     import krewfw.core.KrewActor;
 
     //------------------------------------------------------------

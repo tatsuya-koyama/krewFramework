@@ -1,6 +1,6 @@
-package krewfw.utility {
+package krewfw.utils.as3 {
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
 
     //------------------------------------------------------------
     public class KrewTimeKeeperTask {

@@ -6,7 +6,7 @@ package krewfw.core_internal {
     import starling.textures.Texture;
     import starling.utils.AssetManager;
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
     import krewfw.KrewConfig;
 
     //------------------------------------------------------------

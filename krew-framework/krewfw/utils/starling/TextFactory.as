@@ -1,4 +1,4 @@
-package krewfw.starling_utility {
+package krewfw.utils.starling {
 
     import starling.text.TextField;
     import starling.utils.HAlign;

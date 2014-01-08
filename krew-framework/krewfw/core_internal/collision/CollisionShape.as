@@ -2,7 +2,7 @@ package krewfw.core_internal.collision {
 
     import krewfw.core.KrewActor;
 
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
 
     /**
      * Shape data for collision detection.

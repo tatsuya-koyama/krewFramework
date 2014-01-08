@@ -3,7 +3,7 @@ package krewshoot.actor.game {
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
     public class NiceLogo extends KrewActor {

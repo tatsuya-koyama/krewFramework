@@ -14,7 +14,7 @@ package krewdemo.actor.feature_test {
     import krewfw.NativeStageAccessor;
     import krewfw.builtin_actor.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
-    import krewfw.starling_utility.TileMapHelper;
+    import krewfw.utils.starling.TileMapHelper;
 
     //------------------------------------------------------------
     public class Box2DPhysicsTester1 extends KrewActor {

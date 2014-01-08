@@ -3,7 +3,7 @@ package krewdemo.actor.title {
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
     public class TitleLogo extends KrewActor {

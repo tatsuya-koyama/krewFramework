@@ -2,7 +2,7 @@ package {
 
     import flash.display.Sprite;
     import krewfw.KrewConfig;
-    import krewfw.utility.krew;
+    import krewfw.utils.krew;
 
     /**
      * Customize options or components for local debug.

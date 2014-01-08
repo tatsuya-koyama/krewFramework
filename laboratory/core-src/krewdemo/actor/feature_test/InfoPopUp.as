@@ -6,7 +6,7 @@ package krewdemo.actor.feature_test {
     import krewfw.core.KrewActor;
     import krewfw.builtin_actor.ColorRect;
     import krewfw.builtin_actor.SimpleButton;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
     public class InfoPopUp extends KrewActor {

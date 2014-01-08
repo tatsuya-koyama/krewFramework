@@ -6,7 +6,7 @@ package krewdemo.actor.feature_test {
 
     import krewfw.core.KrewActor;
     import krewfw.core.KrewBlendMode;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
     public class QuadBatchTester2 extends KrewActor {

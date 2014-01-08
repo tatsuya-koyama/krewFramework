@@ -8,7 +8,7 @@ package krewdemo.actor.game {
     import feathers.controls.Button;
 
     import krewfw.core.KrewActor;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
     public class FeatherTester extends KrewActor {

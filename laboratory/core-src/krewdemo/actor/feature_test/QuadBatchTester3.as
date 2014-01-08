@@ -5,7 +5,7 @@ package krewdemo.actor.feature_test {
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
     public class QuadBatchTester3 extends KrewActor {

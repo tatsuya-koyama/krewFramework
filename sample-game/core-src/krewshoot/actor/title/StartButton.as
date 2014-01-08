@@ -6,7 +6,7 @@ package krewshoot.actor.title {
 
     import krewfw.core.KrewActor;
     import krewfw.core.KrewBlendMode;
-    import krewfw.starling_utility.TextFactory;
+    import krewfw.utils.starling.TextFactory;
     import krewfw.builtin_actor.TextButton;
 
     import krewshoot.GameEvent;

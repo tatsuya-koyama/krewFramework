@@ -1,114 +1,117 @@
 package krewfw.builtin_actor {
 
+    import flash.utils.Dictionary;
+
     import krewfw.core.KrewActor;
 
     /**
-     * State Machine Actor. Use this with KrewStateHook.
-     * Usage Example:
-     *
-     *     private var _state:KrewStateMachine = new KrewStateMachine();
-     *
-     *     private function initState():void {
-     *         _state.initWithObj({
-     *             push_start : null,
-     *             select_menu: new KrewStateHook(_onSelectMenuState),
-     *             transition: {
-     *                 goto_tutorial: new KrewStateHook(_onTutorial),
-     *                 goto_normal  : null,
-     *                 goto_crazy   : null
-     *             }
-     *         });
-     *         _state.switchState('push_start');
-     *         setUpActor('_system_', _state, false);
-     *     }
-     *
-     *     public override function getNextScene():KrewScene {
-     *         // set play mode
-     *         switch (_state.currentState) {
-     *         case 'transition.goto_tutorial':
-     *             return new TutorialScene();  break;
-     *             ...
-     *     }
+     * Hierarchical Finite State Machine for krewFramework.
+     *1
+     * [Note] 後から動的に登録 State を変えるような使い方は想定していない。
+     *        また、現状 KrewStateMachine に addState を行った後の state に
+     *        sub state を足すような書き方も想定していない。
      */
     //------------------------------------------------------------
     public class KrewStateMachine extends KrewActor {
 
-        private var _states:Object = new Object();
-        private var _currentState:String = null;
+        // key  : state id
+        // value: KrewState instance
+        private var _states:Dictionary = new Dictionary();
+
+        private var _currentState:KrewState;
 
         //------------------------------------------------------------
-        public function get currentState():String {
-            return _currentState;
+        public function KrewStateMachine() {
+
+        }
+
+        protected override function onDispose():void {
+            _states = null;
         }
 
         //------------------------------------------------------------
-        public function KrewStateMachine() {}
+        // public
+        //------------------------------------------------------------
 
         /**
-         * @param stateTree Example:
-         *     {
-         *         idle: stateHook1,
-         *         attack: {
-         *             shoot: {
-         *                 rapid: null,
-         *                 soft : null
-         *             },
-         *             tackle: null
-         *         },
-         *         defense: {
-         *             guard: stateHook2,
-         *             avoid: null
-         *         }
-         *     }
-         *
-         * This method converts given object into a flat dictionary as below:
-         *     {
-         *         'idle'              : stateHook1
-         *         'attack.shoot.rapid': null
-         *         'attack.shoot.soft' : null
-         *         'attack.tackle'     : null
-         *         'defense.guard'     : stateHook2
-         *         'defense.avoid'     : null
-         *     }
+         * @see KrewState.addState
          */
-        public function initWithObj(stateTree:Object):void {
-            _states = krew.flattenObject(stateTree);
+        public function addState(stateDef:*):void {
+            var state:KrewState = KrewState.makeState(stateDef);
+            _registerStateTree(state);
         }
 
-        public function switchState(state:String):void {
-            if (!(state in _states)) {
-                throw new Error('Undefined state: ' + state);
+        public function changeState(stateId:String):void {
+            if (!_states[stateId]) {
+                throw new Error("[KrewFSM] stateId not registered: " + stateId);
             }
 
-            // after-hook
-            var stateHook:*;
-            stateHook = _states[_currentState];
-            if (stateHook  &&  stateHook is KrewStateHook) {
-                stateHook.invokeAfterHooks();
+            if (_currentState != null) {
+                if (_currentState.onExitHandler != null) {
+                    _currentState.onExitHandler();
+                }
             }
 
-            // change state
-            _currentState = state;
-
-            // before-hook
-            stateHook = _states[_currentState];
-            if (stateHook  &&  stateHook is KrewStateHook) {
-                stateHook.invokeBeforeHooks();
+            var newState:KrewState = _states[stateId];
+            if (newState.onEnterHandler != null) {
+                newState.onEnterHandler();
             }
+
+            _currentState = newState;
         }
+
+        //------------------------------------------------------------
+        // private
+        //------------------------------------------------------------
 
         /**
-         * Return true if given state is current state or belongs to current state group.
-         * For example, isState('attack.shoot') returns true when the current state
-         * is 'attack.shoot.rapid' or 'attack.shoot.soft'.
+         * State を、子を含めて全て Dictionary に保持
+         * （State は Composite Pattern で sub state を子に持てる）
          */
-        public function isState(state:String):Boolean {
-            // _currentState.search(state) == 0 とどっちが速いかは分からん
-            var pattern:RegExp = new RegExp('^' + state);
-            if (_currentState.match(pattern)) {
-                return true;
-            }
-            return false;
+        private function _registerStateTree(state:KrewState):void {
+            state.each(function(aState:KrewState):void {
+                _registerState(aState);
+            });
         }
+
+        // State 1 個ぶんを Dictionary に保持
+        private function _registerState(state:KrewState):void {
+            if (_states[state.stateId]) {
+                throw new Error("[KrewFSM] stateId already registered: " + state.stateId);
+            }
+
+            _states[state.stateId] = state;
+
+            // ToDo: addActor もしてあげる必要があるかな
+
+            krew.log(" * registered: " + state.stateId);  // debug
+        }
+
+        //------------------------------------------------------------
+        // debug method
+        //------------------------------------------------------------
+
+        public function dumpDictionary():void {
+            krew.log(krew.str.repeat("-", 50));
+            krew.log(" KrewStateMachine state dictionary dump");
+            krew.log(krew.str.repeat("-", 50));
+
+            for each(var state:KrewState in _states) {
+                state.dump();
+            }
+        }
+
+        public function dumpStateTree():void {
+            krew.log(krew.str.repeat("-", 50));
+            krew.log(" KrewStateMachine state tree dump");
+            krew.log(krew.str.repeat("-", 50));
+
+            for each(var state:KrewState in _states) {
+                if (!state.hasParent()) {
+                    state.dumpTree();
+                }
+            }
+        }
+
     }
 }

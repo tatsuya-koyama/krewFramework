@@ -44,8 +44,18 @@ package krewfw.core {
         private var _actionInstructors:Vector.<StuntActionInstructor> = new Vector.<StuntActionInstructor>();
         private var _timeKeeper:KrewTimeKeeper = new KrewTimeKeeper();
 
-        public var displayOrder:int = 0;  // high is front
-        public var collidable:Boolean = true;  // false にすると CollisionShape が衝突判定を行わない
+        /** high is front */
+        public var displayOrder:int = 0;
+
+        /**
+         * addActor 前に false にすると addActor 時に addChild を行わない
+         * (Starling の DisplayList にのせない.)
+         * 見た目を持たずに仕事をする Actor はこれを false にすればよい
+         */
+        public var displayable:Boolean = true;
+
+        /** false にすると CollisionShape が衝突判定を行わない */
+        public var collidable:Boolean = true;
 
         //------------------------------------------------------------
         /**
@@ -269,9 +279,14 @@ package krewfw.core {
             return child;
         }
 
+        /**
+         * krewFramework のシステムに Actor を登録し、同時に Starling の DisplayList に追加する.
+         * 見た目を持たずに仕事をするような Actor は putOnDisplayList に false を渡すか、
+         * Actor のプロパティの displayable に false を設定すると処理コストを減らせる
+         */
         public function addActor(actor:KrewActor, putOnDisplayList:Boolean=true):void {
             _childActors.push(actor);
-            if (putOnDisplayList) {
+            if (putOnDisplayList  &&  actor.displayable) {
                 addChild(actor);
             }
 

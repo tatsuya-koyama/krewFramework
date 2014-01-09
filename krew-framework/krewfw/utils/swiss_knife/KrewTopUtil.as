@@ -5,21 +5,44 @@ package krewfw.utils.swiss_knife {
 
     /**
      * Singleton Army knife for game coding.
+     * Collections of top-level, frequently-used stateless functions.
+     *
+     * If you import krewfw.utils.krew, you can access to this utilities easily as below:
+     * <pre>
+     *     import krewfw.utils.krew;
+     *
+     *     krew.rand(100);            // Top Level utilities
+     *     krew.str.repeat('*', 10);  // 2nd Level utilities
+     *     ...
+     * </pre>
+     *
+     * And when you're writing KrewActor, it's no longer need to import krew.
+     * KrewActor has krew as class member.
      */
     //------------------------------------------------------------
-    public class KrewUtil {
+    public class KrewTopUtil {
 
-        private static var _instance:KrewUtil;
+        //------------------------------------------------------------
+        // 2nd level utilities
+        //------------------------------------------------------------
 
-        public function KrewUtil() {
+        public var str:KrewStringUtil = KrewStringUtil.instance;
+
+        //------------------------------------------------------------
+        // Singleton interface
+        //------------------------------------------------------------
+
+        private static var _instance:KrewTopUtil;
+
+        public function KrewTopUtil() {
             if (_instance) {
-                throw new Error("[KrewUtil] Cannot instantiate singleton.");
+                throw new Error("[KrewTopUtil] Cannot instantiate singleton.");
             }
         }
 
-        public static function get instance():KrewUtil {
+        public static function get instance():KrewTopUtil {
             if (!_instance) {
-                _instance = new KrewUtil();
+                _instance = new KrewTopUtil();
             }
             return _instance;
         }
@@ -27,6 +50,7 @@ package krewfw.utils.swiss_knife {
         //------------------------------------------------------------
         // Logging
         //------------------------------------------------------------
+
         public function log(msg:String, traceLevel:int=1):void {
             if (KrewConfig.GAME_LOG_VERBOSE == 0) { return; }
 
@@ -91,24 +115,26 @@ package krewfw.utils.swiss_knife {
         public function dump(obj:Object):void {
             trace('');
             var printKeyAndValue:Function = function(key:String, value:*, depth:int):void {
-                log(repeatStr('    ', depth) + key + ': ' + value, 4);
+                log(str.repeat('    ', depth) + key + ': ' + value, 4);
             };
             traverseSortedWithKey(obj, printKeyAndValue);
             trace('');
         }
 
-        // なんか mx.utils.StringUtil.repeat 使ってると asdoc 失敗するのが直せなかったから…
-        public function repeatStr(strUnit:String, count:int):String {
-            var resultStr:String = strUnit;
-            for (var i:int = 1;  i < count;  ++i) {
-                resultStr += strUnit;
+        //------------------------------------------------------------
+        // Logic general utils
+        //------------------------------------------------------------
+
+        public function times(count:int, func:Function):void {
+            for (var i:int = 0;  i < count;  ++i) {
+                func(i);
             }
-            return resultStr;
         }
 
         //------------------------------------------------------------
         // Data structure general utils
         //------------------------------------------------------------
+
         /**
          * Traverse Object and apply function for each key-values.
          * @param callback Function that accepts (key:String, value:*, depth:int) as its parameter.
@@ -254,6 +280,7 @@ package krewfw.utils.swiss_knife {
         //------------------------------------------------------------
         // Color utils
         //------------------------------------------------------------
+
         public function getAlpha(color:uint):int { return (color >> 24) & 0xff; }
         public function getRed  (color:uint):int { return (color >> 16) & 0xff; }
         public function getGreen(color:uint):int { return (color >>  8) & 0xff; }
@@ -332,6 +359,7 @@ package krewfw.utils.swiss_knife {
         //------------------------------------------------------------
         // Math utils
         //------------------------------------------------------------
+
         public function rand(max:Number):Number {
             return Math.random() * max;
         }

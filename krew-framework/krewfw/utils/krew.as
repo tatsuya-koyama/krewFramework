@@ -1,8 +1,8 @@
 package krewfw.utils {
 
-    import krewfw.utils.swiss_knife.KrewUtil;
+    import krewfw.utils.swiss_knife.KrewTopUtil;
 
-    /** Light-weight Accessor for KrewUtil */
-    public var krew:KrewUtil = KrewUtil.instance;
+    /** Light-weight Accessor for krewFramework utilities. */
+    public var krew:KrewTopUtil = KrewTopUtil.instance;
 
 }

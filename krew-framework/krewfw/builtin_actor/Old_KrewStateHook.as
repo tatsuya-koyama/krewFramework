@@ -4,13 +4,13 @@ package krewfw.builtin_actor {
      * state 切り替え時に何か実行したい時用
      */
     //------------------------------------------------------------
-    public class KrewStateHook {
+    public class Old_KrewStateHook {
 
         private var _beforeHooks:Vector.<Function> = new Vector.<Function>();
         private var _afterHooks :Vector.<Function> = new Vector.<Function>();
 
         //------------------------------------------------------------
-        public function KrewStateHook(beforeHook:Function=null) {
+        public function Old_KrewStateHook(beforeHook:Function=null) {
             if (beforeHook != null) {
                 _beforeHooks.push(beforeHook);
             }

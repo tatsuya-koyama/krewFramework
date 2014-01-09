@@ -11,7 +11,7 @@ package krewfw.core {
     import krewfw.core_internal.IdGenerator;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.StageLayer;
-    import krewfw.utils.swiss_knife.KrewUtil;
+    import krewfw.utils.swiss_knife.KrewTopUtil;
 
     //------------------------------------------------------------
     public class KrewGameObject extends Sprite {
@@ -36,8 +36,8 @@ package krewfw.core {
         /**
          * よく使う utility への簡易アクセス
          */
-        public function get krew():KrewUtil {
-            return KrewUtil.instance;
+        public function get krew():KrewTopUtil {
+            return KrewTopUtil.instance;
         }
 
         //------------------------------------------------------------

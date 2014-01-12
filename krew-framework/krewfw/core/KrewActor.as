@@ -161,6 +161,7 @@ package krewfw.core {
             _disposeDisplayObjs();
             _timeKeeper.dispose();
 
+            _initFuncList      = null;
             _imageList         = null;
             _textList          = null;
             _childActors       = null;

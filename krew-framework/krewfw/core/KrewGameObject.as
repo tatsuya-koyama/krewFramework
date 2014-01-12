@@ -148,21 +148,21 @@ package krewfw.core {
         //------------------------------------------------------------
         // Messaging
         //------------------------------------------------------------
-        protected function listen(eventType:String, callback:Function):void {
+        public function listen(eventType:String, callback:Function):void {
             sharedObj.notificationService.addListener(
                 this, eventType, callback
             );
             _listeningEventTypes[eventType] = true;
         }
 
-        protected function stopListening(eventType:String):void {
+        public function stopListening(eventType:String):void {
             sharedObj.notificationService.removeListener(
                 this, eventType
             );
             delete _listeningEventTypes[eventType];
         }
 
-        protected function stopAllListening():void {
+        public function stopAllListening():void {
             for (var eventType:String in _listeningEventTypes) {
                 stopListening(eventType);
             }

@@ -137,10 +137,10 @@ package krewfw.core {
 
         /**
          * レイヤー構造の定義
-         * @return Example: ['back', 'forward', 'ui']
+         * @return Example: ['back', 'front', 'ui']
          */
         public function getLayerList():Array {
-            return ['l-back', 'l-forward', 'l-ui'];
+            return ['l-back', 'l-front', 'l-ui'];
         }
 
         /**
@@ -299,7 +299,17 @@ package krewfw.core {
 
             var passedTime:Number = KrewTimeKeeper.getReasonablePassedTime(event.passedTime);
 
+            mainLoop(passedTime);
+        }
+
+        /**
+         * Process one frame of game main loop.
+         * It is called automatically by framework, but you can
+         * manually call it for unit test of Actor's messaging.
+         */
+        public function mainLoop(passedTime:Number=1/60):void {
             if (_servantActor.isSystemActivated) {
+
                 // update actors
                 onUpdate(passedTime);
                 sharedObj.layerManager.onUpdate(passedTime);
@@ -341,8 +351,10 @@ package krewfw.core {
             _servantActor.addScheduledTask(timeout, task);
         }
 
-        protected function setUpActor(layerName:String, actor:KrewActor,
-                                      putOnDisplayList:Boolean=true):void {
+        public function setUpActor(layerName:String, actor:KrewActor,
+                                   putOnDisplayList:Boolean=true):void
+        {
+            if (layerName == null) { layerName = 'l-front'; }
             addActor(layerName, actor, putOnDisplayList);
         }
     }

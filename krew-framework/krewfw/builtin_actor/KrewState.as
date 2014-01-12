@@ -8,6 +8,9 @@ package krewfw.builtin_actor {
     //------------------------------------------------------------
     public class KrewState extends KrewActor {
 
+        /** KrewStateMachine gives its reference to a state on registration. */
+        private var _stateMachine:KrewStateMachine;
+
         private var _stateId:String;
         private var _nextStateId:String;
 
@@ -23,10 +26,18 @@ package krewfw.builtin_actor {
         /** Conditions of transitions by event. */
         private var _guardFunc:Function;
 
+        private var _listenList:Array;
+        public  var isListening:Boolean = false;
+
         private var _parentState:KrewState;
         private var _childStates:Vector.<KrewState>;
 
         //------------------------------------------------------------
+        // accessors
+        //------------------------------------------------------------
+
+        public function set stateMachine(fsm:KrewStateMachine):void { _stateMachine = fsm; }
+
         public function get stateId():String { return _stateId; }
 
         public function get parentState():KrewState { return _parentState; }
@@ -37,6 +48,8 @@ package krewfw.builtin_actor {
         public function get onExitHandler()  :Function { return _onExitHandler; }
         public function get guardFunc()      :Function { return _guardFunc; }
 
+        public function get listenList():Array { return _listenList; }
+
         public function hasParent():Boolean { return (_parentState != null); }
 
         //------------------------------------------------------------
@@ -46,15 +59,20 @@ package krewfw.builtin_actor {
          *
          * @param stateDef Object including state options such as:
          * <ul>
-         *   <li>(Required) id: {String} - State name.</li>
-         *   <li>(Optional) enter: {Function} - Called when state starts.</li>
-         *   <li>(Optional) update: {Function} - Called during state or sub-state is selected.</li>
-         *   <li>(Optional) exit: {Function} - Called when state ends.</li>
-         *   <li>(Optional) guard: {Function} - Called when event triggered.
+         *   <li>(Required) id     : {String} - State name.</li>
+         *   <li>(Optional) enter  : {Function} - Called when state starts.</li>
+         *   <li>(Optional) update : {Function} - Called during state or sub-state is selected.</li>
+         *   <li>(Optional) exit   : {Function} - Called when state ends.</li>
+         *   <li>(Optional) guard  : {Function} - Called when event triggered.
          *           Return false to prevent transition.</li>
+         *   <li>(Optional) listen : {Object or Array} - Ex.) [{event: "event_name", to:"target_state_name"}] -
+         *           State は自身に遷移した時 event の listen を開始する。それは自身の sub state に
+         *           遷移した後も続く。自分の外側の state に移ったとき listen をやめる</li>
          * </ul>
          */
         public function KrewState(stateDef:Object) {
+            displayable = false;
+
             if (!stateDef.id) { throw new Error("[new KrewState] id is required."); }
             _stateId = stateDef.id;
 
@@ -62,11 +80,21 @@ package krewfw.builtin_actor {
             _onUpdateHandler = stateDef.update || null;
             _onExitHandler   = stateDef.exit   || null;
             _guardFunc       = stateDef.guard  || null;
+
+            if (stateDef.listen != null) {
+                if (stateDef.listen is Array) {
+                    _listenList = stateDef.listen;
+                } else {
+                    _listenList = [stateDef.listen];
+                }
+            }
         }
 
         protected override function onDispose():void {
-            _parentState = null;
-            _childStates = null;
+            _stateMachine = null;
+            _listenList   = null;
+            _parentState  = null;
+            _childStates  = null;
         }
 
         /**
@@ -78,19 +106,10 @@ package krewfw.builtin_actor {
                 return stateDef;
             }
             else if (stateDef is Object) {
-                return KrewState.fromObj(stateDef);
+                return new KrewState(stateDef);
             }
 
             throw new Error("[KrewState] Invalid state definition: " + stateDef);
-        }
-
-        /**
-           ToDo: これは消す
-         * You should not use this constructor directly.
-         * Factory method fromObj() is recommended.
-         */
-        public static function fromObj(stateDef:Object):KrewState {
-            return new KrewState("todo");
         }
 
         /**
@@ -111,17 +130,78 @@ package krewfw.builtin_actor {
         }
 
         /**
-         * Iterate state tree. Passes itself and children to iterator function.
+         * Iterate state tree downward. Passes itself and children to iterator function.
          * @param iterator function(state:KrewState):void
          */
-        public function each(iterator:Function):void {
+        public function eachChild(iterator:Function):void {
             iterator(this);
 
-            if (!_childStates) { return; }
+            if (_childStates == null) { return; }
 
             for each (var childState:KrewState in _childStates) {
-                childState.each(iterator);
+                childState.eachChild(iterator);
             }
+        }
+
+        /**
+         * Iterate state tree upward. Passes itself and parents to iterator function.
+         * @param iterator function(state:KrewState):void
+         */
+        public function eachParent(iterator:Function):void {
+            iterator(this);
+
+            if (_parentState == null) { return; }
+
+            _parentState.eachParent(iterator);
+        }
+
+        //------------------------------------------------------------
+        // called automatically by KrewStateMachine
+        //------------------------------------------------------------
+
+        /**
+         * @private
+         * Called by KrewStateMachine.
+         * State を開始する。親たちを含めて event の listen を始める
+         */
+        public function enter():void {
+            eachParent(function(state:KrewState):void {
+                if (state.listenList == null) { return; }
+
+                for each (var listenInfo:Object in state.listenList) {
+                    var event:String       = listenInfo.event;
+                    var targetState:String = listenInfo.to;
+                    _listenEvent(state, event, targetState);
+                }
+            });
+        }
+
+        private function _listenEvent(state:KrewState, event:String, targetState:String):void {
+            state.listen(event, function(args:Object):void {
+                _onEvent(args, targetState);
+            });
+            state.isListening = true;
+        }
+
+        /**
+         * @private
+         * Called by KrewStateMachine.
+         * State を終了する。親たちを含めて event の listen をやめる
+         */
+        public function exit():void {
+            eachParent(function(state:KrewState):void {
+                if (state.listenList == null) { return; }
+
+                for each (var listenInfo:Object in state.listenList) {
+                    var event:String = listenInfo.event;
+                    state.stopListening(event);
+                    state.isListening = false;
+                }
+            });
+        }
+
+        private function _onEvent(args:Object, targetState:String):void {
+            _stateMachine.changeState(targetState);
         }
 
         //------------------------------------------------------------
@@ -129,8 +209,20 @@ package krewfw.builtin_actor {
         //------------------------------------------------------------
 
         public function dump():void {
+            krew.log(krew.str.repeat("v", 50));
+
             krew.log("_stateId: " + _stateId);
             krew.log("_nextStateId: " + _nextStateId);
+
+            if (isListening) {
+                krew.log("isListening: true");
+                for each (var listenInfo:Object in listenList) {
+                    krew.log("  - " + listenInfo.event);
+                }
+            } else {
+                krew.log("isListening: false");
+            }
+
             krew.log(krew.str.repeat("^", 50));
         }
 

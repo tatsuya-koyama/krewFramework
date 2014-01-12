@@ -5,6 +5,7 @@ package krewfw.core {
 
     import krewfw.NativeStageAccessor;
 
+    import flash.display.Stage;
     import flash.events.Event;
     import flash.system.System;
     import krewfw.core_internal.KrewSharedObjects;
@@ -25,8 +26,11 @@ package krewfw.core {
         public function KrewGameDirector() {
             KrewBlendMode.registerExtendedBlendModes();
 
-            NativeStageAccessor.stage.addEventListener(flash.events.Event.ACTIVATE,   _onSystemActivate);
-            NativeStageAccessor.stage.addEventListener(flash.events.Event.DEACTIVATE, _onSystemDeactivate);
+            var stage:Stage = NativeStageAccessor.stage;
+            if (stage != null) {
+                stage.addEventListener(flash.events.Event.ACTIVATE,   _onSystemActivate);
+                stage.addEventListener(flash.events.Event.DEACTIVATE, _onSystemDeactivate);
+            }
         }
 
         /**
@@ -47,7 +51,7 @@ package krewfw.core {
          * getRequiredGlobalAssets で指定したアセットが読み込まれた後に
          * 最初の scene に遷移
          */
-        protected function startGame(initialScene:KrewScene):void {
+        public function startGame(initialScene:KrewScene):void {
             _loadGlobalAssets(
                 getInitialGlobalAssets(),
                 function():void {

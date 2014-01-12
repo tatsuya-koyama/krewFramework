@@ -1,5 +1,19 @@
 
 test:
+	make compile_test
+	make run_test
+
+test_large:
+	make compile_test
+	make run_test_large
+
+test_browser:
+	make compile_test
+	make browse_test
+
+#-----------------------------------------------------------
+
+compile_test:
 	mxmlc -incremental=true \
 	      -library-path+="lib/" \
 	      -library-path+="../lib/" \
@@ -8,7 +22,15 @@ test:
 	      -output="build/TestRunner.swf" \
 	      -debug=true \
 	      src/TestRunner.mxml
-	adl src/TestRunner-app.xml build/ -screensize 990x620:990x620
+
+run_test:
+	adl src/TestRunner-app.xml build/ -screensize 1360x738:1360x738
+
+run_test_large:
+	adl src/TestRunner-app.xml build/ -screensize 1920x1160:1920x1160
+
+browse_test:
+	open build/TestRunner.swf -a /Applications/Safari.app -n
 
 clean:
 	rm -f build/*

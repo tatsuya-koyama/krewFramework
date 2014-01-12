@@ -4,12 +4,20 @@ package krewfw.builtin_actor {
 
     import krewfw.core.KrewActor;
 
+    // ToDo List:
+    //   - onUpdate の対応
+    //   - guard の対応
+    //   - ドキュメント
+
     /**
      * Hierarchical Finite State Machine for krewFramework.
-     *1
+     *
      * [Note] 後から動的に登録 State を変えるような使い方は想定していない。
+     *        addState はあるが removeState のインタフェースは用意していない。
+     *
      *        また、現状 KrewStateMachine に addState を行った後の state に
-     *        sub state を足すような書き方も想定していない。
+     *        sub state を足すような書き方にも対応していない。
+     *        KrewStateMachine のコンストラクタで一度に定義してしまうことを推奨する。
      */
     //------------------------------------------------------------
     public class KrewStateMachine extends KrewActor {
@@ -21,8 +29,85 @@ package krewfw.builtin_actor {
         private var _currentState:KrewState;
 
         //------------------------------------------------------------
-        public function KrewStateMachine() {
+        /**
+         * Usage:
+         * <pre>
+         *     var fsm:KrewStateMachine = new KrewStateMachine([
+         *         {
+         *             id: "state_1",  // First element will be an initial state.
+         *             enter: onEnterFunc
+         *         },
+         *
+         *         new YourCustomState(),  // Instead of Object, KrewState instance is OK.
+         *
+         *         {
+         *             id: "state_2",
+         *             children: [  // State can contain sub States.
+         *                 { id: "state_2_a" },
+         *                 { id: "state_2_b" },
+         *                 {
+         *                     id : "state_2_c",
+         *                     listen: {event: "event_1", to: "state_4"},
+         *                     guard : guardFunc
+         *                 },
+         *                 {
+         *                     id: "state_2_d",
+         *                     listen: [  // Array is also OK.
+         *                         {event: "event_2", to: "state_1"},
+         *                         {event: "event_3", to: "state_2"}
+         *                     ]
+         *                 }
+         *             ]
+         *         },
+         *         {
+         *             id: "state_3",
+         *             listen: {event: "event_1", to: "state_4"},
+         *             next: "state_1"  // Default next state is next element of this Array.
+         *         },
+         *         ...
+         *     ]);
+         * </pre>
+         */
+        public function KrewStateMachine(stateDefList:Array=null) {
+            displayable = false;
 
+            _initStates(stateDefList);
+        }
+
+        private function _initStates(stateDefList:Array):void {
+            // guard
+            if (stateDefList == null) { return; }
+
+            if (!(stateDefList is Array)) {
+                throw new Error("[KrewFSM] Constructor argument must be Array.");
+            }
+            if (stateDefList.length == 0) { return; }
+
+            // do init
+            addInitializer(function():void {
+                for each (var stateDef:* in stateDefList) {
+                    addState(stateDef);
+                }
+
+                _setInitialState(stateDefList);
+            });
+        }
+
+        private function _setInitialState(stateDefList:Array):void {
+            var firstDef:* = stateDefList[0];
+            var initStateId:String;
+
+            if (firstDef is KrewState) {
+                initStateId = firstDef.stateId;
+            }
+            else if (firstDef is Object) {
+                initStateId = firstDef.id;
+            }
+            else {
+                throw new Error("[KrewFSM] Invalid first stateDef.");
+            }
+
+            changeState(initStateId);
         }
 
         protected override function onDispose():void {
@@ -46,18 +131,42 @@ package krewfw.builtin_actor {
                 throw new Error("[KrewFSM] stateId not registered: " + stateId);
             }
 
+            // Good bye old state
             if (_currentState != null) {
+                _currentState.exit();
                 if (_currentState.onExitHandler != null) {
                     _currentState.onExitHandler();
                 }
             }
 
+            // Hello new state
             var newState:KrewState = _states[stateId];
+            newState.enter();
             if (newState.onEnterHandler != null) {
                 newState.onEnterHandler();
             }
 
             _currentState = newState;
+        }
+
+        /**
+         * If given state is current state OR parent of current state, return true.
+         * For example, when current state is "A-sub", and it is child state of "A",
+         * both isState("A-sub") and isState("A") returns true.
+         *
+         * 現在の state が指定したものか、指定したものの子 state なら true を返す。
+         * 例えば現在の state "A-sub" が "A" の子 state であるとき、isState("A-sub") でも
+         * isState("A") でも true が返る。
+         */
+        public function isState(stateName:String):Boolean {
+            if (_currentState.stateId == stateName) { return true; }
+
+            var stateIter:KrewState = _currentState;
+            while (stateIter.hasParent()) {
+                stateIter = stateIter.parentState;
+                if (stateIter.stateId == stateName) { return true; }
+            }
+            return false;
         }
 
         //------------------------------------------------------------
@@ -69,7 +178,7 @@ package krewfw.builtin_actor {
          * （State は Composite Pattern で sub state を子に持てる）
          */
         private function _registerStateTree(state:KrewState):void {
-            state.each(function(aState:KrewState):void {
+            state.eachChild(function(aState:KrewState):void {
                 _registerState(aState);
             });
         }
@@ -81,8 +190,8 @@ package krewfw.builtin_actor {
             }
 
             _states[state.stateId] = state;
-
-            // ToDo: addActor もしてあげる必要があるかな
+            state.stateMachine = this;
+            addActor(state);
 
             krew.log(" * registered: " + state.stateId);  // debug
         }
@@ -99,6 +208,10 @@ package krewfw.builtin_actor {
             for each(var state:KrewState in _states) {
                 state.dump();
             }
+        }
+
+        public function dumpState(stateId:String):void {
+            _states[stateId].dump();
         }
 
         public function dumpStateTree():void {

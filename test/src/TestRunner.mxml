@@ -14,6 +14,7 @@
 
         import flexunit_sample.SampleTestSuite;
         import krewfw_builtin_actor.KrewBuiltinActorTestSuite;
+        import krewfw_core.KrewCoreTestSuite;
         import krewfw_core_internal.KrewCoreInternalTestSuite;
         import krewfw_utils.KrewTopUtilTestSuite;
 
@@ -25,6 +26,7 @@
             core.run(
                  SampleTestSuite
                 ,KrewBuiltinActorTestSuite
+                ,KrewCoreTestSuite
                 ,KrewCoreInternalTestSuite
                 ,KrewTopUtilTestSuite
             );

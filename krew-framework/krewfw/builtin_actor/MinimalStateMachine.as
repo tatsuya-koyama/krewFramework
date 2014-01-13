@@ -3,7 +3,10 @@ package krewfw.builtin_actor {
     import krewfw.core.KrewActor;
 
     /**
-     * State Machine Actor. Use this with KrewStateHook.
+     * [Note] Now new Hierarchical Finite State Machine is available.
+     *        You should use it in serious project.
+     *
+     * Simple State Machine Actor. Use this with MinimalStateHook.
      * Usage Example:
      *
      *     private var _state:KrewStateMachine = new KrewStateMachine();
@@ -11,9 +14,9 @@ package krewfw.builtin_actor {
      *     private function initState():void {
      *         _state.initWithObj({
      *             push_start : null,
-     *             select_menu: new KrewStateHook(_onSelectMenuState),
+     *             select_menu: new MinimalStateHook(_onSelectMenuState),
      *             transition: {
-     *                 goto_tutorial: new KrewStateHook(_onTutorial),
+     *                 goto_tutorial: new MinimalStateHook(_onTutorial),
      *                 goto_normal  : null,
      *                 goto_crazy   : null
      *             }
@@ -31,7 +34,7 @@ package krewfw.builtin_actor {
      *     }
      */
     //------------------------------------------------------------
-    public class Old_KrewStateMachine extends KrewActor {
+    public class MinimalStateMachine extends KrewActor {
 
         private var _states:Object = new Object();
         private var _currentState:String = null;
@@ -42,7 +45,7 @@ package krewfw.builtin_actor {
         }
 
         //------------------------------------------------------------
-        public function Old_KrewStateMachine() {}
+        public function MinimalStateMachine() {}
 
         /**
          * @param stateTree Example:
@@ -83,7 +86,7 @@ package krewfw.builtin_actor {
             // after-hook
             var stateHook:*;
             stateHook = _states[_currentState];
-            if (stateHook  &&  stateHook is Old_KrewStateHook) {
+            if (stateHook  &&  stateHook is MinimalStateHook) {
                 stateHook.invokeAfterHooks();
             }
 
@@ -92,7 +95,7 @@ package krewfw.builtin_actor {
 
             // before-hook
             stateHook = _states[_currentState];
-            if (stateHook  &&  stateHook is Old_KrewStateHook) {
+            if (stateHook  &&  stateHook is MinimalStateHook) {
                 stateHook.invokeBeforeHooks();
             }
         }

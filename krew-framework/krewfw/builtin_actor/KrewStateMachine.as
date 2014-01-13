@@ -250,6 +250,19 @@ package krewfw.builtin_actor {
         }
 
         //------------------------------------------------------------
+        // called by krewFramework
+        //------------------------------------------------------------
+
+        public override function onUpdate(passedTime:Number):void {
+            if (_currentState == null) { return; }
+
+            _currentState.eachParent(function(state:KrewState):void {
+                if (state.onUpdateHandler == null) { return; }
+                state.onUpdateHandler(state, passedTime);
+            });
+        }
+
+        //------------------------------------------------------------
         // private
         //------------------------------------------------------------
 

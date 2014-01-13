@@ -286,7 +286,7 @@ package krewfw_builtin_actor.tests {
                 ]},
                 {id: "state_23"},
                 {id: "state_24"}
-            ])
+            ]);
 
             var scene:KrewScene = KrewTestUtil.getScene();
             scene.setUpActor(null, fsm);
@@ -347,6 +347,118 @@ package krewfw_builtin_actor.tests {
             Assert.assertEquals("state_32", fsm.currentState.stateId);
 
             Assert.assertEquals("abcda", trail);
+        }
+
+        [Test]
+        public function test_guardFunc():void {
+            var condition:int = 0;
+
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {
+                    id: "state_40",
+                    listen: {event: "event40_A", to: "state_40_3_1_1"},
+                    guard : function(state:KrewState):Boolean { return (condition > 100); },
+                    children: [
+                        {
+                            id: "state_40_1"
+                        },
+                        {
+                            id: "state_40_2"
+                        },
+                        {
+                            id: "state_40_3",
+                            listen: {event: "event40_B", to: "state_41"},
+                            children: [
+                                {
+                                    id: "state_40_3_1",
+                                    children: [
+                                        {
+                                            id: "state_40_3_1_1",
+                                            guard : function(state:KrewState):Boolean { return false; }
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: "state_40_3_2"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "state_41"
+                }
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            var anActor:KrewActor = new KrewActor();
+            scene.setUpActor(null, anActor);
+
+            // condition is NG
+            anActor.sendMessage("event40_A");
+            scene.mainLoop();
+            Assert.assertEquals("state_40", fsm.currentState.stateId);
+
+            // condition is OK
+            condition = 101;
+            anActor.sendMessage("event40_A");
+            scene.mainLoop();
+            Assert.assertEquals("state_40_3_1_1", fsm.currentState.stateId);
+
+            // bubbling event
+            // 子 state の無関係のイベントに対する guard は実行されない
+            anActor.sendMessage("event40_B");
+            scene.mainLoop();
+            Assert.assertEquals("state_41", fsm.currentState.stateId);
+        }
+
+        [Test]
+        public function test_onUpdateHandler():void {
+            var trail:String = "";
+
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {
+                    id: "state_50",
+                    update : function(state:KrewState, passedTime:Number):void {
+                        trail += "a";
+                    },
+                    children: [
+                        {
+                            id: "state_50_1",
+                            update : function(state:KrewState, passedTime:Number):void {
+                                trail += "b";
+                            },
+                            children: [
+                                {
+                                    id: "state_50_1_1",
+                                    update : function(state:KrewState, passedTime:Number):void {
+                                        trail += "c";
+                                    }
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    id: "state_41"
+                }
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            scene.mainLoop();
+            Assert.assertEquals("a", trail);
+
+            fsm.changeState("state_50_1_1");
+            scene.mainLoop();
+            Assert.assertEquals("acba", trail);
+
+            fsm.changeState("state_50_1");
+            scene.mainLoop();
+            Assert.assertEquals("acbaba", trail);
         }
 
     }

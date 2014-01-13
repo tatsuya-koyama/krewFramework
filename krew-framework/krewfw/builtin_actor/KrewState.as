@@ -68,9 +68,10 @@ package krewfw.builtin_actor {
          *   <li>(Optional) next    : {String} - Next state name. progress() will proceed state to the next.
          *           If omitted, next Array element is used as next state.</li>
          *   <li>(Optional) enter   : {Function(state:KrewState):void} - Called when state starts.</li>
-         *   <li>(Optional) update  : {Function(state:KrewState):void} - Called during state or sub-state is selected.</li>
+         *   <li>(Optional) update  : {Function(state:KrewState, passedTime:Number):void} -
+         *           Called during state or sub-state is selected.</li>
          *   <li>(Optional) exit    : {Function(state:KrewState):void} - Called when state ends.</li>
-         *   <li>(Optional) guard   : {Function(state:KrewState):void} - Called when event triggered.
+         *   <li>(Optional) guard   : {Function(state:KrewState):Boolean} - Called when event triggered.
          *           Return false to prevent transition and bubbling event.</li>
          *   <li>(Optional) listen  : {Object or Array} - Ex.) [{event: "event_name", to:"target_state_name"}] -
          *           event で指定したイベントを受け取ったとき、to で指定した state に遷移する。
@@ -217,10 +218,6 @@ package krewfw.builtin_actor {
         private function _listenToEvent(state:KrewState, event:String, targetState:String):void {
             _stateMachine.listenToStateEvent(event);
             state.isListening = true;
-
-            // state.listen(event, function(args:Object):void {
-            //     _onEvent(args, targetState);
-            // });
         }
 
         /**
@@ -241,6 +238,8 @@ package krewfw.builtin_actor {
 
         public function onEvent(args:Object, event:String):void {
             if (_isListeningTo(event)) {
+                if (_guardFunc != null  &&  !_guardFunc(this)) { return; }
+
                 var targetStateId:String = _getTargetStateIdWith(event)
                 _stateMachine.changeState(targetStateId);
                 return;

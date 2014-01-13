@@ -1,4 +1,4 @@
-package krewfw.builtin_actor {
+package krewfw.builtin_actor.display {
 
     import starling.display.Image;
 

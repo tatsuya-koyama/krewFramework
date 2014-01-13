@@ -4,7 +4,7 @@ package krewfw.core_internal {
 
     import starling.display.DisplayObject;
 
-    import krewfw.builtin_actor.ScreenFader;
+    import krewfw.builtin_actor.display.ScreenFader;
     import krewfw.utils.krew;
     import krewfw.core.KrewActor;
     import krewfw.core.KrewScene;

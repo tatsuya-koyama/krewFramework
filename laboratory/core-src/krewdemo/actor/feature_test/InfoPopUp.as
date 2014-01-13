@@ -4,8 +4,8 @@ package krewdemo.actor.feature_test {
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;
-    import krewfw.builtin_actor.ColorRect;
-    import krewfw.builtin_actor.SimpleButton;
+    import krewfw.builtin_actor.display.ColorRect;
+    import krewfw.builtin_actor.ui.SimpleButton;
     import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------

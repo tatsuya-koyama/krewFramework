@@ -1,4 +1,4 @@
-package krewfw.builtin_actor {
+package krewfw.builtin_actor.ui {
 
     import starling.text.TextField;
     import starling.events.Touch;

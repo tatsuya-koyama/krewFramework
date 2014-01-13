@@ -1,4 +1,4 @@
-package krewfw.builtin_actor {
+package krewfw.builtin_actor.system {
 
     /**
      * state 切り替え時に何か実行したい時用

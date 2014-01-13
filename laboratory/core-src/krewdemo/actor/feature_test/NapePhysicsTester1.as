@@ -16,7 +16,7 @@ package krewdemo.actor.feature_test {
     import nape.util.BitmapDebug;
     import nape.util.Debug;
 
-    import krewfw.builtin_actor.SimpleVirtualJoystick;
+    import krewfw.builtin_actor.ui.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
     import krewfw.utils.starling.TileMapHelper;
 

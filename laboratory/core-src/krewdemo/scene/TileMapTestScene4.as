@@ -5,9 +5,9 @@ package krewdemo.scene {
     import starling.text.TextField;
 
     import krewfw.core.KrewScene;
-    import krewfw.builtin_actor.ImageButton;
-    import krewfw.builtin_actor.ScreenCurtain;
-    import krewfw.builtin_actor.SimpleLoadingScreen;
+    import krewfw.builtin_actor.ui.ImageButton;
+    import krewfw.builtin_actor.display.ScreenCurtain;
+    import krewfw.builtin_actor.display.SimpleLoadingScreen;
 
     import krewdemo.GameEvent;
     import krewdemo.actor.menu.BackButton;

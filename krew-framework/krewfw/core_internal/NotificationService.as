@@ -63,19 +63,35 @@ package krewfw.core_internal {
                 publisher.publish(eventArgs);
             }
 
+            if (_messageQueue.length == 0) { return; }
+
             // イベントのハンドリングの中でさらに Message が投げられていた場合、
             // 再帰して投げられるイベントがなくなるまで処理を継続する。
             // ただし Actor 間でイベントを投げ合うループ構造ができてしまうと無限ループになるため
             // セーフティとして試行回数には制限をかける
-            if (_messageQueue.length > 0  &&  recallCount < MAX_LOOP_COUNT) {
+            if (recallCount < MAX_LOOP_COUNT) {
                 this.broadcastMessage(recallCount + 1);
             } else {
                 // 処理しきれなかったイベントは諦める（そうしないとイベントの数が肥大化しうるから）
                 // * そもそもここが呼ばれる場合は設計が間違っている。
                 //   このログは出力されないべきである
+                dumpMessageQueue();
                 _messageQueue = new Vector.<Object>();
                 krew.fwlog('[Warning!!] Event handling seems to be infinite loop!');
             }
         }
+
+        //------------------------------------------------------------
+        // debug method
+        //------------------------------------------------------------
+
+        public function dumpMessageQueue():void {
+            var types:Vector.<Object> = new Vector.<Object>;
+            types = _messageQueue.map(function(elem:Object, i:int, list:Vector.<Object>):Object {
+                return elem.type;
+            });
+            krew.fwlog('[NotificationService] message dump: ' + types.join(", "));
+        }
+
     }
 }

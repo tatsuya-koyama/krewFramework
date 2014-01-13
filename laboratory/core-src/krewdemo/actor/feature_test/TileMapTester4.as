@@ -7,7 +7,7 @@ package krewdemo.actor.feature_test {
     import nape.callbacks.InteractionType;
     import nape.phys.Body;
 
-    import krewfw.builtin_actor.ImageButton;
+    import krewfw.builtin_actor.ui.ImageButton;
 
     import krewdemo.GameEvent;
 

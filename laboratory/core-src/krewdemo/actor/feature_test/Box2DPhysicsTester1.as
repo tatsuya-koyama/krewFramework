@@ -12,7 +12,7 @@ package krewdemo.actor.feature_test {
     import Box2D.Common.Math.*;
 
     import krewfw.NativeStageAccessor;
-    import krewfw.builtin_actor.SimpleVirtualJoystick;
+    import krewfw.builtin_actor.ui.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
     import krewfw.utils.starling.TileMapHelper;
 

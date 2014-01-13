@@ -5,7 +5,7 @@ package krewdemo.actor.feature_test {
     import starling.textures.Texture;
     import starling.textures.TextureSmoothing;
 
-    import krewfw.builtin_actor.SimpleVirtualJoystick;
+    import krewfw.builtin_actor.ui.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
     import krewfw.utils.starling.TileMapHelper;
 

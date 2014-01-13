@@ -8,14 +8,14 @@ package krewfw.core_internal {
     //------------------------------------------------------------
     public class NotificationService {
 
+        public static var MAX_LOOP_COUNT:int = 8;
+
         private var _publishers:Dictionary = new Dictionary();
         private var _listenerCount:int = 0;
         private var _messageQueue:Vector.<Object> = new Vector.<Object>();
 
         //------------------------------------------------------------
-        public function NotificationService() {
-
-        }
+        public function NotificationService() {}
 
         public function addListener(listener:KrewGameObject,
                                     eventType:String, callback:Function):void {
@@ -48,7 +48,7 @@ package krewfw.core_internal {
             });
         }
 
-        public function broadcastMessage():void {
+        public function broadcastMessage(recallCount:int=0):void {
             if (_messageQueue.length == 0) { return; }
 
             var processingMsgs:Vector.<Object> = _messageQueue.slice(); // copy vector
@@ -63,7 +63,19 @@ package krewfw.core_internal {
                 publisher.publish(eventArgs);
             }
 
-            // ToDo: for の中で Message 投げられてたら再帰
+            // イベントのハンドリングの中でさらに Message が投げられていた場合、
+            // 再帰して投げられるイベントがなくなるまで処理を継続する。
+            // ただし Actor 間でイベントを投げ合うループ構造ができてしまうと無限ループになるため
+            // セーフティとして試行回数には制限をかける
+            if (_messageQueue.length > 0  &&  recallCount < MAX_LOOP_COUNT) {
+                this.broadcastMessage(recallCount + 1);
+            } else {
+                // 処理しきれなかったイベントは諦める（そうしないとイベントの数が肥大化しうるから）
+                // * そもそもここが呼ばれる場合は設計が間違っている。
+                //   このログは出力されないべきである
+                _messageQueue = new Vector.<Object>();
+                krew.fwlog('[Warning!!] Event handling seems to be infinite loop!');
+            }
         }
     }
 }

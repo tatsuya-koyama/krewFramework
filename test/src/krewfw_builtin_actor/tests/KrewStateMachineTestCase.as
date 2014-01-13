@@ -2,8 +2,8 @@ package krewfw_builtin_actor.tests {
 
     import org.flexunit.Assert;
 
-    import krewfw.builtin_actor.KrewState;
-    import krewfw.builtin_actor.KrewStateMachine;
+    import krewfw.builtin_actor.system.KrewState;
+    import krewfw.builtin_actor.system.KrewStateMachine;
     import krewfw.core.KrewActor;
     import krewfw.core.KrewScene;
     import krewfw.utils.dev_tool.KrewTestUtil;

@@ -11,7 +11,7 @@ package krewfw.core {
     import starling.animation.Transitions;
 
     import krewfw.KrewConfig;
-    import krewfw.builtin_actor.ColorRect;
+    import krewfw.builtin_actor.display.ColorRect;
     import krewfw.utils.as3.KrewTimeKeeper;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.ProfileData;

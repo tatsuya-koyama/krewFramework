@@ -4,7 +4,7 @@ package krewdemo.actor.feature_test {
 
     import starling.display.Image;
 
-    import krewfw.builtin_actor.SimpleVirtualJoystick;
+    import krewfw.builtin_actor.ui.SimpleVirtualJoystick;
     import krewfw.core.KrewActor;
 
     //------------------------------------------------------------

@@ -1,4 +1,4 @@
-package krewfw.builtin_actor {
+package krewfw.builtin_actor.ui {
 
     import flash.display.Stage;
     import flash.events.KeyboardEvent;

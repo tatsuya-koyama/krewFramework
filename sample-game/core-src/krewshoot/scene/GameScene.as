@@ -3,7 +3,7 @@ package krewshoot.scene {
     import starling.text.TextField;
 
     import krewfw.core.KrewScene;
-    import krewfw.builtin_actor.ScreenCurtain;
+    import krewfw.builtin_actor.display.ScreenCurtain;
 
     import krewshoot.GameEvent;
     import krewshoot.actor.common.InterlaceFilter;

@@ -3,7 +3,7 @@ package krewdemo.actor.menu {
     import starling.display.Image;
 
     import krewfw.core.KrewActor;
-    import krewfw.builtin_actor.SimpleButton;
+    import krewfw.builtin_actor.ui.SimpleButton;
 
     import krewdemo.GameEvent;
 

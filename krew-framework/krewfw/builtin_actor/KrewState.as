@@ -299,9 +299,9 @@ package krewfw.builtin_actor {
         public function dumpTree(level:int=0):void {
             var indent:String = krew.str.repeat(" ", level * 4);
 
-            var toList:Array  = [];
+            var toList:Array = [];
             if (listenList != null) {
-                listenList.map(function(elem:Object, index:int, array:Array):String {
+                toList = listenList.map(function(elem:Object, index:int, array:Array):String {
                     return elem.to;
                 });
             }

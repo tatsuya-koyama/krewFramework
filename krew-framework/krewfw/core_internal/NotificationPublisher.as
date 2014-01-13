@@ -24,6 +24,11 @@ package krewfw.core_internal {
         }
 
         public function addListener(listener:KrewGameObject, callback:Function):void {
+            if (_listeners[listener.id]) {
+                krew.fwlog('[Warning] Listener is already listening: [id ' + listener.id + ']'
+                           + ' -> ' + _eventType);
+            }
+
             _listeners[listener.id] = callback;
             ++_numListener;
             // krew.fwlog('+++ add listener: [id ' + listener.id + '] '
@@ -32,8 +37,8 @@ package krewfw.core_internal {
 
         public function removeListener(listener:KrewGameObject):Boolean {
             if (!_listeners[listener.id]) {
-                krew.fwlog('[Error] Listener is not listening: [id '
-                               + listener.id + ']');
+                krew.fwlog('[Warning] Listener is not listening: [id ' + listener.id + ']'
+                           + ' -> ' + _eventType);
                 return false;
             }
 

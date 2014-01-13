@@ -11,6 +11,12 @@ test_browser:
 	make compile_test
 	make browse_test
 
+# colorline command:
+#     https://github.com/tatsuya-koyama/MyScript/blob/master/colorline
+test_c:
+	make compile_test
+	make run_test 2>&1 | colorline Error Warning
+
 #-----------------------------------------------------------
 
 compile_test:

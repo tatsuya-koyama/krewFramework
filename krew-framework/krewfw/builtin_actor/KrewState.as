@@ -59,15 +59,16 @@ package krewfw.builtin_actor {
          *
          * @param stateDef Object including state options such as:
          * <ul>
-         *   <li>(Required) id     : {String} - State name.</li>
-         *   <li>(Optional) enter  : {Function} - Called when state starts.</li>
-         *   <li>(Optional) update : {Function} - Called during state or sub-state is selected.</li>
-         *   <li>(Optional) exit   : {Function} - Called when state ends.</li>
-         *   <li>(Optional) guard  : {Function} - Called when event triggered.
+         *   <li>(Required) id      : {String} - State name.</li>
+         *   <li>(Optional) enter   : {Function} - Called when state starts.</li>
+         *   <li>(Optional) update  : {Function} - Called during state or sub-state is selected.</li>
+         *   <li>(Optional) exit    : {Function} - Called when state ends.</li>
+         *   <li>(Optional) guard   : {Function} - Called when event triggered.
          *           Return false to prevent transition.</li>
-         *   <li>(Optional) listen : {Object or Array} - Ex.) [{event: "event_name", to:"target_state_name"}] -
+         *   <li>(Optional) listen  : {Object or Array} - Ex.) [{event: "event_name", to:"target_state_name"}] -
          *           State は自身に遷移した時 event の listen を開始する。それは自身の sub state に
          *           遷移した後も続く。自分の外側の state に移ったとき listen をやめる</li>
+         *   <li>(Optional) children: {Array} - Sub state definition list.</li>
          * </ul>
          */
         public function KrewState(stateDef:Object) {
@@ -81,11 +82,19 @@ package krewfw.builtin_actor {
             _onExitHandler   = stateDef.exit   || null;
             _guardFunc       = stateDef.guard  || null;
 
+            // listen to event
             if (stateDef.listen != null) {
                 if (stateDef.listen is Array) {
                     _listenList = stateDef.listen;
                 } else {
                     _listenList = [stateDef.listen];
+                }
+            }
+
+            // sub states
+            if (stateDef.children != null) {
+                for each (var subStateDef:* in stateDef.children) {
+                    addState(subStateDef);
                 }
             }
         }
@@ -116,6 +125,8 @@ package krewfw.builtin_actor {
          * Add sub state.
          *
          * @param stateDef KrewState のインスタンスか、State 定義情報を含む Object.
+         *                 Object のフォーマットについては KrewState 及び KrewStateMachine の
+         *                 コンストラクタのドキュメントを見よ。
          */
         public function addState(stateDef:*):void {
             var state:KrewState = KrewState.makeState(stateDef);
@@ -150,19 +161,23 @@ package krewfw.builtin_actor {
         public function eachParent(iterator:Function):void {
             iterator(this);
 
-            if (_parentState == null) { return; }
+            if (!hasParent()) { return; }
 
             _parentState.eachParent(iterator);
         }
 
         //------------------------------------------------------------
-        // called automatically by KrewStateMachine
+        // called by KrewStateMachine
         //------------------------------------------------------------
 
         /**
          * @private
-         * Called by KrewStateMachine.
-         * State を開始する。親たちを含めて event の listen を始める
+         * State を開始する。親たちを含めて event の listen を始める.
+         *
+         * [Note] krewFramework のメッセージングの仕組みで listen を行うのは
+         *        KrewStateMachine 側。KrewStateMachine はメッセージを受け取ると
+         *        それを現在の State に渡す。State は自分で解決できない場合は
+         *        親 State にそれを委譲する
          */
         public function enter():void {
             eachParent(function(state:KrewState):void {
@@ -171,21 +186,22 @@ package krewfw.builtin_actor {
                 for each (var listenInfo:Object in state.listenList) {
                     var event:String       = listenInfo.event;
                     var targetState:String = listenInfo.to;
-                    _listenEvent(state, event, targetState);
+                    _listenToEvent(state, event, targetState);
                 }
             });
         }
 
-        private function _listenEvent(state:KrewState, event:String, targetState:String):void {
-            state.listen(event, function(args:Object):void {
-                _onEvent(args, targetState);
-            });
+        private function _listenToEvent(state:KrewState, event:String, targetState:String):void {
+            _stateMachine.listenToStateEvent(event);
             state.isListening = true;
+
+            // state.listen(event, function(args:Object):void {
+            //     _onEvent(args, targetState);
+            // });
         }
 
         /**
          * @private
-         * Called by KrewStateMachine.
          * State を終了する。親たちを含めて event の listen をやめる
          */
         public function exit():void {
@@ -194,14 +210,46 @@ package krewfw.builtin_actor {
 
                 for each (var listenInfo:Object in state.listenList) {
                     var event:String = listenInfo.event;
-                    state.stopListening(event);
+                    _stateMachine.stopListeningToStateEvent(event);
                     state.isListening = false;
                 }
             });
         }
 
-        private function _onEvent(args:Object, targetState:String):void {
-            _stateMachine.changeState(targetState);
+        public function onEvent(args:Object, event:String):void {
+            if (_isListeningTo(event)) {
+                var targetStateId:String = _getTargetStateIdWith(event)
+                _stateMachine.changeState(targetStateId);
+                return;
+            }
+
+            // delegate to parent state
+            if (hasParent()) {
+                _parentState.onEvent(args, event);
+                return;
+            }
+
+            krew.log("[KrewState] Warning: Unexpected case in onEvent: " + event);
+        }
+
+        //------------------------------------------------------------
+        // private
+        //------------------------------------------------------------
+
+        private function _isListeningTo(event:String):Boolean {
+            // [Note] listenList が大きくならない想定で、配列を走査して検索
+            for each (var listenInfo:Object in listenList) {
+                if (listenInfo.event == event) { return true; }
+            }
+            return false;
+        }
+
+        private function _getTargetStateIdWith(event:String):String {
+            // [Note] listenList が大きくならない想定で、配列を走査して検索
+            for each (var listenInfo:Object in listenList) {
+                if (listenInfo.event == event) { return listenInfo.to; }
+            }
+            return null;
         }
 
         //------------------------------------------------------------

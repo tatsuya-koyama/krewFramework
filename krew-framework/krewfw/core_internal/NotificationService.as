@@ -21,7 +21,7 @@ package krewfw.core_internal {
                                     eventType:String, callback:Function):void {
             if (!_publishers[eventType]) {
                 _publishers[eventType] = new NotificationPublisher(eventType);
-                krew.fwlog('+++ create publisher: ' + eventType);
+                krew.fwlog('+++ create publisher: ' + eventType + ' +++');
             }
 
             _publishers[eventType].addListener(listener, callback);
@@ -36,7 +36,7 @@ package krewfw.core_internal {
             _publishers[eventType].removeListener(listener);
             if (_publishers[eventType].numListener == 0) {
                 delete _publishers[eventType];
-                krew.fwlog('--- delete publisher: ' + eventType);
+                krew.fwlog('--- delete publisher: ' + eventType + ' ---');
             }
             return true;
         }

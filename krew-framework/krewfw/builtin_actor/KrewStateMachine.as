@@ -28,6 +28,8 @@ package krewfw.builtin_actor {
 
         private var _currentState:KrewState;
 
+        private var _listenMap:Dictionary = new Dictionary();
+
         //------------------------------------------------------------
         /**
          * Usage:
@@ -111,7 +113,9 @@ package krewfw.builtin_actor {
         }
 
         protected override function onDispose():void {
-            _states = null;
+            _states       = null;
+            _currentState = null;
+            _listenMap    = null;
         }
 
         //------------------------------------------------------------
@@ -170,8 +174,34 @@ package krewfw.builtin_actor {
         }
 
         //------------------------------------------------------------
+        // called by KrewState
+        //------------------------------------------------------------
+
+        public function listenToStateEvent(event:String):void {
+            if (_listenMap[event]) { return; }  // already listening by other state
+
+            listen(event, function(args:Object):void {
+                _onEvent(args, event);
+            })
+
+            _listenMap[event] = true;
+        }
+
+        public function stopListeningToStateEvent(event:String):void {
+            if (!_listenMap[event]) { return; }  // already stopped by other state
+
+            stopListening(event);
+
+            _listenMap[event] = false;
+        }
+
+        //------------------------------------------------------------
         // private
         //------------------------------------------------------------
+
+        private function _onEvent(args:Object, event:String):void {
+            _currentState.onEvent(args, event);
+        }
 
         /**
          * State を、子を含めて全て Dictionary に保持
@@ -206,6 +236,17 @@ package krewfw.builtin_actor {
             krew.log(krew.str.repeat("-", 50));
 
             for each(var state:KrewState in _states) {
+                krew.log(" - " + state.stateId);
+            }
+            krew.log(krew.str.repeat("^", 50));
+        }
+
+        public function dumpDictionaryVerbose():void {
+            krew.log(krew.str.repeat("-", 50));
+            krew.log(" KrewStateMachine state dictionary dump -v");
+            krew.log(krew.str.repeat("-", 50));
+
+            for each(var state:KrewState in _states) {
                 state.dump();
             }
         }
@@ -224,6 +265,7 @@ package krewfw.builtin_actor {
                     state.dumpTree();
                 }
             }
+            krew.log(krew.str.repeat("^", 50));
         }
 
     }

@@ -198,5 +198,64 @@ package krewfw_builtin_actor.tests {
             Assert.assertEquals(true, fsm.isState("state_2"));
         }
 
+        [Test]
+        public function test_eventTransition_2():void {
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {
+                    id: "state_10",
+                    listen: [
+                        {event: "event_C", to: "state_14"},
+                        {event: "event_B", to: "state_10_4_3"}
+                    ],
+                    children: [
+                        {id: "state_10_1", listen: {event: "-", to: "-"}},
+                        {id: "state_10_2", listen: {event: "event_C", to: "state_13"}},
+                        {id: "state_10_3", listen: {event: "-", to: "-"}},
+                        {
+                            id: "state_10_4",
+                            listen: {event: "event_A", to: "state_12"},
+                            children: [
+                                {id: "state_10_4_1", listen: {event: "-", to: "-"}},
+                                {id: "state_10_4_2", listen: {event: "-", to: "-"}},
+                                {id: "state_10_4_3", listen: {event: "event_A", to: "state_11"}}
+                            ]
+                        }
+                    ]
+                },
+                {id: "state_11", listen: {event: "-", to: "-"}},
+                {id: "state_12", listen: {event: "-", to: "-"}},
+                {id: "state_13", listen: {event: "-", to: "-"}},
+                {id: "state_14", listen: {event: "-", to: "-"}}
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            var anActor:KrewActor = new KrewActor();
+            scene.setUpActor(null, anActor);
+
+            Assert.assertEquals(true, fsm.isState("state_10"));
+
+            anActor.sendMessage("event_B");
+            scene.mainLoop();
+            Assert.assertEquals(true, fsm.isState("state_10_4_3"));
+
+            anActor.sendMessage("event_A");
+            scene.mainLoop();
+            Assert.assertEquals(true, fsm.isState("state_11"));
+
+            // delegate 10_4_2 -> 10_4
+            fsm.changeState("state_10_4_2");
+            anActor.sendMessage("event_A");
+            scene.mainLoop();
+            Assert.assertEquals(true, fsm.isState("state_12"));
+
+            // delegate 10_4_1 -> 10_4 -> 10
+            fsm.changeState("state_10_4_1");
+            anActor.sendMessage("event_C");
+            scene.mainLoop();
+            Assert.assertEquals(true, fsm.isState("state_14"));
+        }
+
     }
 }

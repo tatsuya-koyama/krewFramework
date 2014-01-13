@@ -40,8 +40,8 @@ package krewfw.builtin_actor {
 
         public function get stateId():String { return _stateId; }
 
-        public function get parentState():KrewState { return _parentState; }
-        public function set parentState(state:KrewState):void { _parentState = state; }
+        public function get nextStateId():String { return _nextStateId; }
+        public function set nextStateId(id:String):void { _nextStateId = id; }
 
         public function get onEnterHandler() :Function { return _onEnterHandler; }
         public function get onUpdateHandler():Function { return _onUpdateHandler; }
@@ -50,6 +50,11 @@ package krewfw.builtin_actor {
 
         public function get listenList():Array { return _listenList; }
 
+        public function get childStates():Vector.<KrewState> { return _childStates; }
+        public function hasChildren():Boolean { return (_childStates != null); }
+
+        public function get parentState():KrewState { return _parentState; }
+        public function set parentState(state:KrewState):void { _parentState = state; }
         public function hasParent():Boolean { return (_parentState != null); }
 
         //------------------------------------------------------------
@@ -60,14 +65,17 @@ package krewfw.builtin_actor {
          * @param stateDef Object including state options such as:
          * <ul>
          *   <li>(Required) id      : {String} - State name.</li>
-         *   <li>(Optional) enter   : {Function} - Called when state starts.</li>
-         *   <li>(Optional) update  : {Function} - Called during state or sub-state is selected.</li>
-         *   <li>(Optional) exit    : {Function} - Called when state ends.</li>
-         *   <li>(Optional) guard   : {Function} - Called when event triggered.
-         *           Return false to prevent transition.</li>
+         *   <li>(Optional) next    : {String} - Next state name. progress() will proceed state to the next.
+         *           If omitted, next Array element is used as next state.</li>
+         *   <li>(Optional) enter   : {Function(state:KrewState):void} - Called when state starts.</li>
+         *   <li>(Optional) update  : {Function(state:KrewState):void} - Called during state or sub-state is selected.</li>
+         *   <li>(Optional) exit    : {Function(state:KrewState):void} - Called when state ends.</li>
+         *   <li>(Optional) guard   : {Function(state:KrewState):void} - Called when event triggered.
+         *           Return false to prevent transition and bubbling event.</li>
          *   <li>(Optional) listen  : {Object or Array} - Ex.) [{event: "event_name", to:"target_state_name"}] -
-         *           State は自身に遷移した時 event の listen を開始する。それは自身の sub state に
-         *           遷移した後も続く。自分の外側の state に移ったとき listen をやめる</li>
+         *           event で指定したイベントを受け取ったとき、to で指定した state に遷移する。
+         *           KrewStateMachine はイベントをまず現在の state に渡す。 state は自分で解決できない
+         *           イベントだった場合は親 state に委譲していく</li>
          *   <li>(Optional) children: {Array} - Sub state definition list.</li>
          * </ul>
          */
@@ -75,7 +83,9 @@ package krewfw.builtin_actor {
             displayable = false;
 
             if (!stateDef.id) { throw new Error("[new KrewState] id is required."); }
-            _stateId = stateDef.id;
+
+            _stateId     = stateDef.id;
+            _nextStateId = stateDef.next || null;
 
             _onEnterHandler  = stateDef.enter  || null;
             _onUpdateHandler = stateDef.update || null;
@@ -121,6 +131,10 @@ package krewfw.builtin_actor {
             throw new Error("[KrewState] Invalid state definition: " + stateDef);
         }
 
+        //------------------------------------------------------------
+        // public
+        //------------------------------------------------------------
+
         /**
          * Add sub state.
          *
@@ -139,6 +153,19 @@ package krewfw.builtin_actor {
 
             krew.log(" $ added [" + _stateId + "] -> " + state.stateId);  // debug
         }
+
+        /** Go on the next state. */
+        public function proceed():void {
+            if (!_nextStateId) {
+                throw new Error("[KrewState] Next state not defined in: " + _stateId);
+            }
+
+            _stateMachine.changeState(_nextStateId);
+        }
+
+        //------------------------------------------------------------
+        // called by KrewStateMachine
+        //------------------------------------------------------------
 
         /**
          * Iterate state tree downward. Passes itself and children to iterator function.
@@ -165,10 +192,6 @@ package krewfw.builtin_actor {
 
             _parentState.eachParent(iterator);
         }
-
-        //------------------------------------------------------------
-        // called by KrewStateMachine
-        //------------------------------------------------------------
 
         /**
          * @private
@@ -276,7 +299,16 @@ package krewfw.builtin_actor {
 
         public function dumpTree(level:int=0):void {
             var indent:String = krew.str.repeat(" ", level * 4);
-            krew.log(indent + _stateId);
+
+            var toList:Array  = [];
+            if (listenList != null) {
+                listenList.map(function(elem:Object, index:int, array:Array):String {
+                    return elem.to;
+                });
+            }
+
+            krew.log(indent + _stateId + " --> " + _nextStateId
+                     + "  (" + toList.join(", ") + ")");
 
             if (!_childStates) { return; }
 

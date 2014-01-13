@@ -122,6 +122,23 @@ package krewfw.utils.swiss_knife {
         }
 
         //------------------------------------------------------------
+        // Array utils
+        //------------------------------------------------------------
+
+        /**
+         * Returns the last element of a list.
+         * Passing optional n will return an array of the last n elements of the list.
+         *
+         * @param list Array or Vector is expected.
+         */
+        public function last(list:Object, n:int = -1):* {
+            if (n == -1) {
+                return list[list.length - 1];
+            }
+            return list.slice(-n);
+        }
+
+        //------------------------------------------------------------
         // Logic general utils
         //------------------------------------------------------------
 

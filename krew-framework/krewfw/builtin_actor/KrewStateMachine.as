@@ -26,6 +26,9 @@ package krewfw.builtin_actor {
         // value: KrewState instance
         private var _states:Dictionary = new Dictionary();
 
+        // States with constructor argument order. Used for default 'next' settings.
+        private var _rootStateList:Vector.<KrewState> = new Vector.<KrewState>();
+
         private var _currentState:KrewState;
 
         private var _listenMap:Dictionary = new Dictionary();
@@ -37,7 +40,8 @@ package krewfw.builtin_actor {
          *     var fsm:KrewStateMachine = new KrewStateMachine([
          *         {
          *             id: "state_1",  // First element will be an initial state.
-         *             enter: onEnterFunc
+         *             enter: onEnterFunc,
+         *             next: "state_2"  // Default next state is next element of this Array.
          *         },
          *
          *         new YourCustomState(),  // Instead of Object, KrewState instance is OK.
@@ -63,8 +67,7 @@ package krewfw.builtin_actor {
          *         },
          *         {
          *             id: "state_3",
-         *             listen: {event: "event_1", to: "state_4"},
-         *             next: "state_1"  // Default next state is next element of this Array.
+         *             listen: {event: "event_1", to: "state_4"}
          *         },
          *         ...
          *     ]);
@@ -92,6 +95,7 @@ package krewfw.builtin_actor {
                 }
 
                 _setInitialState(stateDefList);
+                _setDefaultNextStates(_rootStateList);
             });
         }
 
@@ -112,10 +116,48 @@ package krewfw.builtin_actor {
             changeState(initStateId);
         }
 
+        /**
+         * next が指定されていない state について、コンストラクタで渡した定義で
+         * 上から下になぞるように next を設定していく。
+         * この関数は再帰で、ツリーの末端の子 state を返す
+         */
+        private function _setDefaultNextStates(stateList:Vector.<KrewState>):KrewState {
+            if (stateList.length == 0) { return null; }
+
+            for (var i:int = 0;  i < stateList.length;  ++i) {
+                var state:KrewState = stateList[i];
+
+                if (state.nextStateId == null) {
+                    if (state.hasChildren()) {
+                        state.nextStateId = state.childStates[0].stateId;
+                    }
+                    else if (i + 1 <= stateList.length - 1) {
+                        state.nextStateId = stateList[i + 1].stateId;
+                    }
+                }
+
+                if (state.hasChildren()) {
+                    var edgeState:KrewState = _setDefaultNextStates(state.childStates);
+
+                    if (i + 1 <= stateList.length - 1) {
+                        edgeState.nextStateId = stateList[i + 1].stateId;
+                    } else {
+                        return edgeState;
+                    }
+                }
+            }
+
+            var edgeState:KrewState = krew.last(stateList);
+            if (!edgeState.hasParent()) { return null; }
+
+            return edgeState;
+        }
+
         protected override function onDispose():void {
-            _states       = null;
-            _currentState = null;
-            _listenMap    = null;
+            _states        = null;
+            _rootStateList = null;
+            _currentState  = null;
+            _listenMap     = null;
         }
 
         //------------------------------------------------------------
@@ -128,6 +170,7 @@ package krewfw.builtin_actor {
         public function addState(stateDef:*):void {
             var state:KrewState = KrewState.makeState(stateDef);
             _registerStateTree(state);
+            _rootStateList.push(state);
         }
 
         public function changeState(stateId:String):void {
@@ -139,18 +182,18 @@ package krewfw.builtin_actor {
             if (_currentState != null) {
                 _currentState.exit();
                 if (_currentState.onExitHandler != null) {
-                    _currentState.onExitHandler();
+                    _currentState.onExitHandler(_currentState);
                 }
             }
 
             // Hello new state
             var newState:KrewState = _states[stateId];
+            _currentState = newState;
+
             newState.enter();
             if (newState.onEnterHandler != null) {
-                newState.onEnterHandler();
+                newState.onEnterHandler(newState);
             }
-
-            _currentState = newState;
         }
 
         /**
@@ -171,6 +214,17 @@ package krewfw.builtin_actor {
                 if (stateIter.stateId == stateName) { return true; }
             }
             return false;
+        }
+
+        public function getState(stateId:String):KrewState {
+            if (!_states[stateId]) {
+                throw new Error("[KrewFSM] stateId not registered: " + stateId);
+            }
+            return _states[stateId];
+        }
+
+        public function get currentState():KrewState {
+            return _currentState;
         }
 
         //------------------------------------------------------------
@@ -260,10 +314,8 @@ package krewfw.builtin_actor {
             krew.log(" KrewStateMachine state tree dump");
             krew.log(krew.str.repeat("-", 50));
 
-            for each(var state:KrewState in _states) {
-                if (!state.hasParent()) {
-                    state.dumpTree();
-                }
+            for each(var state:KrewState in _rootStateList) {
+                state.dumpTree();
             }
             krew.log(krew.str.repeat("^", 50));
         }

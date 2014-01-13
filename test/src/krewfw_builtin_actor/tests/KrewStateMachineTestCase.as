@@ -105,7 +105,7 @@ package krewfw_builtin_actor.tests {
             var fsm:KrewStateMachine = new KrewStateMachine();
             var state1:KrewState = new KrewState({
                 id: "test_state_1",
-                enter: function():void { signal = 101; }
+                enter: function(state:KrewState):void { signal = 101; }
             });
 
             fsm.addState(state1);
@@ -122,7 +122,7 @@ package krewfw_builtin_actor.tests {
             var state1:KrewState = new KrewState({id: "test_state_1"});
             var state2:KrewState = new KrewState({
                 id: "test_state_2",
-                exit: function():void { signal = 102; }
+                exit: function(state:KrewState):void { signal = 102; }
             });
 
             fsm.addState(state1);
@@ -219,7 +219,8 @@ package krewfw_builtin_actor.tests {
                                 {id: "state_10_4_2", listen: {event: "-", to: "-"}},
                                 {id: "state_10_4_3", listen: {event: "event_A", to: "state_11"}}
                             ]
-                        }
+                        },
+                        {id: "state_10_5", listen: {event: "-", to: "-"}}
                     ]
                 },
                 {id: "state_11", listen: {event: "-", to: "-"}},
@@ -255,6 +256,97 @@ package krewfw_builtin_actor.tests {
             anActor.sendMessage("event_C");
             scene.mainLoop();
             Assert.assertEquals(true, fsm.isState("state_14"));
+        }
+
+        [Test]
+        public function test_defaultNext():void {
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {id: "state_20", children: [
+                    {id: "state_20_1"},
+                    {id: "state_20_2", next: "state_22"},
+                    {id: "state_20_3"},
+                    {id: "state_20_4", children: [
+                        {id: "state_20_4_1"},
+                        {id: "state_20_4_2"},
+                        {id: "state_20_4_3"}
+                    ]},
+                    {id: "state_20_5"},
+                    {id: "state_20_6", children: [
+                        {id: "state_20_6_1", children: [
+                            {id: "state_20_6_1_1"}
+                        ]}
+                    ]}
+                ]},
+                {id: "state_21"},
+                {id: "state_22", children: [
+                    {id: "state_22_1", children: [
+                        {id: "state_22_1_1"}
+                    ]},
+                    {id: "state_22_2"}
+                ]},
+                {id: "state_23"},
+                {id: "state_24"}
+            ])
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            Assert.assertEquals("state_20_1"     , fsm.getState("state_20"      ).nextStateId);
+            Assert.assertEquals("state_22"       , fsm.getState("state_20_2"    ).nextStateId);
+            Assert.assertEquals("state_20_4"     , fsm.getState("state_20_3"    ).nextStateId);
+            Assert.assertEquals("state_20_4_1"   , fsm.getState("state_20_4"    ).nextStateId);
+            Assert.assertEquals("state_22"       , fsm.getState("state_21"      ).nextStateId);
+            Assert.assertEquals("state_20_5"     , fsm.getState("state_20_4_3"  ).nextStateId);
+            Assert.assertEquals("state_20_6_1"   , fsm.getState("state_20_6"    ).nextStateId);
+            Assert.assertEquals("state_20_6_1_1" , fsm.getState("state_20_6_1"  ).nextStateId);
+            Assert.assertEquals("state_21"       , fsm.getState("state_20_6_1_1").nextStateId);
+            Assert.assertEquals("state_23"       , fsm.getState("state_22_2"    ).nextStateId);
+            Assert.assertEquals(null             , fsm.getState("state_24"      ).nextStateId);
+        }
+
+        [Test]
+        public function test_proceed():void {
+            var trail:String = "";
+            var state31:KrewState = new KrewState({id: "state_31"});
+
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {
+                    id   : "state_30",
+                    next : "state_32",
+                    enter: function(state:KrewState):void { trail += "a";  state.proceed(); }
+                },
+                state31,
+                {id: "state_32", children: [
+                    {
+                        id   : "state_32_1",
+                        enter: function(state:KrewState):void { trail += "b";  state.proceed(); }
+                    },
+                    {
+                        id   : "state_32_2",
+                        enter: function(state:KrewState):void { trail += "c";  state.proceed(); }
+                    }
+                ]},
+                {
+                    id   : "state_33",
+                    next : "state_30",
+                    enter: function(state:KrewState):void { trail += "d";  state.proceed(); }
+                }
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            Assert.assertEquals("state_32", fsm.currentState.stateId);
+
+            fsm.changeState("state_31");
+            state31.proceed();
+            Assert.assertEquals("state_32", fsm.currentState.stateId);
+
+            fsm.changeState("state_32_1");
+            state31.proceed();
+            Assert.assertEquals("state_32", fsm.currentState.stateId);
+
+            Assert.assertEquals("abcda", trail);
         }
 
     }

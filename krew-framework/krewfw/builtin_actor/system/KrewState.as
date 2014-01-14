@@ -151,8 +151,6 @@ package krewfw.builtin_actor.system {
                 _childStates = new Vector.<KrewState>;
             }
             _childStates.push(state);
-
-            krew.log(" $ added [" + _stateId + "] -> " + state.stateId);  // debug
         }
 
         /** Go on the next state. */
@@ -251,7 +249,7 @@ package krewfw.builtin_actor.system {
                 return;
             }
 
-            krew.log("[KrewState] Warning: Unexpected case in onEvent: " + event);
+            krew.fwlog("[KrewState] Warning: Unexpected case in onEvent: " + event);
         }
 
         //------------------------------------------------------------

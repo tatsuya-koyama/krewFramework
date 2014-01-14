@@ -8,7 +8,10 @@ package krewfw.utils.starling {
 
     /**
      * Tiled Map Editor (http://www.mapeditor.org/) の tmx ファイルから
-     * 出力した json をもとに各マスの Image を返すユーティリティ
+     * 出力した json をもとに各マスの Image を返すユーティリティ.
+     *
+     * [Note] 現状、1 つの layer に 1 つの tileSet だけを使用していることを想定。
+     *        Draw Call などをケアすると必然的にそういった使い方になるだろうしね
      */
     //------------------------------------------------------------
     public class TileMapHelper {
@@ -26,8 +29,48 @@ package krewfw.utils.starling {
                     return layerData;
                 }
             }
-            krew.fwlog("[TileMapHelpr] Layer not found: " + layerName);
+            krew.fwlog("[Error] [TileMapHelper] Layer not found: " + layerName);
             return null;
+        }
+
+        /**
+         * Tiled Map Editor で出力した json の Object から、
+         * 名前でタイルセットのデータを取得する。名前がヒットしなかった場合は null を返す
+         */
+        public static function getTileSetByName(tileMapInfo:Object, tileSetName:String):Object {
+            for each (var tileSet:Object in tileMapInfo.tilesets) {
+                if (tileSet.name == tileSetName) {
+                    return tileSet;
+                }
+            }
+            krew.fwlog("[Error] [TileMapHelper] Tileset not found: " + tileSetName);
+            return null;
+        }
+
+        /**
+         * layer の指定した位置の data を global ID で返す。
+         * １枚目のタイル画像の一番左上が gid = 1 となる（タイルなし = 0）
+         */
+        public static function gidAt(tileLayer:Object, col:uint, row:uint):int {
+            var numMapCol:uint = tileLayer.width;
+            var tileId:int = tileLayer.data[(row * numMapCol) + col];
+            return tileId;
+        }
+
+        /**
+         * layer の指定した位置の data を local ID で返す
+         * 各タイル画像ごとに一番左上を localId = 0 として返す（タイルなし = -1）
+         */
+        public static function tileAt(tileLayer:Object, tileSet:Object, col:uint, row:uint):int {
+            var globalTileId:int = gidAt(tileLayer, col, row);
+            if (globalTileId == 0) { return -1; }
+
+            var localTileId:int = globalTileId - tileSet.firstgid;
+            if (localTileId < 0) {
+                throw new Error("[Error] [TileMapHelper] local id must not be negative. "
+                                + "(gid: " + globalTileId + ")");
+            }
+            return localTileId;
         }
 
         /**
@@ -35,7 +78,7 @@ package krewfw.utils.starling {
          * 指定されたマスに対応するテクスチャを持つ Image を返す。
          * orientation: "orthogonal" 専用。spacing に対応.
          *
-         * Tiled Map Editor では空タイルは 0 と表現される。
+         * Tiled Map Editor では空タイルは gid = 0 と表現される。
          * ソースのタイル画像の一番左上は 1 から始まる。
          * 指定したマスが 0 の場合は null を返す.
          *
@@ -50,9 +93,8 @@ package krewfw.utils.starling {
                                             tilesTexture:Texture, col:uint, row:uint):Image
         {
             // calculate UV coord
-            var numMapCol:uint = tileLayer.width;
-            var tileIndex:int  = tileLayer.data[(row * numMapCol) + col] - 1;
-            if (tileIndex < 0) { return null; }
+            var tileId:int = tileAt(tileLayer, tileSet, col, row);
+            if (tileId == -1) { return null; }
 
             // * consider spacing
             var tileWidth :Number = (tileSet.tilewidth  + tileSet.spacing);
@@ -60,8 +102,8 @@ package krewfw.utils.starling {
 
             var numTileImageCol:uint = tileSet.imagewidth  / tileWidth;
             var numTileImageRow:uint = tileSet.imageheight / tileHeight;
-            var tileImageCol:uint = tileIndex % numTileImageCol;
-            var tileImageRow:uint = tileIndex / numTileImageCol;
+            var tileImageCol:uint = tileId % numTileImageCol;
+            var tileImageRow:uint = tileId / numTileImageCol;
 
             var uvLeft:Number = (tileWidth  * tileImageCol) / tileSet.imagewidth;
             var uvTop :Number = (tileHeight * tileImageRow) / tileSet.imageheight;

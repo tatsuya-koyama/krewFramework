@@ -4,11 +4,6 @@ package krewfw.builtin_actor.system {
 
     import krewfw.core.KrewActor;
 
-    // ToDo List:
-    //   - onUpdate の対応
-    //   - guard の対応
-    //   - ドキュメント
-
     /**
      * Hierarchical Finite State Machine for krewFramework.
      *
@@ -21,6 +16,9 @@ package krewfw.builtin_actor.system {
      */
     //------------------------------------------------------------
     public class KrewStateMachine extends KrewActor {
+
+        /** If trace log is annoying you, set it false. */
+        public static var VERBOSE:Boolean = true;
 
         // key  : state id
         // value: KrewState instance
@@ -179,7 +177,9 @@ package krewfw.builtin_actor.system {
             }
 
             // Good bye old state
+            var oldStateId:String = "null";
             if (_currentState != null) {
+                oldStateId = _currentState.stateId;
                 _currentState.exit();
                 if (_currentState.onExitHandler != null) {
                     _currentState.onExitHandler(_currentState);
@@ -189,6 +189,8 @@ package krewfw.builtin_actor.system {
             // Hello new state
             var newState:KrewState = _states[stateId];
             _currentState = newState;
+
+            _log("[Info] [KrewFSM] SWITCHED: " + newState.stateId + "  <-  " + oldStateId);
 
             newState.enter();
             if (newState.onEnterHandler != null) {
@@ -289,13 +291,16 @@ package krewfw.builtin_actor.system {
             _states[state.stateId] = state;
             state.stateMachine = this;
             addActor(state);
-
-            krew.log(" * registered: " + state.stateId);  // debug
         }
 
         //------------------------------------------------------------
         // debug method
         //------------------------------------------------------------
+
+        private function _log(text:String):void {
+            if (!VERBOSE) { return; }
+            krew.fwlog(text);
+        }
 
         public function dumpDictionary():void {
             krew.log(krew.str.repeat("-", 50));

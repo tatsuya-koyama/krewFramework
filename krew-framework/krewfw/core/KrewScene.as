@@ -343,12 +343,20 @@ package krewfw.core {
             _servantActor.react();
         }
 
+        public function addScheduledTask(timeout:Number, task:Function):void {
+            _servantActor.addScheduledTask(timeout, task);
+        }
+
+        public function delay(timeout:Number, task:Function):void {
+            _servantActor.addScheduledTask(timeout, task);
+        }
+
         public function addPeriodicTask(interval:Number, task:Function):void {
             _servantActor.addPeriodicTask(interval, task);
         }
 
-        public function addScheduledTask(timeout:Number, task:Function):void {
-            _servantActor.addScheduledTask(timeout, task);
+        public function cyclic(interval:Number, task:Function):void {
+            _servantActor.addPeriodicTask(interval, task);
         }
 
         public function setUpActor(layerName:String, actor:KrewActor,

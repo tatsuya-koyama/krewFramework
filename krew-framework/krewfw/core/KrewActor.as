@@ -372,12 +372,23 @@ package krewfw.core {
             }
         }
 
-        // equivalent to setTimeout()
+        /** Equivalent to setTimeout() */
         public function addScheduledTask(timeout:Number, task:Function):void {
             _timeKeeper.addPeriodicTask(timeout, task, 1);
         }
 
+        /** Alias for addScheduledTask */
+        public function delay(timeout:Number, task:Function):void {
+            _timeKeeper.addPeriodicTask(timeout, task, 1);
+        }
+
+        /** Equivalent to setInterval() */
         public function addPeriodicTask(interval:Number, task:Function, times:int=-1):void {
+            _timeKeeper.addPeriodicTask(interval, task, times);
+        }
+
+        /** Alias for addPeriodicTask */
+        public function cyclic(interval:Number, task:Function, times:int=-1):void {
             _timeKeeper.addPeriodicTask(interval, task, times);
         }
 

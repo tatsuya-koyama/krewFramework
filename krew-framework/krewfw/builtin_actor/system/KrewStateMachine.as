@@ -137,10 +137,12 @@ package krewfw.builtin_actor.system {
                 if (state.hasChildren()) {
                     var edgeState:KrewState = _setDefaultNextStates(state.childStates);
 
-                    if (i + 1 <= stateList.length - 1) {
-                        edgeState.nextStateId = stateList[i + 1].stateId;
-                    } else {
-                        return edgeState;
+                    if (edgeState.nextStateId == null) {
+                        if (i + 1 <= stateList.length - 1) {
+                            edgeState.nextStateId = stateList[i + 1].stateId;
+                        } else {
+                            return edgeState;
+                        }
                     }
                 }
             }

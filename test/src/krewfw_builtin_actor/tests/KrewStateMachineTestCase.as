@@ -268,7 +268,7 @@ package krewfw_builtin_actor.tests {
                     {id: "state_20_4", children: [
                         {id: "state_20_4_1"},
                         {id: "state_20_4_2"},
-                        {id: "state_20_4_3"}
+                        {id: "state_20_4_3", next: "state_20_1"}
                     ]},
                     {id: "state_20_5"},
                     {id: "state_20_6", children: [
@@ -296,7 +296,7 @@ package krewfw_builtin_actor.tests {
             Assert.assertEquals("state_20_4"     , fsm.getState("state_20_3"    ).nextStateId);
             Assert.assertEquals("state_20_4_1"   , fsm.getState("state_20_4"    ).nextStateId);
             Assert.assertEquals("state_22"       , fsm.getState("state_21"      ).nextStateId);
-            Assert.assertEquals("state_20_5"     , fsm.getState("state_20_4_3"  ).nextStateId);
+            Assert.assertEquals("state_20_1"     , fsm.getState("state_20_4_3"  ).nextStateId);
             Assert.assertEquals("state_20_6_1"   , fsm.getState("state_20_6"    ).nextStateId);
             Assert.assertEquals("state_20_6_1_1" , fsm.getState("state_20_6_1"  ).nextStateId);
             Assert.assertEquals("state_21"       , fsm.getState("state_20_6_1_1").nextStateId);

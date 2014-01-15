@@ -73,12 +73,16 @@ package krewfw.builtin_actor.system {
          *   <li>(Optional) exit    : {Function(state:KrewState):void} - Called when state ends.</li>
          *   <li>(Optional) guard   : {Function(state:KrewState):Boolean} - Called when event triggered.
          *           Return false to prevent transition and bubbling event.</li>
-         *   <li>(Optional) listen  : {Object or Array} - Ex.) [{event: "event_name", to:"target_state_name"}] -
-         *           event で指定したイベントを受け取ったとき、to で指定した state に遷移する。
+         *   <li>(Optional) listen  : {Object or Array} - Ex.)
+         *           [{event: "event_name", to:"target_state_name", hook:hookFunc}]
+         *           - event で指定したイベントを受け取ったとき、to で指定した state に遷移する。
          *           KrewStateMachine はイベントをまず現在の state に渡す。 state は自分で解決できない
          *           イベントだった場合は親 state に委譲していく</li>
          *   <li>(Optional) children: {Array} - Sub state definition list.</li>
          * </ul>
+         *
+         * listen で指定する hook には (state:KrewState, eventArgs:Object) が渡される。
+         * hook は guard が false を返してイベントの遷移を止める場合には呼ばれない。
          */
         public function KrewState(stateDef:Object) {
             displayable = false;
@@ -153,8 +157,13 @@ package krewfw.builtin_actor.system {
             _childStates.push(state);
         }
 
-        /** Go on the next state. */
-        public function proceed():void {
+        /**
+         * Go on the next state.
+         *
+         * [Hint] すぐに次のステートに遷移させたいような場合の定義には
+         *        enter: proceed と書けばよい
+         */
+        public function proceed(state:KrewState=null):void {
             if (!_nextStateId) {
                 throw new Error("[KrewState] Next state not defined in: " + _stateId);
             }
@@ -234,11 +243,22 @@ package krewfw.builtin_actor.system {
             });
         }
 
+        /**
+         * イベントを受け取った際、 KrewStateMachine から呼ばれるハンドラ。
+         * State は自分が listen しているイベントでなければ、親 state に委譲する。
+         * 自分が listen しているイベントだった場合でも、
+         * guard に指定した function が false を返す間は、遷移を行わない。
+         * guard を通過した際、hook が指定されていればそれに (state, eventArgs) を渡して呼ぶ。
+         * その後、to に指定されていたステートへ遷移する
+         */
         public function onEvent(args:Object, event:String):void {
             if (_isListeningTo(event)) {
                 if (_guardFunc != null  &&  !_guardFunc(this)) { return; }
 
-                var targetStateId:String = _getTargetStateIdWith(event)
+                var eventHook:Function = _getEventHookWith(event);
+                if (eventHook != null) { eventHook(this, args); }
+
+                var targetStateId:String = _getTargetStateIdWith(event);
                 _stateMachine.changeState(targetStateId);
                 return;
             }
@@ -268,6 +288,14 @@ package krewfw.builtin_actor.system {
             // [Note] listenList が大きくならない想定で、配列を走査して検索
             for each (var listenInfo:Object in listenList) {
                 if (listenInfo.event == event) { return listenInfo.to; }
+            }
+            return null;
+        }
+
+        private function _getEventHookWith(event:String):Function {
+            // [Note] listenList が大きくならない想定で、配列を走査して検索
+            for each (var listenInfo:Object in listenList) {
+                if (listenInfo.event == event) { return listenInfo.hook; }
             }
             return null;
         }

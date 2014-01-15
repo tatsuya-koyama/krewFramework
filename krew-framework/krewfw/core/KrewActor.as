@@ -378,7 +378,7 @@ package krewfw.core {
         }
 
         /** Alias for addScheduledTask */
-        public function delay(timeout:Number, task:Function):void {
+        public function delayed(timeout:Number, task:Function):void {
             _timeKeeper.addPeriodicTask(timeout, task, 1);
         }
 

@@ -182,8 +182,8 @@ package krewfw.builtin_actor.system {
             _stateMachine.sendMessage(eventType, eventArgs);
         }
 
-        public function delay(timeout:Number, task:Function):void {
-            _stateMachine.delay(timeout, task);
+        public function delayed(timeout:Number, task:Function):void {
+            _stateMachine.delayed(timeout, task);
         }
 
         //------------------------------------------------------------

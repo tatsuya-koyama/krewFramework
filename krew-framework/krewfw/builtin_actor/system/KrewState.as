@@ -1,12 +1,13 @@
 package krewfw.builtin_actor.system {
 
     import krewfw.core.KrewActor;
+    import krewfw.utils.krew;
 
     /**
      * State Object for KrewStateMachine.
      */
     //------------------------------------------------------------
-    public class KrewState extends KrewActor {
+    public class KrewState {
 
         /** KrewStateMachine gives its reference to a state on registration. */
         private var _stateMachine:KrewStateMachine;
@@ -85,8 +86,6 @@ package krewfw.builtin_actor.system {
          * hook は guard が false を返してイベントの遷移を止める場合には呼ばれない。
          */
         public function KrewState(stateDef:Object) {
-            displayable = false;
-
             if (!stateDef.id) { throw new Error("[new KrewState] id is required."); }
 
             _stateId     = stateDef.id;
@@ -114,7 +113,7 @@ package krewfw.builtin_actor.system {
             }
         }
 
-        protected override function onDispose():void {
+        public function dispose():void {
             _stateMachine = null;
             _listenList   = null;
             _parentState  = null;
@@ -169,6 +168,22 @@ package krewfw.builtin_actor.system {
             }
 
             _stateMachine.changeState(_nextStateId);
+        }
+
+        //------------------------------------------------------------
+        // Actor-mimicry interface
+        //------------------------------------------------------------
+
+        public function createActor(newActor:KrewActor, layerName:String=null):void {
+            _stateMachine.createActor(newActor, layerName);
+        }
+
+        public function sendMessage(eventType:String, eventArgs:Object=null):void {
+            _stateMachine.sendMessage(eventType, eventArgs);
+        }
+
+        public function delay(timeout:Number, task:Function):void {
+            _stateMachine.delay(timeout, task);
         }
 
         //------------------------------------------------------------

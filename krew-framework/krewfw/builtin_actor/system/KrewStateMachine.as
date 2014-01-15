@@ -154,6 +154,12 @@ package krewfw.builtin_actor.system {
         }
 
         protected override function onDispose():void {
+            for each (var state:KrewState in _states) {
+                state.eachChild(function(childState:KrewState):void {
+                    childState.dispose();
+                });
+            }
+
             _states        = null;
             _rootStateList = null;
             _currentState  = null;
@@ -292,7 +298,6 @@ package krewfw.builtin_actor.system {
 
             _states[state.stateId] = state;
             state.stateMachine = this;
-            addActor(state);
         }
 
         //------------------------------------------------------------

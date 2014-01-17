@@ -70,14 +70,17 @@ package krewfw.builtin_actor.system {
          *         ...
          *     ]);
          * </pre>
+         *
+         * @param stateDefList Array of KrewState instances or definition objects.
+         * @param funcOwner If you speciify functions with name string, pass function-owner object.
          */
-        public function KrewStateMachine(stateDefList:Array=null) {
+        public function KrewStateMachine(stateDefList:Array=null, funcOwner:Object=null) {
             displayable = false;
 
-            _initStates(stateDefList);
+            _initStates(stateDefList, funcOwner);
         }
 
-        private function _initStates(stateDefList:Array):void {
+        private function _initStates(stateDefList:Array, funcOwner:Object=null):void {
             // guard
             if (stateDefList == null) { return; }
 
@@ -89,7 +92,7 @@ package krewfw.builtin_actor.system {
             // do init
             addInitializer(function():void {
                 for each (var stateDef:* in stateDefList) {
-                    addState(stateDef);
+                    addState(stateDef, funcOwner);
                 }
 
                 _setInitialState(stateDefList);
@@ -173,8 +176,8 @@ package krewfw.builtin_actor.system {
         /**
          * @see KrewState.addState
          */
-        public function addState(stateDef:*):void {
-            var state:KrewState = KrewState.makeState(stateDef);
+        public function addState(stateDef:*, funcOwner:Object=null):void {
+            var state:KrewState = KrewState.makeState(stateDef, funcOwner);
             _registerStateTree(state);
             _rootStateList.push(state);
         }

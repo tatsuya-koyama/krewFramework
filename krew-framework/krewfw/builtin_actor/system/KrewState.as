@@ -84,17 +84,25 @@ package krewfw.builtin_actor.system {
          *
          * listen で指定する hook には (state:KrewState, eventArgs:Object) が渡される。
          * hook は guard が false を返してイベントの遷移を止める場合には呼ばれない。
+         *
+         * 関数は直接 Function を指定するのではなく、関数名を文字列で指定することもできる。
+         * その場合は第二引数にその関数を持つ Object を渡す必要がある。
          */
-        public function KrewState(stateDef:Object) {
+        public function KrewState(stateDef:Object, funcOwner:Object=null) {
             if (!stateDef.id) { throw new Error("[new KrewState] id is required."); }
 
             _stateId     = stateDef.id;
             _nextStateId = stateDef.next || null;
 
-            _onEnterHandler  = stateDef.enter  || null;
-            _onUpdateHandler = stateDef.update || null;
-            _onExitHandler   = stateDef.exit   || null;
-            _guardFunc       = stateDef.guard  || null;
+            // _onEnterHandler  = stateDef.enter  || null;
+            // _onUpdateHandler = stateDef.update || null;
+            // _onExitHandler   = stateDef.exit   || null;
+            // _guardFunc       = stateDef.guard  || null;
+
+            _onEnterHandler  = _getFunction(stateDef.enter , funcOwner);
+            _onUpdateHandler = _getFunction(stateDef.update, funcOwner);
+            _onExitHandler   = _getFunction(stateDef.exit  , funcOwner);
+            _guardFunc       = _getFunction(stateDef.guard , funcOwner);
 
             // listen to event
             if (stateDef.listen != null) {
@@ -108,7 +116,7 @@ package krewfw.builtin_actor.system {
             // sub states
             if (stateDef.children != null) {
                 for each (var subStateDef:* in stateDef.children) {
-                    addState(subStateDef);
+                    addState(subStateDef, funcOwner);
                 }
             }
         }
@@ -123,13 +131,13 @@ package krewfw.builtin_actor.system {
         /**
          * @see addState
          */
-        public static function makeState(stateDef:*):KrewState {
+        public static function makeState(stateDef:*, funcOwner:Object=null):KrewState {
             var state:KrewState;
             if (stateDef is KrewState) {
                 return stateDef;
             }
             else if (stateDef is Object) {
-                return new KrewState(stateDef);
+                return new KrewState(stateDef, funcOwner);
             }
 
             throw new Error("[KrewState] Invalid state definition: " + stateDef);
@@ -146,8 +154,8 @@ package krewfw.builtin_actor.system {
          *                 Object のフォーマットについては KrewState 及び KrewStateMachine の
          *                 コンストラクタのドキュメントを見よ。
          */
-        public function addState(stateDef:*):void {
-            var state:KrewState = KrewState.makeState(stateDef);
+        public function addState(stateDef:*, funcOwner:Object=null):void {
+            var state:KrewState = KrewState.makeState(stateDef, funcOwner);
             state.parentState = this;
 
             if (!_childStates) {
@@ -290,6 +298,28 @@ package krewfw.builtin_actor.system {
         //------------------------------------------------------------
         // private
         //------------------------------------------------------------
+
+        /**
+         * State 定義から Function を返す。State 定義には Function を直接指定する代わりに、
+         * 関数名の文字列を指定することもできる。文字列で指定した場合は funcOwner に
+         * その関数を持っているオブジェクトを指定しなければエラーになる。
+         *
+         * 文字列で指定することの利点は、State 定義を完全に外部データにすることが
+         * 可能になるところにある。
+         *
+         * @param funcDef Function or function name string.
+         * @param funcOwner Object that contains the function.
+         */
+        private function _getFunction(funcDef:*, funcOwner:Object):Function {
+            if (funcDef == null) { return null; }
+
+            if (funcDef is Function) { return funcDef; }
+            if (!funcDef is String) { throw new Error("[KrewState] funcDef must be Function or String."); }
+            if (funcOwner == null)  { throw new Error("[KrewState] funcOwner is required."); }
+
+            if (!funcOwner.hasOwnProperty(funcDef)) { throw new Error("[KrewState] function name not found: " + funcDef); }
+            return funcOwner[funcDef];
+        }
 
         private function _isListeningTo(event:String):Boolean {
             // [Note] listenList が大きくならない想定で、配列を走査して検索

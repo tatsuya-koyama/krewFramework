@@ -461,5 +461,43 @@ package krewfw_builtin_actor.tests {
             Assert.assertEquals("acbaba", trail);
         }
 
+        [Test]
+        public function test_stringFunction():void {
+            _instanceSignal = 0;
+
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {
+                    id: "state_60",
+                    exit : "_test_func_1"
+                },
+                {
+                    id: "state_61"
+                },
+                {
+                    id: "state_62",
+                    enter: "_test_func_2"
+                }
+            ], this);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            fsm.changeState("state_61");
+            Assert.assertEquals(101, _instanceSignal);
+
+            fsm.changeState("state_62");
+            Assert.assertEquals(102, _instanceSignal);
+        }
+
+        private var _instanceSignal:int = 0;
+
+        public function _test_func_1(state:KrewState):void {
+            _instanceSignal = 101;
+        }
+
+        public function _test_func_2(state:KrewState):void {
+            _instanceSignal = 102;
+        }
+
     }
 }

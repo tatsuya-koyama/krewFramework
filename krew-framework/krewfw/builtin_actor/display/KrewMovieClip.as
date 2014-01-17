@@ -21,14 +21,16 @@ package krewfw.builtin_actor.display {
          * Please call after init().
          *
          * @param infoList List of [imageName, durationSec]. Example:
+         * <pre>
          * [
          *     ['frame_1', 0.1],
          *     ['frame_2', 0.1],
          *     ['frame_3', 0.1],
          *     ...
          * ]
+         * </pre>
          */
-        public function setupMovieClip(infoList:Array, width:Number, height:Number,
+        public function setUpMovieClip(infoList:Array, width:Number, height:Number,
                                        x:Number=0, y:Number=0):void
         {
             _movieInfoList = infoList;
@@ -37,6 +39,16 @@ package krewfw.builtin_actor.display {
             _movieImage = getImage(imageName);
             addImage(_movieImage, width, height, x, y);
             _frameCount = 0;
+        }
+
+        public function changeClip(newInfoList:Array):void {
+            _movieInfoList = newInfoList;
+
+            _frameCount    = 0;
+            _framePlayTime = 0;
+
+            var imageName:String = _movieInfoList[_frameCount][0];
+            changeImage(_movieImage, imageName);
         }
 
         public function setRandomFrame():void {
@@ -53,7 +65,7 @@ package krewfw.builtin_actor.display {
 
         private function _updateMovieFrame(passedTime:Number):void {
             if (!_movieInfoList) { return; }
-            if (_movieInfoList.length == 0) { return; }
+            if (_movieInfoList.length <= 1) { return; }
 
             var nextDuration:Number = _movieInfoList[_frameCount][1];
             _framePlayTime += passedTime;

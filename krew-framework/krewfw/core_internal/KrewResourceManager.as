@@ -24,6 +24,20 @@ package krewfw.core_internal {
             _sceneScopeAssets .verbose = KrewConfig.ASSET_MANAGER_VERBOSE;
         }
 
+        //------------------------------------------------------------
+        // accessor
+        //------------------------------------------------------------
+
+        public function get globalAssetManager():AssetManager {
+            return _globalScopeAssets;
+        }
+
+        public function get sceneAssetManager():AssetManager {
+            return _sceneScopeAssets;
+        }
+
+        //------------------------------------------------------------
+
         /**
          * シーン単位で使いたいリソースのロード.
          * 基本的に starling.utils.AssetManager をラップしているだけなので

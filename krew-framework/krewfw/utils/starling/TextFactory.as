@@ -17,8 +17,8 @@ package krewfw.utils.starling {
             color:uint = 0xffffff,
             x:Number = 0,
             y:Number = 0,
-            hAlign:String = HAlign.LEFT,
-            vAlign:String = VAlign.TOP,
+            hAlign:String = HAlign.LEFT,  // "left", "center", "right"
+            vAlign:String = VAlign.TOP,   // "top", "center", "bottom"
             touchable:Boolean = false
         ):TextField {
 

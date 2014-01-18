@@ -259,7 +259,7 @@ package krewfw_builtin_actor.tests {
         }
 
         [Test]
-        public function test_defaultNext():void {
+        public function test_defaultNext_1():void {
             var fsm:KrewStateMachine = new KrewStateMachine([
                 {id: "state_20", children: [
                     {id: "state_20_1"},
@@ -302,6 +302,26 @@ package krewfw_builtin_actor.tests {
             Assert.assertEquals("state_21"       , fsm.getState("state_20_6_1_1").nextStateId);
             Assert.assertEquals("state_23"       , fsm.getState("state_22_2"    ).nextStateId);
             Assert.assertEquals(null             , fsm.getState("state_24"      ).nextStateId);
+        }
+
+        [Test]
+        public function test_defaultNext_2():void {
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {id: "state_25",
+                 enter: function(state:KrewState):void { state.proceed(); },
+                 children: [
+                    {id: "state_25_1"},
+                    {id: "state_25_2", children: [
+                        {id: "state_25_2_1"}
+                    ]}
+                 ]},
+                {id: "state_26"}
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            Assert.assertEquals("state_25_1", fsm.currentState.stateId);
         }
 
         [Test]

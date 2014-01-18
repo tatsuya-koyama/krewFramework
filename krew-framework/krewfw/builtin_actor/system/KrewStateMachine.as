@@ -95,8 +95,8 @@ package krewfw.builtin_actor.system {
                     addState(stateDef, funcOwner);
                 }
 
-                _setInitialState(stateDefList);
                 _setDefaultNextStates(_rootStateList);
+                _setInitialState(stateDefList);
             });
         }
 

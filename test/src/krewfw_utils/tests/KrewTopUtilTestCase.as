@@ -1,6 +1,7 @@
 package krewfw_utils.tests {
 
     import org.flexunit.Assert;
+    import org.flexunit.assertThat;
     import mx.utils.ObjectUtil;
 
     import krewfw.utils.krew;
@@ -31,6 +32,22 @@ package krewfw_utils.tests {
 
             var testingObj:Object = krew.flattenObject(srcObj);
             Assert.assertEquals(0, ObjectUtil.compare(testingObj, expectedObj));
+        }
+
+        [Test]
+        public function test_range():void {
+            assertThat([0, 1, 2, 3, 4],      krew.range(5));
+            assertThat([3, 4, 5, 6, 7],      krew.range(3, 7));
+            assertThat([3],                  krew.range(3, 3.1));
+            assertThat([2.0, 2.5, 3.0, 3.5], krew.range(2, 3.5, 0.5));
+
+            assertThat([7, 6, 5, 4, 3],      krew.range(7, 3));
+            assertThat([7],                  krew.range(7, 7));
+            assertThat([7],                  krew.range(7, 6.9));
+            assertThat([3.0, 2.5, 2.0],      krew.range(3, 2, -0.5));
+            assertThat([],                   krew.range(0));
+
+            Assert.assertEquals(null, krew.range(7, 3, 1));
         }
 
     }

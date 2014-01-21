@@ -138,6 +138,70 @@ package krewfw.utils.swiss_knife {
             return list.slice(-n);
         }
 
+        /**
+         * Returns shuffled copy of the list, using the Fisher-Yates shuffle algorithm.
+         */
+        public function shuffle(list:Array):Array {
+            var shuffled:Array = [];
+
+            var index:int = 0;
+            for each (var val:* in list) {
+                var randIndex:int = randInt(0, index);
+                shuffled[index]     = shuffled[randIndex];
+                shuffled[randIndex] = val;
+                ++index;
+            }
+
+            return shuffled;
+        }
+
+        /**
+         * <pre>
+         *   range(5)           -> [0, 1, 2, 3, 4]
+         *   range(3, 7)        -> [3, 4, 5, 6, 7]
+         *   range(3, 3.1)      -> [3]
+         *   range(2, 3.5, 0.5) -> [2.0, 2.5, 3.0, 3.5]
+         *
+         *   range(7, 3)        -> [7, 6, 5, 4, 3]
+         *   range(7, 7)        -> [7]
+         *   range(7, 6.9)      -> [7]
+         *   range(3, 2, -0.5)  -> [3.0, 2.5, 2.0]
+         *   range(7, 3, 1)     -> null  // invalid arguments
+         *   range(0)           -> []
+         * </pre>
+         */
+        public function range(first:Number, last:Number=NaN, step:Number=NaN):Array {
+            // 1 argument
+            if (isNaN(last)) {
+                last  = first;
+                first = 0;
+            }
+
+            // 2 arguments
+            if (isNaN(step)) {
+                step = (first < last) ? 1 : -1;
+            }
+            if (step == 0) { step = 1; }
+
+            // 3 arguments
+            if (!isNaN(step)  &&  first > last  &&  step > 0) {
+                return null;
+            }
+
+            var iter:Number = first;
+            var range:Array = [];
+            if (first <= last) {
+                while(iter < last) {
+                    range.push(iter);  iter += step;
+                }
+            } else {
+                while(iter > last) {
+                    range.push(iter);  iter += step;
+                }
+            }
+            return range;
+        }
+
         //------------------------------------------------------------
         // Logic general utils
         //------------------------------------------------------------
@@ -377,20 +441,48 @@ package krewfw.utils.swiss_knife {
         // Math utils
         //------------------------------------------------------------
 
-        public function rand(max:Number):Number {
-            return Math.random() * max;
+        /**
+         * Returns floating random number.
+         *
+         * <pre>
+         *   rand(5)    -> 0.0 〜 5.0   // (max is not inclusive)
+         *   rand(2, 4) -> 2.0 〜 4.0
+         *   rand(4, 2) -> 2.0 〜 4.0
+         * </pre>
+         */
+        public function rand(min:Number, max:Number=NaN):Number {
+            if (isNaN(max)) {
+                max = min;
+                min = 0;
+            }
+            return min + (Math.random() * (max - min));
         }
 
-        public function randInt(max:int):int {
-            return int(rand(max));
+        /**
+         * Returns integer random number.
+         *
+         * <pre>
+         *   rand(5)    -> any of  0, 1, 2, 3, 4
+         *   rand(0, 5) -> any of  0, 1, 2, 3, 4, 5   // (5 is inclusive)
+         *   rand(5, 0) -> any of  0, 1, 2, 3, 4, 5
+         *   rand(-5)   -> any of  -1, -2, -3, -4, -5
+         * </pre>
+         */
+        public function randInt(min:Number, max:Number=NaN):int {
+            if (!isNaN(max)) {
+                if (min < max) { ++max; }
+                if (min > max) { ++min; }
+            }
+            return Math.floor(rand(min, max));
         }
 
+        /** OLD CODE. Now this is alias of rand(min, max) */
         public function randArea(min:Number, max:Number):Number {
-            return min + rand(max - min);
+            return rand(min, max);
         }
 
         public function randPlusOrMinus(min:Number, max:Number):Number {
-            var val:Number = min + rand(max - min);
+            var val:Number = rand(min, max);
             if (rand(100) < 50) { val = -val; }
             return val;
         }

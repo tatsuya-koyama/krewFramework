@@ -12,6 +12,12 @@ run:
 	ln -s -f ../asset/asset ./build/
 	adl projects/debug-project/src/DebugMain-app.xml build/ -screensize 480x720:480x720
 
+# [Required] colorline command:
+#     https://github.com/tatsuya-koyama/MyScript/blob/master/colorline
+run2:
+	ln -s -f ../../asset/asset ./build/
+	make run 2>&1 | colorline Error Warning AssetManager LayerManager FSM processCount
+
 debug:
 	mxmlc -incremental=true \
 	      -library-path+="lib/" \
@@ -27,6 +33,10 @@ debug_run:
 	make debug
 	make run
 
+debug_run2:
+	make debug
+	make run2
+
 # web での公開用
 flash:
 	mxmlc -incremental=true \
@@ -40,9 +50,9 @@ flash:
 	      projects/web-project/src/WebMain.as
 
 # [Note]
-# Embed している場合はどうやら incremental な compile がうまくいかないようで、
-# 毎度 swf を削除してあげないとコマンドラインからのビルドが成功しなくて面倒だ。
-# 本プロジェクトは Embed 使わずローカルからファイルを読み込むので削除の必要はない。
+# ASC2.0 では -incremental オプションは無くなったが、コマンドラインビルドでは
+# FlashBuilder がやっている「2 回目以降のビルド時間を短縮する機構」が働かないため、
+# コマンドラインでは当面、旧式のコンパイラを使用している
 
 
 # AIR for Android のもとになる swf をつくる
@@ -99,7 +109,7 @@ install-android:
 #
 atlas:
 	../sample-game/script/atlas_generator/generate_atlas.rb --padding 2 --maxsize 1024x1024 \
-	asset/asset/image_src/$(p)/*.png asset/asset/image/atlas_$(p).xml
+	asset/workfile/image_src/$(p)/*.png asset/asset/image/atlas_$(p).xml
 
 clean:
 	rm -f build/*

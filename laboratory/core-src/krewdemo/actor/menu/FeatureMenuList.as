@@ -53,7 +53,7 @@ package krewdemo.actor.menu {
                 ,{ text: "11.Box2D Physics stress test",  scene: Box2DPhysicsTestScene2 }
                 ,{ text: "12.Tile Map with collision",    scene: TileMapTestScene3 }
                 ,{ text: "13.Tiled Platformer",           scene: TileMapTestScene4 }
-                ,{ text: "14.----", scene: null }
+                ,{ text: "14.Not-Tiled Platformer",       scene: PlatformerTestScene1 }
                 ,{ text: "15.----", scene: null }
                 ,{ text: "16.----", scene: null }
             ];

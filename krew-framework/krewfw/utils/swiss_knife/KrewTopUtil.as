@@ -27,6 +27,7 @@ package krewfw.utils.swiss_knife {
         //------------------------------------------------------------
 
         public var str:KrewStringUtil = KrewStringUtil.instance;
+        public var list:KrewListUtil  = KrewListUtil.instance;
 
         //------------------------------------------------------------
         // Singleton interface

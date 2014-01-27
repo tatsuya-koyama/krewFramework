@@ -1,7 +1,5 @@
 package krewfw.utils.swiss_knife {
 
-    import flash.utils.getQualifiedClassName;
-
     /**
      * Singleton Army knife for string processing.
      */

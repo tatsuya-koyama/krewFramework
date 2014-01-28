@@ -282,7 +282,8 @@ package krewfw.core {
         /**
          * krewFramework のシステムに Actor を登録し、同時に Starling の DisplayList に追加する.
          * 見た目を持たずに仕事をするような Actor は putOnDisplayList に false を渡すか、
-         * Actor のプロパティの displayable に false を設定すると処理コストを減らせる
+         * Actor のコンストラクタで displayable に false を設定しておくと Starling の DisplayList
+         * には追加しない
          */
         public function addActor(actor:KrewActor, putOnDisplayList:Boolean=true):void {
             _childActors.push(actor);
@@ -357,6 +358,7 @@ package krewfw.core {
         // purge actions
         public function react():void {
             _actionInstructors.length = 0;
+            removeTweens();
         }
 
         private function _updateAction(passedTime:Number):void {

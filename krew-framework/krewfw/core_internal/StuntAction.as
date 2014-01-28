@@ -18,7 +18,8 @@ package krewfw.core_internal {
 
         public var instructor:StuntActionInstructor;
         public var nextAction:StuntAction;
-        public var updater:Function = function():void {};
+        public var updater:Function = null;      // function(action:StuntAction):void
+        public var foreverMode:Boolean = false;  // これが true の間は Action を終わりにせず update を続ける
 
         private var _passedTime:Number = 0;
         private var _frame:int = 0;
@@ -59,10 +60,14 @@ package krewfw.core_internal {
             ++_frame;
             _progress += passedTime;
             _passedTime = passedTime;
-            updater(this);
+            if (updater != null) {
+                updater(this);
+            }
         }
 
         public function isFinished():Boolean {
+            if (foreverMode) { return false; }
+
             return (_progress >= _duration);
         }
 
@@ -75,12 +80,12 @@ package krewfw.core_internal {
         }
 
         /** １回だけ実行して、duration 秒待つ。コールバックの引数には StuntAction を渡す */
-        public function doit(duration:Number, aUpdater:Function):StuntAction {
+        public function doit(duration:Number, anUpdater:Function):StuntAction {
             var action:StuntAction = new StuntAction(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
-                aUpdater(_action);
-            }
+                anUpdater(_action);
+            };
             return this.and(action);
         }
 
@@ -88,21 +93,36 @@ package krewfw.core_internal {
          * １回だけ実行して、duration 秒待つ。引数に何も渡さない.
          * ToDo: AS3 のコールバックの引数の型の扱いよくわかってない
          */
-        public function justdoit(duration:Number, aUpdater:Function):StuntAction {
+        public function justdoit(duration:Number, anUpdater:Function):StuntAction {
             var action:StuntAction = new StuntAction(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
-                aUpdater();
-            }
+                anUpdater();
+            };
             return this.and(action);
         }
 
         /** 関数を duration 秒間、実行し続ける */
-        public function goon(duration:Number, aUpdater:Function):StuntAction {
+        public function goon(duration:Number, anUpdater:Function):StuntAction {
             var action:StuntAction = new StuntAction(duration);
             action.updater = function(_action:StuntAction):void {
-                aUpdater(_action);
-            }
+                anUpdater(_action);
+            };
+            return this.and(action);
+        }
+
+        /**
+         * anUpdater を、それが true を返すまで実行し続ける
+         * @param anUpdater schema: function(passedTime:Number):Boolean
+         */
+        public function until(anUpdater:Function):StuntAction {
+            var action:StuntAction = new StuntAction(0);
+            action.foreverMode = true;
+
+            action.updater = function(_action:StuntAction):void {
+                var isTimeToEnd:Boolean = anUpdater(_action.passedTime);
+                if (isTimeToEnd) { _action.foreverMode = false; }
+            };
             return this.and(action);
         }
 

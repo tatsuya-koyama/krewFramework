@@ -346,7 +346,7 @@ package krewfw.core {
             _servantActor.addScheduledTask(timeout, task);
         }
 
-        public function delay(timeout:Number, task:Function):void {
+        public function delayed(timeout:Number, task:Function):void {
             _servantActor.addScheduledTask(timeout, task);
         }
 

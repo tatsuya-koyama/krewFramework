@@ -1,9 +1,8 @@
 package krewfw.core_internal {
 
-    import krewfw.core_internal.collision.CollisionShape;
-
-    import krewfw.utils.krew;
     import krewfw.core.KrewActor;
+    import krewfw.core_internal.collision.CollisionShape;
+    import krewfw.utils.krew;
 
     //------------------------------------------------------------
     public class CollisionGroup {

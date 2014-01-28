@@ -2,8 +2,8 @@ package krewfw.core_internal {
 
     import flash.utils.Dictionary;
 
-    import krewfw.core_internal.collision.CollisionShape;
     import krewfw.core.KrewActor;
+    import krewfw.core_internal.collision.CollisionShape;
 
     //------------------------------------------------------------
     public class CollisionSystem {

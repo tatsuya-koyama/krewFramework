@@ -2,8 +2,8 @@ package krewfw.core_internal {
 
     import flash.utils.Dictionary;
 
-    import krewfw.utils.krew;
     import krewfw.core.KrewGameObject;
+    import krewfw.utils.krew;
 
     //------------------------------------------------------------
     public class NotificationService {

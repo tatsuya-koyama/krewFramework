@@ -1,4 +1,5 @@
 package krewfw.core_internal {
+
     import krewfw.core.KrewActor;
 
     public class StuntActionInstructor {

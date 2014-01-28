@@ -1,6 +1,7 @@
 package krewfw.utils.swiss_knife {
 
     import flash.utils.getQualifiedClassName;
+
     import krewfw.KrewConfig;
 
     /**

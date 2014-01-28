@@ -6,8 +6,8 @@ package krewfw.core_internal {
     import starling.textures.Texture;
     import starling.utils.AssetManager;
 
-    import krewfw.utils.krew;
     import krewfw.KrewConfig;
+    import krewfw.utils.krew;
 
     //------------------------------------------------------------
     public class KrewResourceManager {

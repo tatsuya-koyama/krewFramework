@@ -4,11 +4,10 @@ package krewfw.core {
     import starling.events.EnterFrameEvent;
     import starling.events.Event;
 
-    import krewfw.core.KrewSystemEventType;
-    import krewfw.utils.as3.KrewTimeKeeper;
     import krewfw.core_internal.SceneServantActor;
     import krewfw.core_internal.StageLayer;
     import krewfw.core_internal.StuntAction;
+    import krewfw.utils.as3.KrewTimeKeeper;
 
     //------------------------------------------------------------
     public class KrewScene extends KrewGameObject {

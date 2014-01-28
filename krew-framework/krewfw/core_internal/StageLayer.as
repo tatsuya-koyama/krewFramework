@@ -1,6 +1,7 @@
 package krewfw.core_internal {
 
     import starling.animation.Juggler;
+
     import krewfw.core.KrewActor;
 
     //------------------------------------------------------------

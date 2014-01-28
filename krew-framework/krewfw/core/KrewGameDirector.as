@@ -1,13 +1,13 @@
 package krewfw.core {
 
+    import flash.display.Stage;
+    import flash.events.Event;
+    import flash.system.System;
+
     import starling.display.Sprite;
     import starling.events.Event;
 
     import krewfw.NativeStageAccessor;
-
-    import flash.display.Stage;
-    import flash.events.Event;
-    import flash.system.System;
     import krewfw.core_internal.KrewSharedObjects;
 
     /**

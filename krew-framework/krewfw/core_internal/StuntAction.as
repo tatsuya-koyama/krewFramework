@@ -1,11 +1,11 @@
 package krewfw.core_internal {
 
-    import starling.display.DisplayObject;
-    import starling.animation.Tween;
     import starling.animation.Transitions;
+    import starling.animation.Tween;
+    import starling.display.DisplayObject;
 
-    import krewfw.utils.krew;
     import krewfw.core.KrewActor;
+    import krewfw.utils.krew;
 
     /**
      * StuntAction means Actor's Tween Animation.

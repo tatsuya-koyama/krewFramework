@@ -1,8 +1,8 @@
 package krewfw.core_internal {
 
     import krewfw.KrewConfig;
-    import krewfw.core.KrewSystemEventType;
     import krewfw.core.KrewActor;
+    import krewfw.core.KrewSystemEventType;
 
     //------------------------------------------------------------
     public class SceneServantActor extends KrewActor {

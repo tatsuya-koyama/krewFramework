@@ -5,12 +5,11 @@
      * 落ち着いたら書きなおす
      */
 
+    import flash.events.Event;
     import flash.media.Sound;
     import flash.media.SoundChannel;
-    import flash.media.SoundTransform;
     import flash.media.SoundMixer;
-
-    import flash.events.Event;
+    import flash.media.SoundTransform;
 
     public class KrewSoundPlayer {
 

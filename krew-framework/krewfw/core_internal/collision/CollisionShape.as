@@ -1,7 +1,6 @@
 package krewfw.core_internal.collision {
 
     import krewfw.core.KrewActor;
-
     import krewfw.utils.krew;
 
     /**

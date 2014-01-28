@@ -1,23 +1,22 @@
 package krewfw.core {
 
-    import flash.display.Bitmap;
     import flash.geom.Rectangle;
 
+    import starling.animation.Transitions;
+    import starling.animation.Tween;
     import starling.display.DisplayObject;
     import starling.display.Image;
-    import starling.textures.Texture;
     import starling.text.TextField;
-    import starling.animation.Tween;
-    import starling.animation.Transitions;
+    import starling.textures.Texture;
 
     import krewfw.KrewConfig;
     import krewfw.builtin_actor.display.ColorRect;
-    import krewfw.utils.as3.KrewTimeKeeper;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.ProfileData;
     import krewfw.core_internal.StageLayer;
     import krewfw.core_internal.StuntAction;
     import krewfw.core_internal.StuntActionInstructor;
+    import krewfw.utils.as3.KrewTimeKeeper;
 
     //------------------------------------------------------------
     public class KrewActor extends KrewGameObject {

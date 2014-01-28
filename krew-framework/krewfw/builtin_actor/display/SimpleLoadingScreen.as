@@ -1,6 +1,5 @@
 package krewfw.builtin_actor.display {
 
-    import starling.display.Image;
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;

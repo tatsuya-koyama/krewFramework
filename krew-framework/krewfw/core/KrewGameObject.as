@@ -7,10 +7,10 @@ package krewfw.core {
     import starling.display.Sprite;
     import starling.textures.Texture;
 
-    import krewfw.core_internal.collision.CollisionShape;
     import krewfw.core_internal.IdGenerator;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.core_internal.StageLayer;
+    import krewfw.core_internal.collision.CollisionShape;
     import krewfw.utils.swiss_knife.KrewTopUtil;
 
     //------------------------------------------------------------

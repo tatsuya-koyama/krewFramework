@@ -1,4 +1,5 @@
 package krewfw.data_structure {
+
     import krewfw.utils.krew;
 
     /**

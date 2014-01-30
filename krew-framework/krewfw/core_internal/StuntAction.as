@@ -269,6 +269,22 @@ package krewfw.core_internal {
             return this.and(action);
         }
 
+        /**
+         * KrewActor.sendMessage のショートカット。
+         * KrewActor 以外に使うと何も起こらない
+         */
+        public function send(eventType:String, eventArgs:Object=null):StuntAction {
+            var action:StuntAction = new StuntAction(0);
+            action.updater = function(_action:StuntAction):void {
+                if (_action.frame > 1) { return; }
+                var actor:KrewActor = _action.instructor.actor as KrewActor;
+                if (actor) {
+                    actor.sendMessage(eventType, eventArgs);
+                }
+            };
+            return this.and(action);
+        }
+
         /** １回暗くなって明るくなる */
         public function blink(displayObj:DisplayObject,
                               duration:Number=0.25, alphaMin:Number=0.3):StuntAction {

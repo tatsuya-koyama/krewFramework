@@ -298,6 +298,10 @@ package krewfw.core {
         }
 
         public function createActor(newActor:KrewActor, layerName:String=null):void {
+            if (!newActor) {
+                throw new Error("[Error] [KrewActor :: createActor] newActor is required.");
+            }
+
             // layerName 省略時は自分と同じ layer に出す
             if (layerName == null) {
                 layerName = this.layerName;
@@ -375,12 +379,16 @@ package krewfw.core {
 
         /** Equivalent to setTimeout() */
         public function addScheduledTask(timeout:Number, task:Function):void {
+            if (timeout <= 0) {
+                task();
+                return;
+            }
             _timeKeeper.addPeriodicTask(timeout, task, 1);
         }
 
         /** Alias for addScheduledTask */
         public function delayed(timeout:Number, task:Function):void {
-            _timeKeeper.addPeriodicTask(timeout, task, 1);
+            addScheduledTask(timeout, task);
         }
 
         /** Equivalent to setInterval() */
@@ -390,7 +398,7 @@ package krewfw.core {
 
         /** Alias for addPeriodicTask */
         public function cyclic(interval:Number, task:Function, times:int=-1):void {
-            _timeKeeper.addPeriodicTask(interval, task, times);
+            addPeriodicTask(interval, task, times);
         }
 
         // for touch action

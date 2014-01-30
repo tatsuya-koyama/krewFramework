@@ -282,7 +282,8 @@ package krewfw.core {
         /**
          * krewFramework のシステムに Actor を登録し、同時に Starling の DisplayList に追加する.
          * 見た目を持たずに仕事をするような Actor は putOnDisplayList に false を渡すか、
-         * Actor のプロパティの displayable に false を設定すると処理コストを減らせる
+         * Actor のコンストラクタで displayable に false を設定しておくと Starling の DisplayList
+         * には追加しない
          */
         public function addActor(actor:KrewActor, putOnDisplayList:Boolean=true):void {
             _childActors.push(actor);
@@ -297,6 +298,10 @@ package krewfw.core {
         }
 
         public function createActor(newActor:KrewActor, layerName:String=null):void {
+            if (!newActor) {
+                throw new Error("[Error] [KrewActor :: createActor] newActor is required.");
+            }
+
             // layerName 省略時は自分と同じ layer に出す
             if (layerName == null) {
                 layerName = this.layerName;
@@ -357,6 +362,7 @@ package krewfw.core {
         // purge actions
         public function react():void {
             _actionInstructors.length = 0;
+            removeTweens();
         }
 
         private function _updateAction(passedTime:Number):void {
@@ -373,12 +379,16 @@ package krewfw.core {
 
         /** Equivalent to setTimeout() */
         public function addScheduledTask(timeout:Number, task:Function):void {
+            if (timeout <= 0) {
+                task();
+                return;
+            }
             _timeKeeper.addPeriodicTask(timeout, task, 1);
         }
 
         /** Alias for addScheduledTask */
         public function delayed(timeout:Number, task:Function):void {
-            _timeKeeper.addPeriodicTask(timeout, task, 1);
+            addScheduledTask(timeout, task);
         }
 
         /** Equivalent to setInterval() */
@@ -388,7 +398,7 @@ package krewfw.core {
 
         /** Alias for addPeriodicTask */
         public function cyclic(interval:Number, task:Function, times:int=-1):void {
-            _timeKeeper.addPeriodicTask(interval, task, times);
+            addPeriodicTask(interval, task, times);
         }
 
         // for touch action

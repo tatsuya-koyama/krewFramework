@@ -14,6 +14,9 @@ package krewfw.utils.as3 {
             );
         }
 
+        /**
+         * [ToDo]: 終わった task は削除した方がいいんじゃないの
+         */
         public function update(passedTime:Number):void {
             for each (var task:KrewTimeKeeperTask in _tasks) {
                 task.update(passedTime);

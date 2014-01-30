@@ -208,6 +208,9 @@ package krewfw.utils.swiss_knife {
         // Logic general utils
         //------------------------------------------------------------
 
+        /**
+         * Simply repeat func n times. Useful for making closures in loops.
+         */
         public function times(count:int, func:Function):void {
             for (var i:int = 0;  i < count;  ++i) {
                 func(i);

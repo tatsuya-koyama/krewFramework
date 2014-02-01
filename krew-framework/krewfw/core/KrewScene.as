@@ -240,15 +240,23 @@ package krewfw.core {
 
         /**
          * @private
-         * 新しい Actor を足してもらうよう Scene に頼む
-         * この関数は KrewActor によって呼ばれる
-         * 新しい Actor 達は既存の Actor 達の update の後に layer に足される
+         * 新しい Actor を足してもらうよう Scene に頼む。
+         * この関数は KrewActor によって呼ばれる。
+         * 新しい Actor 達は既存の Actor 達の update の後に layer に足される。
+         *
+         * layer に足される前に新しい Actor が sharedObject などにアクセスできるように
+         * するため、KrewActor.setUp() はこの段階で呼ばれる。
          */
         public function applyForNewActor(newActor:KrewActor, layerName:String=null):void {
             _newActorPool.push({
                 actor: newActor,
                 layer: layerName
             });
+
+            newActor.setUp(
+                sharedObj, applyForNewActor,
+                getLayer(layerName), layerName
+            );
         }
 
         private function _recruitNewActors():void {

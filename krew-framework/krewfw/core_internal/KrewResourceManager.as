@@ -13,12 +13,15 @@ package krewfw.core_internal {
     public class KrewResourceManager {
 
         private var _urlScheme:String;
-        private var _globalScopeAssets:AssetManager = new AssetManager();
-        private var _sceneScopeAssets :AssetManager = new AssetManager();
+        private var _globalScopeAssets:AssetManager;
+        private var _sceneScopeAssets :AssetManager;
 
         //------------------------------------------------------------
         public function KrewResourceManager() {
             _urlScheme = KrewConfig.ASSET_URL_SCHEME;
+
+            _globalScopeAssets = new KrewConfig.ASSET_MANAGER_CLASS;
+            _sceneScopeAssets  = new KrewConfig.ASSET_MANAGER_CLASS;
 
             _globalScopeAssets.verbose = KrewConfig.ASSET_MANAGER_VERBOSE;
             _sceneScopeAssets .verbose = KrewConfig.ASSET_MANAGER_VERBOSE;

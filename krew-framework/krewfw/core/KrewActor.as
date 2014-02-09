@@ -179,6 +179,7 @@ package krewfw.core {
             _initFuncList      = null;
             _imageList         = null;
             _textList          = null;
+            _displayObjList    = null;
             _childActors       = null;
             _actionInstructors = null;
             _timeKeeper        = null;

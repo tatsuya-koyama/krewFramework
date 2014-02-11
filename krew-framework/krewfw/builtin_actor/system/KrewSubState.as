@@ -5,6 +5,11 @@ package krewfw.builtin_actor.system {
 
     /**
      * 一つの StateMachine に複数入れて使い回したいような State をつくる。
+     * （state 名に自動生成した prefix をつける）
+     *
+     * 基本的に入りと出しか意識しないような使い方を想定しているが、
+     * 外の State から SubState 内の特定の state を指定したい場合は
+     * prefix を明示して SubState を new してほしい
      */
     //------------------------------------------------------------
     public class KrewSubState extends KrewState {

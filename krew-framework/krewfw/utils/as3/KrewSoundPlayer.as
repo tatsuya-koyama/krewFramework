@@ -95,6 +95,7 @@
         public function resumeBgm():void {
             if (!_bgmChannel) { return; }
 
+            stopBgm();
             playBgm(_currentBgm, _currentBgmId, NaN, _pausePosition);
         }
 

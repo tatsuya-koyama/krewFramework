@@ -12,6 +12,7 @@ package {
         public function AndroidMain() {
             krew.log("Kicked from AndroidMain");
 
+            KrewConfig.IS_AIR = true;
             KrewConfig.ASSET_URL_SCHEME = "app:/";
 
             var main:Main = new Main(this);

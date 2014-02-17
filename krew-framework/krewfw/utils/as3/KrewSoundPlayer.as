@@ -10,6 +10,9 @@
     import flash.media.SoundChannel;
     import flash.media.SoundMixer;
     import flash.media.SoundTransform;
+    import flash.utils.getDefinitionByName;
+
+    import krewfw.KrewConfig;
 
     public class KrewSoundPlayer {
 
@@ -35,6 +38,13 @@
             volume = 1;
             FadeMode = false;
             muteMode = false;
+
+            // AIR ならば、端末のミュートボタンに従う。
+            // クラスを動的に取得しているのは Flash にこのクラスが無いため
+            if (KrewConfig.IS_AIR) {
+                var AudioPlaybackMode:Class = getDefinitionByName("flash.media.AudioPlaybackMode") as Class;
+                SoundMixer.audioPlaybackMode = AudioPlaybackMode.AMBIENT;
+            }
         }
 
         //音量の設定 ---------------------------------------------------------------

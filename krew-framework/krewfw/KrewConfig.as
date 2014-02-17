@@ -4,9 +4,18 @@ package krewfw {
 
     /**
      * Please customize these static values for your game
-     * before the krewFramework starts up.
+     * before the calling KrewGameDirector.startGame().
      */
     public class KrewConfig {
+
+        /**
+         * AIR の場合はこれを true にする。Flash なら false のままにすること。
+         * true にすると、krewFramework が AIR でのみ提供されている機能を
+         * 利用するようになる。（KrewSoundPlayer で端末の Mute 機能を使うなど）
+         *
+         * これを true にすると mxmlc による Flash 向けのビルドが失敗するので注意。
+         */
+        public static var IS_AIR:Boolean = false;
 
         /** Virtual screen size */
         public static var SCREEN_WIDTH :int = 480;

@@ -10,8 +10,8 @@ package {
 
         //------------------------------------------------------------
         public function KrewDemoDirector() {
-            //var firstScene:KrewScene = new TitleScene();
-            var firstScene:KrewScene = new PlatformerTestScene1();
+            var firstScene:KrewScene = new TitleScene();
+            //var firstScene:KrewScene = new PlatformerTestScene1();
             startGame(firstScene);
         }
 

@@ -44,6 +44,7 @@ package krewdemo.actor.feature_test {
 
         protected var _physicsSpace:Space;
         protected var _gravity:Number = 900;
+        private   var _mapScale:Number = 0.5;
 
         protected var _tileMapDisplays:Array = [];
         private   var _clouds:Sprite;
@@ -72,8 +73,8 @@ package krewdemo.actor.feature_test {
 
             for (var i:int=0;  i < 2;  ++i) {
                 _tileMapDisplays[i] = _makeMapDisplay("view_" + (i + 1));
-                _tileMapDisplays[i].scaleX = 1.0;
-                _tileMapDisplays[i].scaleY = 1.0;
+                _tileMapDisplays[i].scaleX = _mapScale;
+                _tileMapDisplays[i].scaleY = _mapScale;
                 addChild(_tileMapDisplays[i]);
             }
 
@@ -154,10 +155,10 @@ package krewdemo.actor.feature_test {
 
             // starling display
             var image:Image = getImage('rectangle_taro');
-            addImage(image, size, size, imageX, imageY);
-            body.userData.displayObj = image;
+            addImage(image, size * _mapScale, size * _mapScale, imageX, imageY);
 
             _hero = body;
+            _hero.userData.displayObj = image;
         }
 
         //----------------------------------------------------------------------
@@ -269,6 +270,25 @@ package krewdemo.actor.feature_test {
 
         protected function _onUpdateJoystick(args:Object):void {
             _velocityX = args.velocityX * 300;
+
+            if (Math.abs(args.velocityY) > 0.5) {
+                _updateMapScale(args.velocityY * 0.01);
+            }
+        }
+
+        private function _updateMapScale(zoom:Number):void {
+            _mapScale += zoom;
+
+            for (var i:int=0;  i < 2;  ++i) {
+                _tileMapDisplays[i].scaleX = _mapScale;
+                _tileMapDisplays[i].scaleY = _mapScale;
+            }
+
+            var heroSize:Number = 32 * 0.94 * _mapScale;
+            _hero.userData.displayObj.width  = heroSize;
+            _hero.userData.displayObj.height = heroSize;
+
+            _updateView();
         }
 
         private function _onTriggerJump(args:Object):void {
@@ -286,22 +306,26 @@ package krewdemo.actor.feature_test {
             _physicsSpace.step(passedTime);
 
             // view
-            var cloudDepth:Number = 0.2;
-            _clouds.x = 240 - (_hero.position.x * cloudDepth);
-            _clouds.y = 160 - (_hero.position.y * cloudDepth);
-            
-            for (var i:int=0;  i < _tileMapDisplays.length;  ++i) {
-                _tileMapDisplays[i].x = 240 - _hero.position.x;
-                _tileMapDisplays[i].y = 160 - _hero.position.y;
-            }
-
-            var heroImage:Image = _hero.userData.displayObj;
-            heroImage.rotation = _hero.rotation;
+            _updateView();
 
             _onUpdatePhysicsDebugDraw();
 
             // out of world border
             _checkExitWorld();
+        }
+
+        private function _updateView():void {
+            var cloudDepth:Number = 0.2;
+            _clouds.x = 240 - (_hero.position.x * cloudDepth);
+            _clouds.y = 160 - (_hero.position.y * cloudDepth);
+            
+            for (var i:int=0;  i < _tileMapDisplays.length;  ++i) {
+                _tileMapDisplays[i].x = 240 - (_hero.position.x * _mapScale);
+                _tileMapDisplays[i].y = 160 - (_hero.position.y * _mapScale);
+            }
+
+            var heroImage:Image = _hero.userData.displayObj;
+            heroImage.rotation = _hero.rotation;
         }
 
         private function _checkExitWorld():void {

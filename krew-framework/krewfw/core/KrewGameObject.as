@@ -81,9 +81,13 @@ package krewfw.core {
 
         //----- Sound Control
 
-        public function playBgm(bgmId:String):void {
-            var bgm:Sound = sharedObj.resourceManager.getSound(bgmId);
-            sharedObj.soundPlayer.playBgm(bgm);
+        /**
+         * 同じ bgmId をすでに再生中の場合は、再生し直さない。
+         * （0 から再生し直したい場合は先に stopBgm() を呼んでね）
+         */
+        public function playBgm(bgmId:String, vol:Number=NaN, startTime:Number=0):void {
+            var bgm:Sound = getSound(bgmId);
+            sharedObj.soundPlayer.playBgm(bgm, bgmId, vol, startTime);
         }
 
         public function pauseBgm():void {
@@ -94,13 +98,23 @@ package krewfw.core {
             sharedObj.soundPlayer.resumeBgm();
         }
 
-        public function playSe(seId:String):void {
-            var se:Sound = sharedObj.resourceManager.getSound(seId);
-            sharedObj.soundPlayer.playSe(se);
+        public function stopBgm():void {
+            sharedObj.soundPlayer.stopBgm();
         }
 
-        public function stopSound():void {
-            sharedObj.soundPlayer.stop();
+        public function playSe(seId:String, pan:Number=0, loops:int=0,
+                               vol:Number=NaN, startTime:Number=0):void
+        {
+            var se:Sound = getSound(seId);
+            sharedObj.soundPlayer.playSe(se, pan, loops, vol, startTime);
+        }
+
+        public function stopSe():void {
+            sharedObj.soundPlayer.stopSe();
+        }
+
+        public function stopAllSound():void {
+            sharedObj.soundPlayer.stopAll();
         }
 
         //----- Layer Control

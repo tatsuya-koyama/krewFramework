@@ -1,10 +1,5 @@
 ﻿package krewfw.utils.as3 {
 
-    /**
-     * これは小山が 19 歳くらいの頃に書いたソース
-     * 落ち着いたら書きなおす
-     */
-
     import flash.events.Event;
     import flash.media.Sound;
     import flash.media.SoundChannel;
@@ -13,139 +8,154 @@
     import flash.utils.getDefinitionByName;
 
     import krewfw.KrewConfig;
+    import krewfw.utils.krew;
 
     public class KrewSoundPlayer {
 
-        public static const   LOOP_INFINITY:uint = 99999999; //こんだけ繰り返せば無限ループみたいなもんよね
+        private var _bgmChannel:SoundChannel;
+        private var _seChannel :SoundChannel;
 
-        public var   muteMode:Boolean;
+        private var _soundTransform:SoundTransform;
+        private var _bgmVolume:Number = 1.0;  // master volume for BGM
+        private var _seVolume:Number  = 1.0;  // master volume for SE
 
-        private var   bgmChannel:SoundChannel = new SoundChannel();
-        private var   seChannel :SoundChannel = new SoundChannel();
-        private var   trans:SoundTransform = new SoundTransform();
-        private var   volume:Number;
-        private var   targetVolume:Number; //音量フェード時の目標値
-        private var   deltaVolume:Number; //音量フェード時のきざみ幅
-        private var   FadeMode:Boolean;
-
-        private var _currentBgmSrc:Sound = null;
+        private var _currentBgmId:String;
+        private var _currentBgm:Sound;
         private var _pausePosition:int = 0;
 
-        //コンストラクタ ---------------------------------------------------------------
+
+        /**
+         * BGM と SE の再生ユーティリティー。
+         * ToDo: 現状は非常にシンプルなもの。BGM は全てループ再生
+         * ToDO: 同じ SE 鳴らし過ぎちゃわない対応
+         */
+        //------------------------------------------------------------
         public function KrewSoundPlayer() {
-            bgmChannel = null;
-            seChannel  = null;
-            volume = 1;
-            FadeMode = false;
-            muteMode = false;
+            _soundTransform = new SoundTransform();
 
-            // AIR ならば、端末のミュートボタンに従う。
-            // クラスを動的に取得しているのは Flash にこのクラスが無いため
-            if (KrewConfig.IS_AIR) {
-                var AudioPlaybackMode:Class = getDefinitionByName("flash.media.AudioPlaybackMode") as Class;
-                SoundMixer.audioPlaybackMode = AudioPlaybackMode.AMBIENT;
+            _followDeviceMuteButton();
+        }
+
+        //------------------------------------------------------------
+        // accessors
+        //------------------------------------------------------------
+
+        public function get bgmVolume():Number { return _bgmVolume; }
+
+        public function set bgmVolume(vol:Number):void {
+            _bgmVolume = vol;
+            _bgmVolume = krew.within(_bgmVolume, 0, 1);
+        }
+
+        public function get seVolume():Number { return _seVolume; }
+
+        public function set seVolume(vol:Number):void {
+            _seVolume = vol;
+            _seVolume = krew.within(_seVolume, 0, 1);
+        }
+
+        //------------------------------------------------------------
+        // interfaces for BGM
+        //------------------------------------------------------------
+
+        /**
+         * 渡した Sound を BGM として再生。
+         * 前回渡した bgmId と同じものをすでに再生中の場合は、再生し直しを行わない。
+         * bgmId に null を渡した場合は常に再生し直す
+         */
+        public function playBgm(sound:Sound, bgmId:String=null, vol:Number=NaN, startTime:Number=0):void
+        {
+            if (_bgmChannel) {
+                if (bgmId != null  &&  bgmId == _currentBgmId) { return; }
+                _bgmChannel.stop();
             }
+            _currentBgmId = bgmId;
+
+            _soundTransform.volume = (!isNaN(vol)) ? vol : _bgmVolume;
+            var loops:int = 1;
+            _bgmChannel = sound.play(startTime, loops, _soundTransform);
+            _currentBgm = sound;
+
+            _bgmChannel.addEventListener(Event.SOUND_COMPLETE, _onBgmComplete);
         }
 
-        //音量の設定 ---------------------------------------------------------------
-        public function setVolume( vol:Number ):void {
-            volume = vol;
-            if( volume > 1 ) volume = 1;
-            if( volume < 0 ) volume = 0;
-            trans.volume = volume;
-            SoundMixer.soundTransform = trans;
-        }
+        public function replayBgm(vol:Number=NaN, startTime:Number=0):void {
+            if (!_currentBgm) { return; }
 
-        //ミュートモードの切り替え -----------------------------------------------------
-        public function toggleMuteMode():void {
-            muteMode = !muteMode;
-            if( muteMode ){
-                setVolume( 0 );
-            } else {
-                setVolume( 1 );
-            }
-        }
-
-        //フェードイン・アウト開始 -----------------------------------------------------------
-        public function startFade( _targetVolume:Number, time:uint ):void {
-            targetVolume = _targetVolume;
-            if( targetVolume > 1 ) targetVolume = 1;
-            if( targetVolume < 0 ) targetVolume = 0;
-            deltaVolume = (targetVolume - volume) / time;
-            FadeMode = true;
-        }
-
-        //音量フェード用の更新処理 ----------------------------------------------------
-        public function updateFade():void {
-
-            if( !FadeMode ) return;
-            if( deltaVolume <= 0  &&  volume <= targetVolume ) FadeMode = false;
-            if( deltaVolume >  0  &&  volume >= targetVolume ) FadeMode = false;
-
-            volume += deltaVolume;
-            if( volume > 1 ) volume = 1;
-            if( volume < 0 ) volume = 0;
-            trans.volume = volume;
-            SoundMixer.soundTransform = trans;
-
-        }
-
-        //BGMの再生 ---------------------------------------------------------------
-        public function playBgm( src:Sound, vol:Number = 1, loops:int = 1,
-                                 startTime:Number = 0 ):void {
-            if( bgmChannel != null ) bgmChannel.stop();
-            trans.volume = vol;
-            bgmChannel = src.play( startTime, loops, trans );
-            bgmChannel.addEventListener(Event.SOUND_COMPLETE, _onSoundComplete);
-            _currentBgmSrc = src;
-        }
-
-        public function replayBgm():void {
-            if (_currentBgmSrc == null) { return; }
-
-            playBgm(_currentBgmSrc);
+            playBgm(_currentBgm, _currentBgmId, vol, startTime);
         }
 
         public function pauseBgm():void {
-            if (bgmChannel == null) { return; }
+            if (!_bgmChannel) { return; }
 
-            _pausePosition = bgmChannel.position;
-            bgmChannel.stop();
+            _pausePosition = _bgmChannel.position;
+            _bgmChannel.stop();
         }
 
         public function resumeBgm():void {
-            if (bgmChannel == null) { return; }
+            if (!_bgmChannel) { return; }
 
-            playBgm(_currentBgmSrc, 1, 1, _pausePosition);
+            playBgm(_currentBgm, _currentBgmId, NaN, _pausePosition);
+        }
+
+        public function stopBgm():void {
+            if (_bgmChannel) {
+                _bgmChannel.stop();
+                _bgmChannel = null;
+            }
+        }
+
+        //------------------------------------------------------------
+        // interfaces for SE
+        //------------------------------------------------------------
+
+        public function playSe(sound:Sound, pan:Number=0, loops:int=0,
+                               vol:Number=NaN, startTime:Number=0):void
+        {
+            _soundTransform.pan    = pan;
+            _soundTransform.volume = (!isNaN(vol)) ? vol : _seVolume;
+            _seChannel = sound.play(startTime, loops, _soundTransform);
+        }
+
+        public function stopSe():void {
+            if (_seChannel) {
+                _seChannel.stop();
+                _seChannel = null;
+            }
+        }
+
+        //------------------------------------------------------------
+        // interfaces for Entire Sound
+        //------------------------------------------------------------
+
+        public function stopAll():void {
+            stopBgm();
+            stopSe();
+        }
+
+        //------------------------------------------------------------
+        // private
+        //------------------------------------------------------------
+
+        /**
+         * 端末のミュートボタンに従う。IS_AIR が true にセットされていなければ何もしない。
+         * クラスを動的に取得しているのは Flash にこのクラスが無いため
+         */
+        private function _followDeviceMuteButton():void {
+            if (!KrewConfig.IS_AIR) { return; }
+
+            var AudioPlaybackMode:Class  = getDefinitionByName("flash.media.AudioPlaybackMode") as Class;
+            SoundMixer.audioPlaybackMode = AudioPlaybackMode.AMBIENT;
         }
 
         /**
-         * Sound.play の loops に 1 より多い数を指定してループさせると、
-         * 途中再開したときに再開位置からループし直してしまうようだ。
-         * それでは困るので再生終了のコールバックで 0 位置から再生し直すようにする
+         * pause & resume してしまうと、Sound.play() の loops に 2 以上の値を入れて
+         * ループさせた場合に、resume した位置から再生が再開されてしまうようだ。
+         * ひとまず再生終了のコールバックで 0 位置から再生し直すことでループ再生する
          */
-        private function _onSoundComplete(event:Event):void {
+        private function _onBgmComplete(event:Event):void {
             replayBgm();
         }
 
-        //SEの再生 ----------------------------------------------------------------
-        public function playSe( src:Sound, vol:Number = 0.4, pan:Number = 0, loops:int = 0,
-                                startTime:Number = 0 ):void {
-            trans.pan = pan;
-            trans.volume = vol;
-            seChannel = src.play( startTime, loops, trans );
-        }
-
-        //再生中のサウンドを停止 -------------------------------------------------------
-        public function stop( ):void {
-            if( bgmChannel != null ){
-                bgmChannel.stop();
-                bgmChannel = null;
-            }
-            if( seChannel != null ){
-                seChannel.stop();
-                seChannel = null;
-            }
-        }
     }
 }

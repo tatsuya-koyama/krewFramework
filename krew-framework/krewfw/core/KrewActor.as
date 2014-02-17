@@ -57,6 +57,9 @@ package krewfw.core {
         public var collidable:Boolean = true;
 
         //------------------------------------------------------------
+        // accessors
+        //------------------------------------------------------------
+
         /**
          * [CAUTION] starling.display.DisplayObjectContainer の
          * width / height の getter は重い行列計算が走るので滅多なことでもない限り使うな
@@ -97,7 +100,14 @@ package krewfw.core {
             return _markedForDeath;
         }
 
+        public function get hasInitialized():Boolean {
+            return _hasInitialized;
+        }
+
         //------------------------------------------------------------
+        // constructors
+        //------------------------------------------------------------
+
         public function KrewActor() {}
 
         /**
@@ -115,17 +125,19 @@ package krewfw.core {
 
         /** @private */
         public function setUp(sharedObj:KrewSharedObjects, applyForNewActor:Function,
-                              layer:StageLayer, layerName:String):void {
+                              layer:StageLayer, layerName:String):void
+        {
             if (_hasInitialized) {
                 krew.fwlog('[Warning] KrewActor has initialized twice.');
                 return;
             }
             _hasInitialized = true;
 
-            this.sharedObj = sharedObj;
+            this.sharedObj        = sharedObj;
             this.applyForNewActor = applyForNewActor;
-            this.layer     = layer;
-            this.layerName = layerName;
+            this.layer            = layer;
+            this.layerName        = layerName;
+
             _doInit();
 
             ProfileData.countActor(1, this.layerName);
@@ -137,6 +149,10 @@ package krewfw.core {
                 initFunc();
             }
         }
+
+        //------------------------------------------------------------
+        // destructors
+        //------------------------------------------------------------
 
         /** @private */
         public override function dispose():void {
@@ -163,6 +179,7 @@ package krewfw.core {
             _initFuncList      = null;
             _imageList         = null;
             _textList          = null;
+            _displayObjList    = null;
             _childActors       = null;
             _actionInstructors = null;
             _timeKeeper        = null;
@@ -197,29 +214,6 @@ package krewfw.core {
         protected function removeCollision():void {
             if (!sharedObj) { return; }
             sharedObj.collisionSystem.removeShapeWithActor(this);
-        }
-
-        /** @private */
-        public function update(passedTime:Number):void {
-            if (_hasDisposed) { return; }
-
-            // update children actors
-            for (var i:int=0;  i < _childActors.length;  ++i) {
-                var child:KrewActor = _childActors[i];
-                if (child.isDead) {
-                    _childActors.splice(i, 1);  // remove dead actor from Array
-                    removeChild(child);
-                    child.dispose();
-                    --i;
-                    continue;
-                }
-                child.update(passedTime);
-            }
-
-            onUpdate(passedTime);
-            _updateAction(passedTime);
-            _timeKeeper.update(passedTime);
-            _disappearInOutside();
         }
 
         //------------------------------------------------------------
@@ -291,10 +285,8 @@ package krewfw.core {
                 addChild(actor);
             }
 
-            actor.setUp(
-                this.sharedObj, this.applyForNewActor,
-                this.layer, this.layerName
-            );
+            if (actor.hasInitialized) { return; }
+            actor.setUp(sharedObj, applyForNewActor, layer, layerName);
         }
 
         public function createActor(newActor:KrewActor, layerName:String=null):void {
@@ -326,6 +318,7 @@ package krewfw.core {
         //------------------------------------------------------------
         // Helpers for Tween
         //------------------------------------------------------------
+
         public function addTween(tween:Tween):void {
             if (!layer) {
                 krew.fwlog('[Error] This actor does not belong to any layer.');
@@ -353,6 +346,7 @@ package krewfw.core {
         //------------------------------------------------------------
         // Multi Tasker
         //------------------------------------------------------------
+
         public function act(action:StuntAction=null):StuntAction {
             var actionInstructor:StuntActionInstructor = new StuntActionInstructor(this, action);
             _actionInstructors.push(actionInstructor);
@@ -425,6 +419,32 @@ package krewfw.core {
         }
 
         //------------------------------------------------------------
+        // Called by framework
+        //------------------------------------------------------------
+
+        /** @private */
+        public function update(passedTime:Number):void {
+            if (_hasDisposed) { return; }
+
+            // update children actors
+            for (var i:int=0;  i < _childActors.length;  ++i) {
+                var child:KrewActor = _childActors[i];
+                if (child.isDead) {
+                    _childActors.splice(i, 1);  // remove dead actor from Array
+                    removeChild(child);
+                    child.dispose();
+                    --i;
+                    continue;
+                }
+                child.update(passedTime);
+            }
+
+            onUpdate(passedTime);
+            _updateAction(passedTime);
+            _timeKeeper.update(passedTime);
+            _disappearInOutside();
+        }
+
         /**
          * _checkDisplayArea = true の Actor は、画面外にいるときは表示を off にする。
          * これをやってあげないと少なくとも Flash では

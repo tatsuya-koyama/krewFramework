@@ -20,7 +20,7 @@ package krewfw.core {
     public class KrewGameDirector extends Sprite {
 
         private var _currentScene:KrewScene = null;
-        private var _sharedObj:KrewSharedObjects = new KrewSharedObjects();
+        private var _sharedObj:KrewSharedObjects;
 
         //------------------------------------------------------------
         public function KrewGameDirector() {
@@ -47,11 +47,13 @@ package krewfw.core {
         }
 
         /**
-         * コンストラクタでこれを呼ぶことで、ゲームが始動する.
-         * getRequiredGlobalAssets で指定したアセットが読み込まれた後に
-         * 最初の scene に遷移
+         * これに最初の Scene を渡して呼ぶことで、ゲームが始動する.
+         * krewFramework のセットアップ（KrewConfig の値の変更など）はここまでに済ませておくこと。
+         * getInitialGlobalAssets で指定したアセットが読み込まれた後に最初の scene に遷移する
          */
         public function startGame(initialScene:KrewScene):void {
+            _sharedObj = new KrewSharedObjects();
+
             _loadGlobalAssets(
                 getInitialGlobalAssets(),
                 function():void {

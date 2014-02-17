@@ -14,6 +14,7 @@ package krewfw.builtin_actor.system {
 
         private var _stateId:String;
         private var _nextStateId:String;
+        private var _prefix:String;
 
         /** Handler called when state starts. */
         private var _onEnterHandler:Function;
@@ -39,7 +40,7 @@ package krewfw.builtin_actor.system {
 
         public function set stateMachine(fsm:KrewStateMachine):void { _stateMachine = fsm; }
 
-        public function get stateId():String { return _stateId; }
+        public function get stateId():String { return _prefix + _stateId; }
 
         public function get nextStateId():String { return _nextStateId; }
         public function set nextStateId(id:String):void { _nextStateId = id; }
@@ -87,17 +88,18 @@ package krewfw.builtin_actor.system {
          *
          * 関数は直接 Function を指定するのではなく、関数名を文字列で指定することもできる。
          * その場合は第二引数にその関数を持つ Object を渡す必要がある。
+         *
+         * prefix を指定すると、stateDef 内の id, next, to の先頭に prefix がついているものと見なされる。
+         * 内部だけで閉じている State を複数箇所で指定したい場合に用いる。
          */
-        public function KrewState(stateDef:Object, funcOwner:Object=null) {
+        public function KrewState(stateDef:Object, funcOwner:Object=null, prefix:String="") {
             if (!stateDef.id) { throw new Error("[new KrewState] id is required."); }
 
             _stateId     = stateDef.id;
             _nextStateId = stateDef.next || null;
+            _prefix      = prefix;
 
-            // _onEnterHandler  = stateDef.enter  || null;
-            // _onUpdateHandler = stateDef.update || null;
-            // _onExitHandler   = stateDef.exit   || null;
-            // _guardFunc       = stateDef.guard  || null;
+            if (_nextStateId) { _nextStateId = _prefix + _nextStateId; }
 
             _onEnterHandler  = _getFunction(stateDef.enter , funcOwner);
             _onUpdateHandler = _getFunction(stateDef.update, funcOwner);
@@ -116,7 +118,7 @@ package krewfw.builtin_actor.system {
             // sub states
             if (stateDef.children != null) {
                 for each (var subStateDef:* in stateDef.children) {
-                    addState(subStateDef, funcOwner);
+                    addState(subStateDef, funcOwner, prefix);
                 }
             }
         }
@@ -131,13 +133,13 @@ package krewfw.builtin_actor.system {
         /**
          * @see addState
          */
-        public static function makeState(stateDef:*, funcOwner:Object=null):KrewState {
+        public static function makeState(stateDef:*, funcOwner:Object=null, prefix:String=""):KrewState {
             var state:KrewState;
             if (stateDef is KrewState) {
                 return stateDef;
             }
             else if (stateDef is Object) {
-                return new KrewState(stateDef, funcOwner);
+                return new KrewState(stateDef, funcOwner, prefix);
             }
 
             throw new Error("[KrewState] Invalid state definition: " + stateDef);
@@ -154,8 +156,8 @@ package krewfw.builtin_actor.system {
          *                 Object のフォーマットについては KrewState 及び KrewStateMachine の
          *                 コンストラクタのドキュメントを見よ。
          */
-        public function addState(stateDef:*, funcOwner:Object=null):void {
-            var state:KrewState = KrewState.makeState(stateDef, funcOwner);
+        public function addState(stateDef:*, funcOwner:Object=null, prefix:String=""):void {
+            var state:KrewState = KrewState.makeState(stateDef, funcOwner, prefix);
             state.parentState = this;
 
             if (!_childStates) {
@@ -332,7 +334,7 @@ package krewfw.builtin_actor.system {
         private function _getTargetStateIdWith(event:String):String {
             // [Note] listenList が大きくならない想定で、配列を走査して検索
             for each (var listenInfo:Object in listenList) {
-                if (listenInfo.event == event) { return listenInfo.to; }
+                if (listenInfo.event == event) { return _prefix + listenInfo.to; }
             }
             return null;
         }
@@ -352,8 +354,8 @@ package krewfw.builtin_actor.system {
         public function dump():void {
             krew.log(krew.str.repeat("v", 50));
 
-            krew.log("_stateId: " + _stateId);
-            krew.log("_nextStateId: " + _nextStateId);
+            krew.log("stateId: " + stateId);
+            krew.log("nextStateId: " + nextStateId);
 
             if (isListening) {
                 krew.log("isListening: true");
@@ -373,11 +375,11 @@ package krewfw.builtin_actor.system {
             var toList:Array = [];
             if (listenList != null) {
                 toList = listenList.map(function(elem:Object, index:int, array:Array):String {
-                    return elem.to;
+                    return _prefix + elem.to;
                 });
             }
 
-            krew.log(indent + _stateId + " --> " + _nextStateId
+            krew.log(indent + stateId + " --> " + nextStateId
                      + "  (" + toList.join(", ") + ")");
 
             if (!_childStates) { return; }

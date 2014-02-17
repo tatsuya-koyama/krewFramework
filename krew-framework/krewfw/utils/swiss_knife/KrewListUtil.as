@@ -1,5 +1,7 @@
 package krewfw.utils.swiss_knife {
 
+    import krewfw.utils.krew;
+
     /**
      * Singleton Army knife for Array processing.
      * (Use this if you cannot find necessary methods in built-in Array.)
@@ -48,6 +50,17 @@ package krewfw.utils.swiss_knife {
                 if (iterator(item)) { ++num; }
             }
             return num;
+        }
+
+        /**
+         * Returns a random element in the array.
+         * If array is empty, returns null.
+         */
+        public function sample(list:Array):* {
+            if (list.length == 0) { return null; }
+
+            var index:int = krew.randInt(0, list.length - 1);
+            return list[index];
         }
 
     }

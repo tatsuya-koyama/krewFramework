@@ -519,5 +519,59 @@ package krewfw_builtin_actor.tests {
             _instanceSignal = 102;
         }
 
+        [Test]
+        public function test_prefix():void {
+            var prefix:String = "PRETEST_";
+
+            var state1:KrewState = new KrewState({
+                id: "state_70",
+                listen: {event: "event70_A", to: "state_70_2"},
+                children: [
+                    {
+                        id: "state_70_1",
+                        next: "state_70_4",
+                        enter: function(state:KrewState):void { state.proceed(); }
+                    },
+                    {
+                        id: "state_70_2",
+                        enter: function(state:KrewState):void { state.proceed(); }
+                    },
+                    {
+                        id: "state_70_3",
+                        next: "state_70_1",
+                        enter: function(state:KrewState):void { state.proceed(); }
+                    },
+                    {
+                        id: "state_70_4",
+                        listen: {event: "event70_B", to: "state_70_5"}
+                    },
+                    {
+                        id: "state_70_5",
+                        enter: function(state:KrewState):void { state.proceed(); }
+                    }
+                ]
+            }, null, prefix);
+
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                state1,
+                {id: "state_71"}
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+            fsm.dumpStateTree();
+
+            var anActor:KrewActor = new KrewActor();
+            scene.setUpActor(null, anActor);
+
+            anActor.sendMessage("event70_A");
+            scene.mainLoop();
+            Assert.assertEquals("PRETEST_state_70_4", fsm.currentState.stateId);
+
+            anActor.sendMessage("event70_B");
+            scene.mainLoop();
+            Assert.assertEquals("state_71", fsm.currentState.stateId);
+        }
+
     }
 }

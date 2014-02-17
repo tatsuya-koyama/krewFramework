@@ -19,7 +19,8 @@ package krewfw.utils.starling {
             y:Number = 0,
             hAlign:String = HAlign.LEFT,  // "left", "center", "right"
             vAlign:String = VAlign.TOP,   // "top", "center", "bottom"
-            touchable:Boolean = false
+            touchable:Boolean = false,
+            batchable:Boolean = false
         ):TextField {
 
             var textField:TextField = new TextField(width, height, text);
@@ -31,6 +32,7 @@ package krewfw.utils.starling {
             textField.hAlign    = hAlign;
             textField.vAlign    = vAlign;
             textField.touchable = touchable;
+            textField.batchable = batchable;
             return textField;
         }
     }

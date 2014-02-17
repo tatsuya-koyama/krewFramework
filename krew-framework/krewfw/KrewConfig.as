@@ -1,5 +1,7 @@
 package krewfw {
 
+    import starling.utils.AssetManager;
+
     /**
      * Please customize these static values for your game
      * before the krewFramework starts up.
@@ -18,6 +20,10 @@ package krewfw {
          */
         public static var ALLOW_DELAY_FPS:int = 15;
 
+        //------------------------------------------------------------
+        // Asset Manager
+        //------------------------------------------------------------
+
         /**
          * ビルド対象のプラットフォームに応じて、ファイルアクセスのベースパスとなる
          * スキーマを任意に指定してほしい.
@@ -28,6 +34,7 @@ package krewfw {
          *       （swf と同じ階層にアセットディレクトリのリンクなど置いておくことを想定）
          *   </li>
          *   <li>iOS, Android アプリの場合は "app:/" を指定する</li>
+         *   <li>アプリから保存したデータ領域にアクセスするには "app-storage:/" を指定する</li>
          *   <li>Web 上で Flash として公開したい場合は "http://..." のように
          *       アセットが置かれている URL を指定すればよい
          *   </li>
@@ -37,9 +44,17 @@ package krewfw {
 
         public static var ASSET_BASE_PATH:String = "asset/";
 
+        /**
+         * krewFramework はアセット読み込みに starling.utils.AssetManager を用いる。
+         * AssetManager のサブクラスであれば、ここを書き換えることによって任意のクラスを
+         * 代わりに利用することができる。 例えばリソースの登録名などが気に入らない場合は
+         * AssetManager.getName() を override したクラスを用意し、ここに指定すればよい。
+         */
+        public static var ASSET_MANAGER_CLASS:Class = AssetManager;
+
 
         //------------------------------------------------------------
-        // デバッグ系
+        // Debug and Profiling
         //------------------------------------------------------------
 
         /**

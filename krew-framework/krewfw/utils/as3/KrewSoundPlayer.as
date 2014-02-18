@@ -67,7 +67,7 @@
         {
             if (_bgmChannel) {
                 if (bgmId != null  &&  bgmId == _currentBgmId) { return; }
-                _bgmChannel.stop();
+                _disposeBgmChannel();
             }
             _currentBgmId = bgmId;
 
@@ -82,6 +82,7 @@
         public function replayBgm(vol:Number=NaN, startTime:Number=0):void {
             if (!_currentBgm) { return; }
 
+            _currentBgmId = null;
             playBgm(_currentBgm, _currentBgmId, vol, startTime);
         }
 
@@ -100,10 +101,9 @@
         }
 
         public function stopBgm():void {
-            if (_bgmChannel) {
-                _bgmChannel.stop();
-                _bgmChannel = null;
-            }
+            if (!_bgmChannel) { return; }
+
+            _disposeBgmChannel();
         }
 
         //------------------------------------------------------------
@@ -156,6 +156,14 @@
          */
         private function _onBgmComplete(event:Event):void {
             replayBgm();
+        }
+
+        private function _disposeBgmChannel():void {
+            if (!_bgmChannel) { return; }
+
+            _bgmChannel.stop();
+            _bgmChannel.removeEventListener(Event.SOUND_COMPLETE, _onBgmComplete);
+            _bgmChannel = null;
         }
 
     }

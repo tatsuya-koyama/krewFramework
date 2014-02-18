@@ -5,7 +5,7 @@ package krewfw.utils.as3 {
     //------------------------------------------------------------
     public class KrewTimeKeeper {
 
-        private var _tasks:Vector.<KrewTimeKeeperTask> = new Vector.<KrewTimeKeeperTask>();
+        private var _tasks:Vector.<ITimeKeeperTask> = new Vector.<ITimeKeeperTask>();
 
         //------------------------------------------------------------
         public function addPeriodicTask(interval:Number, task:Function, times:int=-1):void {
@@ -14,17 +14,23 @@ package krewfw.utils.as3 {
             );
         }
 
+        public function addPeriodicFrameTask(interval:int, task:Function, times:int=-1):void {
+            _tasks.push(
+                new KrewTimeKeeperFrameTask(interval, task, times)
+            );
+        }
+
         /**
          * [ToDo]: 終わった task は削除した方がいいんじゃないの
          */
         public function update(passedTime:Number):void {
-            for each (var task:KrewTimeKeeperTask in _tasks) {
+            for each (var task:ITimeKeeperTask in _tasks) {
                 task.update(passedTime);
             }
         }
 
         public function dispose():void {
-            for each (var task:KrewTimeKeeperTask in _tasks) {
+            for each (var task:ITimeKeeperTask in _tasks) {
                 task.dispose();
             }
             _tasks = null;

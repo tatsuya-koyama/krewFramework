@@ -315,6 +315,29 @@ package krewfw.core {
             }
         }
 
+        /** for touch action */
+        public function addTouchMarginNode(touchWidth:Number=0, touchHeight:Number=0):void {
+            var margin:ColorRect = new ColorRect(touchWidth, touchHeight);
+            margin.touchable = true;
+            margin.alpha = 0;
+            margin.x = -touchWidth  / 2;
+            margin.y = -touchHeight / 2;
+            addActor(margin);
+        }
+
+        /**
+         * displayOrder の値でツリーをソート。 children が皆 KrewActor である前提。
+         * tkActor.displayOrder = 1;  のように設定した上で
+         * getLayer('hoge').sortDisplayOrder(); のように使う
+         */
+        public function sortDisplayOrder():void {
+            sortChildren(function(a:KrewActor, b:KrewActor):int {
+                if (a.displayOrder < b.displayOrder) { return -1; }
+                if (a.displayOrder > b.displayOrder) { return  1; }
+                return 0;
+            });
+        }
+
         //------------------------------------------------------------
         // Helpers for Tween
         //------------------------------------------------------------
@@ -371,7 +394,7 @@ package krewfw.core {
             }
         }
 
-        /** Equivalent to setTimeout() */
+        /** Equivalent to setTimeout(), but passed time will be based on game's timeline. */
         public function addScheduledTask(timeout:Number, task:Function):void {
             if (timeout <= 0) {
                 task();
@@ -385,7 +408,7 @@ package krewfw.core {
             addScheduledTask(timeout, task);
         }
 
-        /** Equivalent to setInterval() */
+        /** Equivalent to setInterval(), but passed time will be based on game's timeline. */
         public function addPeriodicTask(interval:Number, task:Function, times:int=-1):void {
             _timeKeeper.addPeriodicTask(interval, task, times);
         }
@@ -395,27 +418,14 @@ package krewfw.core {
             addPeriodicTask(interval, task, times);
         }
 
-        // for touch action
-        public function addTouchMarginNode(touchWidth:Number=0, touchHeight:Number=0):void {
-            var margin:ColorRect = new ColorRect(touchWidth, touchHeight);
-            margin.touchable = true;
-            margin.alpha = 0;
-            margin.x = -touchWidth  / 2;
-            margin.y = -touchHeight / 2;
-            addActor(margin);
+        /** Runs task 1 times after n frames. */
+        public function delayedFrame(task:Function, waitFrames:int=1):void {
+            _timeKeeper.addPeriodicFrameTask(waitFrames, task, 1);
         }
 
-        /**
-         * displayOrder の値でツリーをソート。 children が皆 KrewActor である前提。
-         * tkActor.displayOrder = 1;  のように設定した上で
-         * getLayer('hoge').sortDisplayOrder(); のように使う
-         */
-        public function sortDisplayOrder():void {
-            sortChildren(function(a:KrewActor, b:KrewActor):int {
-                if (a.displayOrder < b.displayOrder) { return -1; }
-                if (a.displayOrder > b.displayOrder) { return  1; }
-                return 0;
-            });
+        /** Runs task several times after n frames. */
+        public function cyclicFrame(task:Function, waitFrames:int=1, times:int=-1):void {
+            _timeKeeper.addPeriodicFrameTask(waitFrames, task, times);
         }
 
         //------------------------------------------------------------
@@ -440,8 +450,8 @@ package krewfw.core {
             }
 
             onUpdate(passedTime);
-            _updateAction(passedTime);
             _timeKeeper.update(passedTime);
+            _updateAction(passedTime);
             _disappearInOutside();
         }
 

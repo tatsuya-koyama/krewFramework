@@ -337,10 +337,24 @@ package krewfw.core {
         //------------------------------------------------------------
         // Your tools
         //------------------------------------------------------------
+
         protected function exit(nextScene:KrewScene=null):void {
             _isTimeToExit = true;
             _nextScene    = nextScene;
         }
+
+        public function setUpActor(layerName:String, actor:KrewActor,
+                                   putOnDisplayList:Boolean=true):void
+        {
+            if (layerName == null) { layerName = 'l-front'; }
+            addActor(layerName, actor, putOnDisplayList);
+        }
+
+        //------------------------------------------------------------
+        // Actor の特権だが Scene でも使いたくなるような便利なメソッドは
+        // Scene からも使えるようにしている。
+        // これは Scene お抱えの Actor に委譲することで実現している
+        //------------------------------------------------------------
 
         protected function act(action:StuntAction=null):StuntAction {
             return _servantActor.act(action);
@@ -366,11 +380,13 @@ package krewfw.core {
             _servantActor.addPeriodicTask(interval, task);
         }
 
-        public function setUpActor(layerName:String, actor:KrewActor,
-                                   putOnDisplayList:Boolean=true):void
-        {
-            if (layerName == null) { layerName = 'l-front'; }
-            addActor(layerName, actor, putOnDisplayList);
+        public function delayedFrame(task:Function, waitFrames:int=1):void {
+            _servantActor.delayedFrame(task, waitFrames);
         }
+
+        public function cyclicFrame(task:Function, waitFrames:int=1, times:int=-1):void {
+            _servantActor.cyclicFrame(task, waitFrames, times);
+        }
+
     }
 }

@@ -17,10 +17,16 @@ package krewfw.builtin_actor.event {
         private var _quad:Quad;
 
         //------------------------------------------------------------
-        public function TouchFilter() {
+        public function TouchFilter(left:Number=0, top:Number=0,
+                                    filterWidth:Number=NaN, filterHeight:Number=NaN)
+        {
             touchable = true;
 
-            _quad = new Quad(KrewConfig.SCREEN_WIDTH, KrewConfig.SCREEN_HEIGHT);
+            if (isNaN(filterWidth )) { filterWidth  = KrewConfig.SCREEN_WIDTH;  }
+            if (isNaN(filterHeight)) { filterHeight = KrewConfig.SCREEN_HEIGHT; }
+            _quad   = new Quad(filterWidth, filterHeight);
+            _quad.x = left;
+            _quad.y = top;
             _quad.touchable = true;
             _quad.alpha     = 0;
             addChild(_quad);

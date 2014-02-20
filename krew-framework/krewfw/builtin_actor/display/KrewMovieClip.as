@@ -13,6 +13,10 @@ package krewfw.builtin_actor.display {
         private var _frameCount:int       = 0;
         private var _framePlayTime:Number = 0;
 
+        /**
+         * If you want to override onUpdate() in sub classes,
+         * please call super.onUpdate(passedTime).
+         */
         //------------------------------------------------------------
         public function KrewMovieClip() {}
 
@@ -58,8 +62,7 @@ package krewfw.builtin_actor.display {
             _frameCount = krew.randInt(_movieInfoList.length);
         }
 
-        public override function update(passedTime:Number):void {
-            super.update(passedTime);
+        public override function onUpdate(passedTime:Number):void {
             _updateMovieFrame(passedTime);
         }
 

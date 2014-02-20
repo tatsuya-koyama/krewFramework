@@ -433,7 +433,7 @@ package krewfw.core {
         //------------------------------------------------------------
 
         /** @private */
-        public function update(passedTime:Number):void {
+        public final function update(passedTime:Number):void {
             if (_hasDisposed) { return; }
 
             // update children actors
@@ -455,6 +455,7 @@ package krewfw.core {
             _disappearInOutside();
         }
 
+        //------------------------------------------------------------
         /**
          * _checkDisplayArea = true の Actor は、画面外にいるときは表示を off にする。
          * これをやってあげないと少なくとも Flash では

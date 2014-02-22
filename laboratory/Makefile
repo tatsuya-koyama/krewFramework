@@ -112,5 +112,9 @@ atlas:
 	asset/workfile/image_src/$(p)/*.png asset/asset/image/atlas_$(p).xml
 
 clean:
-	rm -f build/*
+	rm -f build/*.swf
+	rm -f build/*.swf.cache
+	rm -f build/*.apk
+	rm -f build/*.ipa
+	rm -rf build/*.tmp
 

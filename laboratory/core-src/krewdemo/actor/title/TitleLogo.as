@@ -20,7 +20,7 @@ package krewdemo.actor.title {
 
         private function _makeTitleLogo():TextField {
             var text:TextField = TextFactory.makeText(
-                480, 100, "krewFramework\nFeature Demos", 30, "tk_courier", 0xffcc55,
+                480, 100, "krewFramework\nLaboratory", 30, "tk_courier", 0xffcc55,
                 0, 0, "center", "top", false
             );
             return text;

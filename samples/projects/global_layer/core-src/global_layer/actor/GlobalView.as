@@ -13,12 +13,6 @@ package global_layer.actor {
         public function GlobalView(caption:String="LOGO", color:uint=0xffcc55):void {
             addInitializer(function():void {
 
-                //--- character (You must use global assets for global layer view)
-                var charaActor:KrewActor = new KrewActor();
-                charaActor.addImage(getImage("rectangle_taro"), 100, 100, 70, 260);
-                createActor(charaActor, "global-front");
-
-
                 //--- bg quad
                 var rect:ColorRect = new ColorRect(480, 100, false, 0xffffff);
                 rect.y = 320 - 30;

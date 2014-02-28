@@ -12,6 +12,8 @@ package global_layer.scene {
     //------------------------------------------------------------
     public class SecondScene extends KrewScene {
 
+        private const DEL_GLOBAL_BACK:String = "delGlobalBack";
+
         //------------------------------------------------------------
         public override function getLayerList():Array {
             return ['l-back', 'l-front', 'l-ui'];
@@ -22,9 +24,14 @@ package global_layer.scene {
             setUpActor('l-ui',   new SimpleLogo("SECOND SCENE", 0x99ccff));
             setUpActor('l-ui',   new SimpleLogoButton(GameEvent.EXIT_SCENE, "BACK SCENE"));
 
+            setUpActor('l-ui', new SimpleLogoButton(
+                DEL_GLOBAL_BACK, "Dispose Global-Back Layer", 0xff9999, 360, 30, 14
+            ));
+
             blackIn(0.5);
 
             listen(GameEvent.EXIT_SCENE, onSceneTransition);
+            listen(DEL_GLOBAL_BACK, onDisposeGlobalBackLayer);
         }
 
         protected function onSceneTransition(args:Object):void {
@@ -32,6 +39,10 @@ package global_layer.scene {
             addScheduledTask(0.3, function():void {
                 exit();
             });
+        }
+
+        protected function onDisposeGlobalBackLayer(args:Object):void {
+            sharedObj.layerManager.killActors("global-back");
         }
 
         public override function getDefaultNextScene():KrewScene {

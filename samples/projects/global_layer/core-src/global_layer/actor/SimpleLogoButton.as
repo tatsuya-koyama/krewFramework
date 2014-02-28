@@ -15,14 +15,15 @@ package global_layer.actor {
     public class SimpleLogoButton extends KrewActor {
 
         //------------------------------------------------------------
-        public function SimpleLogoButton(event:String, caption:String, color:uint=0xffffff):void {
+        public function SimpleLogoButton(event:String, caption:String, color:uint=0xffffff,
+                                         x:Number=240, y:Number=180, fontSize:Number=26):void {
             touchable = true;
 
             addInitializer(function():void {
                 // make text button
                 var textField:TextField = TextFactory.makeText(
-                    480, 60, caption, 26, "tk_cooper", color,
-                    0, 150 + 3, 'center', 'center', true
+                    480, 60, caption, fontSize, "tk_cooper", color,
+                    x - 240, y - 30 + 3, 'center', 'center', true
                 );
 
                 var textButton:TextButton = new TextButton(textField, function():void {

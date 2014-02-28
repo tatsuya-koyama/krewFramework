@@ -49,6 +49,7 @@ package krewfw.core_internal {
             for each (var globalLayerName:String in _globalDisplayOrder) {
                 var globalLayer:StageLayer = _globalLayersCache[globalLayerName];
                 _addLayer(scene, globalLayerName, globalLayer);
+                _resetGlobalActorsContext(globalLayer);
             }
 
             _displayOrder = displayOrder.concat(_globalDisplayOrder);
@@ -61,18 +62,6 @@ package krewfw.core_internal {
                 _globalLayersCache[layerName] = globalLayer;
             }
             _globalDisplayOrder = displayOrder;
-        }
-
-        private function _addLayer(scene:KrewScene, layerName:String, layer:StageLayer=null):void {
-            if (layer == null) {
-                layer = new StageLayer();
-            }
-            _layers[layerName] = layer;
-
-            layer.layer     = layer;
-            layer.layerName = layerName;
-            scene.addLayer(layer);
-            krew.fwlog('+++ add Layer: ' + layerName);
         }
 
         public function disposeAllSceneScopeLayers():void {
@@ -93,6 +82,12 @@ package krewfw.core_internal {
             for each (var layerName:String in _globalDisplayOrder) {
                 var globalLayer:StageLayer = _globalLayersCache[layerName];
                 scene.removeChild(globalLayer);
+
+                // Layer が次の Scene にセットし直されたときに、
+                // 各 Actor がその Scene 用に初期化され直すようにする
+                for each (var child:KrewActor in globalLayer.childActors) {
+                    child.hasInitialized = false;
+                }
             }
         }
 
@@ -149,6 +144,18 @@ package krewfw.core_internal {
 
         public function resetTimeScale(layerName:String):void {
             setTimeScale(layerName, 1);
+        }
+
+        public function killActors(layerName:String):Boolean {
+            if (!_layers[layerName]) {
+                krew.fwlog('[Error] layer not found: ' + layerName);
+                return false;
+            }
+
+            for each (var child:KrewActor in _layers[layerName].childActors) {
+                child.passAway();
+            }
+            return true;
         }
 
         //------------------------------------------------------------
@@ -213,6 +220,32 @@ package krewfw.core_internal {
         public function setAllLayersEnabled(enabled:Boolean):void {
             for each (var layerName:String in _displayOrder) {
                 setEnabled(layerName, enabled);
+            }
+        }
+
+        //------------------------------------------------------------
+        // private
+        //------------------------------------------------------------
+
+        private function _addLayer(scene:KrewScene, layerName:String, layer:StageLayer=null):void {
+            if (layer == null) {
+                layer = new StageLayer();
+            }
+            _layers[layerName] = layer;
+
+            layer.layer     = layer;
+            layer.layerName = layerName;
+            scene.addLayer(layer);
+            krew.fwlog('+++ add Layer: ' + layerName);
+        }
+
+        /**
+         * グローバルレイヤーを新しい Scene に移し替えた際に、
+         * グローバルな Actor の持つ Scene 依存の属性を設定し直す
+         */
+        private function _resetGlobalActorsContext(globalLayer:StageLayer):void {
+            for each (var child:KrewActor in globalLayer.childActors) {
+                child.applyForNewActor = globalLayer.applyForNewActor;
             }
         }
     }

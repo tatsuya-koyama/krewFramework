@@ -7,9 +7,9 @@ package global_layer.scene {
 
     import global_layer.GameEvent;
     import global_layer.actor.GlobalView;
+    import global_layer.actor.GlobalWalkerGenerator;
     import global_layer.actor.SimpleLogo;
     import global_layer.actor.SimpleLogoButton;
-    import global_layer.actor.WalkerGenerator;
 
     //------------------------------------------------------------
     public class BootScene extends KrewScene {
@@ -25,7 +25,8 @@ package global_layer.scene {
             setUpActor('l-ui',     new SimpleLogoButton(GameEvent.EXIT_SCENE, "START GAME"));
 
             // Add actor to global layer
-            setUpActor('global-back', new GlobalView("This is Global Layer", 0xffff66));
+            setUpActor('global-back',  new GlobalWalkerGenerator());
+            setUpActor('global-front', new GlobalView("This is Global Layer", 0xffff66));
 
             blackIn(0.5);
 

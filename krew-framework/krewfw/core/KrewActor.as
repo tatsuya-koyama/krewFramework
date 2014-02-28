@@ -104,6 +104,11 @@ package krewfw.core {
             return _hasInitialized;
         }
 
+        /** Called by StageLayerManager for re-init global actor. */
+        public function set hasInitialized(value:Boolean):void {
+            _hasInitialized = value;
+        }
+
         //------------------------------------------------------------
         // constructors
         //------------------------------------------------------------

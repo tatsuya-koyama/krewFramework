@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/4.0">
+    <id>krewfw.samples.global-layer</id>
+    <versionNumber>1.0</versionNumber>
+    <filename>krewSample</filename>
+    <initialWindow>
+        <content>krew_sample_global_layer.swf</content>
+        <aspectRatio>landscape</aspectRatio>
+        <autoOrients>true</autoOrients>
+        <fullScreen>true</fullScreen>
+        <renderMode>direct</renderMode>
+        <depthAndStencil>false</depthAndStencil>
+    </initialWindow>
+    <supportedProfiles>mobileDevice</supportedProfiles>
+</application>

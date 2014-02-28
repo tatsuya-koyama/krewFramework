@@ -47,12 +47,23 @@ package krewfw.core {
         }
 
         /**
+         * Scene を遷移しても消えないレイヤー構造の定義。
+         * これらのレイヤーは最前面に置かれる
+         * @return Example: ['global-header', 'global-ui']
+         */
+        protected function getGlobalLayerList():Array {
+            return [];
+        }
+
+        /**
          * これに最初の Scene を渡して呼ぶことで、ゲームが始動する.
          * krewFramework のセットアップ（KrewConfig の値の変更など）はここまでに済ませておくこと。
          * getInitialGlobalAssets で指定したアセットが読み込まれた後に最初の scene に遷移する
          */
         public function startGame(initialScene:KrewScene):void {
             _sharedObj = new KrewSharedObjects();
+
+            _sharedObj.layerManager.makeGlobalLayers(getGlobalLayerList());
 
             _loadGlobalAssets(
                 getInitialGlobalAssets(),
@@ -61,6 +72,10 @@ package krewfw.core {
                 }
             );
         }
+
+        //------------------------------------------------------------
+        // private
+        //------------------------------------------------------------
 
         private function _loadGlobalAssets(fileNameList:Array, onLoadComplete:Function):void {
             if (fileNameList.length == 0) {
@@ -97,6 +112,8 @@ package krewfw.core {
 
         private function _onExitScene(event:starling.events.Event):void {
             if (!_currentScene) { return; }
+
+            _sharedObj.layerManager.removeGlobalLayersFromScene(_currentScene);
 
             // Call dispose() of derived KrewScene class and remove listeners.
             // Scene-scope assets will be purged.

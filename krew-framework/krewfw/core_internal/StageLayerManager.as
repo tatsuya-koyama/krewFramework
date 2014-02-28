@@ -12,14 +12,26 @@ package krewfw.core_internal {
     //------------------------------------------------------------
     public class StageLayerManager {
 
+        /** {"layername": <StageLayer>} */
         private var _layers:Dictionary = new Dictionary;
+        private var _globalLayersCache:Dictionary = new Dictionary;
+
+        /** Array of layer name (String) in order from back to front. */
         private var _displayOrder:Array;
+        private var _globalDisplayOrder:Array = [];
+
         private var _screenFader:ScreenFader;
 
         //------------------------------------------------------------
         public function StageLayerManager() {}
 
+        //------------------------------------------------------------
+        // Called by System (You should not call directly)
+        //------------------------------------------------------------
+
         /**
+         * Called by KrewScene.
+         *
          * displayOrder で指定したレイヤー名の順に奥から並ぶ.
          * 例えば ['back', 'middle', 'front'] を渡すと back レイヤーが一番奥になる。
          * そして暗黙で最前面に '_system_' レイヤーが足されるので
@@ -27,51 +39,61 @@ package krewfw.core_internal {
          */
         public function setUpLayers(scene:KrewScene, displayOrder:Array):void {
             displayOrder.push('_system_');
+
+            // create and add scene-scope layers
             for each (var layerName:String in displayOrder) {
                 _addLayer(scene, layerName);
             }
-            _displayOrder = displayOrder;
 
+            // add global-scope layers from cache
+            for each (var globalLayerName:String in _globalDisplayOrder) {
+                var globalLayer:StageLayer = _globalLayersCache[globalLayerName];
+                _addLayer(scene, globalLayerName, globalLayer);
+            }
+
+            _displayOrder = displayOrder.concat(_globalDisplayOrder);
             _setUpScreenFader();
         }
 
-        //------------------------------------------------------------
-        // Fade In/Out Helper
-        //------------------------------------------------------------
-        private function _setUpScreenFader():void {
-            _screenFader = new ScreenFader();
-            addActor('_system_', _screenFader);
+        public function makeGlobalLayers(displayOrder:Array):void {
+            for each (var layerName:String in displayOrder) {
+                var globalLayer:StageLayer = new StageLayer();
+                _globalLayersCache[layerName] = globalLayer;
+            }
+            _globalDisplayOrder = displayOrder;
         }
 
-        public function blackIn (duration:Number=0.33, startAlpha:Number=1):void { _screenFader.blackIn (duration, startAlpha); }
-        public function blackOut(duration:Number=0.33, startAlpha:Number=0):void { _screenFader.blackOut(duration, startAlpha); }
-        public function whiteIn (duration:Number=0.33, startAlpha:Number=1):void { _screenFader.whiteIn (duration, startAlpha); }
-        public function whiteOut(duration:Number=0.33, startAlpha:Number=0):void { _screenFader.whiteOut(duration, startAlpha); }
-        public function colorIn (color:uint, duration:Number=0.33, startAlpha:Number=1):void { _screenFader.colorIn (color, duration, startAlpha); }
-        public function colorOut(color:uint, duration:Number=0.33, startAlpha:Number=0):void { _screenFader.colorOut(color, duration, startAlpha); }
-        //------------------------------------------------------------
-
-        public function dispose():void {
-            _removeAllLayers();
-        }
-
-        private function _addLayer(scene:KrewScene, layerName:String):void {
-            var layer:StageLayer = new StageLayer();
+        private function _addLayer(scene:KrewScene, layerName:String, layer:StageLayer=null):void {
+            if (layer == null) {
+                layer = new StageLayer();
+            }
             _layers[layerName] = layer;
 
-            layer.layer     = layer
+            layer.layer     = layer;
             layer.layerName = layerName;
             scene.addLayer(layer);
-            krew.fwlog('+++ addLayer: ' + layerName);
+            krew.fwlog('+++ add Layer: ' + layerName);
         }
 
-        private function _removeAllLayers():void {
+        public function disposeAllSceneScopeLayers():void {
             for (var layerName:String in _layers) {
+                if (_globalLayersCache[layerName] != null) {
+                    delete _layers[layerName];
+                    continue;
+                }
+
                 _layers[layerName].dispose();
                 delete _layers[layerName];
+                krew.fwlog('--- dispose Layer: ' + layerName);
             }
             _displayOrder = new Array(); // clear array
-            krew.fwlog('--- removeAllLayers');
+        }
+
+        public function removeGlobalLayersFromScene(scene:KrewScene):void {
+            for each (var layerName:String in _globalDisplayOrder) {
+                var globalLayer:StageLayer = _globalLayersCache[layerName];
+                scene.removeChild(globalLayer);
+            }
         }
 
         public function addActor(layerName:String, actor:KrewActor,
@@ -95,6 +117,17 @@ package krewfw.core_internal {
             return true;
         }
 
+        public function onUpdate(passedTime:Number):void {
+            // update layers in display order (from back to front)
+            for each (var layerName:String in _displayOrder) {
+                _layers[layerName].onUpdate(passedTime);
+            }
+        }
+
+        //------------------------------------------------------------
+        // public interfaces
+        //------------------------------------------------------------
+
         public function getLayer(layerName:String):StageLayer {
             if (!_layers[layerName]) {
                 krew.fwlog('[Error] layer not found: ' + layerName);
@@ -102,13 +135,6 @@ package krewfw.core_internal {
             }
 
             return _layers[layerName];
-        }
-
-        public function onUpdate(passedTime:Number):void {
-            // update layers in display order
-            for each (var layerName:String in _displayOrder) {
-                _layers[layerName].onUpdate(passedTime);
-            }
         }
 
         public function setTimeScale(layerName:String, timeScale:Number):Boolean {
@@ -126,8 +152,25 @@ package krewfw.core_internal {
         }
 
         //------------------------------------------------------------
+        // Fade In/Out Helper
+        //------------------------------------------------------------
+
+        private function _setUpScreenFader():void {
+            _screenFader = new ScreenFader();
+            addActor('_system_', _screenFader);
+        }
+
+        public function blackIn (duration:Number=0.33, startAlpha:Number=1):void { _screenFader.blackIn (duration, startAlpha); }
+        public function blackOut(duration:Number=0.33, startAlpha:Number=0):void { _screenFader.blackOut(duration, startAlpha); }
+        public function whiteIn (duration:Number=0.33, startAlpha:Number=1):void { _screenFader.whiteIn (duration, startAlpha); }
+        public function whiteOut(duration:Number=0.33, startAlpha:Number=0):void { _screenFader.whiteOut(duration, startAlpha); }
+        public function colorIn (color:uint, duration:Number=0.33, startAlpha:Number=1):void { _screenFader.colorIn (color, duration, startAlpha); }
+        public function colorOut(color:uint, duration:Number=0.33, startAlpha:Number=0):void { _screenFader.colorOut(color, duration, startAlpha); }
+
+        //------------------------------------------------------------
         // set enabled utilities
         //------------------------------------------------------------
+
         /**
          * layer の on/off を行う
          * off にすると時間が進まなくなり、タッチ不能になる。

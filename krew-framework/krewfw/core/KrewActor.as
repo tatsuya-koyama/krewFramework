@@ -183,6 +183,7 @@ package krewfw.core {
             _childActors       = null;
             _actionInstructors = null;
             _timeKeeper        = null;
+            layer              = null;
 
             onDispose();
             super.dispose();

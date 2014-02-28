@@ -90,7 +90,7 @@ package krewfw.core_internal {
         }
 
         /**
-         * １回だけ実行して、duration 秒待つ。引数に何も渡さない.
+         * １回だけ実行して、即座に次に行く。引数に何も渡さない.
          * ToDo: AS3 のコールバックの引数の型の扱いよくわかってない
          */
         public function justdoit(duration:Number, anUpdater:Function):StuntAction {

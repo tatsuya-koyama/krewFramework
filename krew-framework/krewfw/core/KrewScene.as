@@ -29,7 +29,7 @@ package krewfw.core {
             _hasDisposed = true;
 
             removeEventListener(Event.ENTER_FRAME, _onEnterFrame);
-            sharedObj.layerManager.dispose();
+            sharedObj.layerManager.disposeAllSceneScopeLayers();
             sharedObj.collisionSystem.removeAllGroups();
             sharedObj.resourceManager.purgeSceneScopeResources();
             _newActorPool = [];

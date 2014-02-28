@@ -1,0 +1,21 @@
+<TextureAtlas imagePath='atlas_game.png'>
+  <SubTexture name='tree_1' x='0' y='0' width='300.0' height='500.0'/>
+  <SubTexture name='ground_2' x='302' y='0' width='500.0' height='300.0'/>
+  <SubTexture name='ground_1' x='302' y='302' width='500.0' height='300.0'/>
+  <SubTexture name='cloud_1' x='0' y='502' width='300.0' height='200.0'/>
+  <SubTexture name='joystick_holder' x='0' y='704' width='180.0' height='180.0'/>
+  <SubTexture name='go_button' x='0' y='886' width='200.0' height='100.0'/>
+  <SubTexture name='joystick_ball' x='804' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='star' x='804' y='130' width='128.0' height='128.0'/>
+  <SubTexture name='circle_jiro' x='804' y='302' width='128.0' height='128.0'/>
+  <SubTexture name='red_button' x='804' y='432' width='128.0' height='128.0'/>
+  <SubTexture name='rectangle_taro' x='302' y='604' width='128.0' height='128.0'/>
+  <SubTexture name='man' x='302' y='734' width='128.0' height='128.0'/>
+  <SubTexture name='back_button' x='182' y='704' width='100.0' height='100.0'/>
+  <SubTexture name='rock_1' x='302' y='864' width='100.0' height='100.0'/>
+  <SubTexture name='long_bar' x='432' y='604' width='256.0' height='32.0'/>
+  <SubTexture name='info_icon' x='182' y='806' width='70.0' height='70.0'/>
+  <SubTexture name='invader' x='254' y='806' width='32.0' height='32.0'/>
+  <SubTexture name='pyramid' x='254' y='840' width='32.0' height='32.0'/>
+  <SubTexture name='white' x='0' y='988' width='32.0' height='32.0'/>
+</TextureAtlas>

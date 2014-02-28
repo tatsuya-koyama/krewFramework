@@ -26,8 +26,13 @@ package krewfw.builtin_actor.display {
          */
         public function ColorRect(width:Number=100, height:Number=100,
                                   touchable:Boolean=true,
-                                  color1:int=0, color2:int=0,
-                                  color3:int=0, color4:int=0) {
+                                  color1:int=0, color2:int=-1,
+                                  color3:int=-1, color4:int=-1)
+        {
+            if (color2 == -1) { color2 = color1; }
+            if (color3 == -1) { color3 = color2; }
+            if (color4 == -1) { color4 = color3; }
+
             this.touchable = touchable;
 
             _quad = new Quad(width, height);

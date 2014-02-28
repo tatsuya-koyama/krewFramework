@@ -24,9 +24,13 @@ package krewfw.builtin_actor.display {
          *   | / |
          *   3 - 4
          */
-        public function ScreenCurtain(color1:int=0, color2:int=0,
-                                      color3:int=0, color4:int=0) {
+        public function ScreenCurtain(color1:int=0, color2:int=-1,
+                                      color3:int=-1, color4:int=-1) {
             touchable = true;
+
+            if (color2 == -1) { color2 = color1; }
+            if (color3 == -1) { color3 = color2; }
+            if (color4 == -1) { color4 = color3; }
 
             _quad = new Quad(KrewConfig.SCREEN_WIDTH, KrewConfig.SCREEN_HEIGHT);
             _quad.touchable = true;

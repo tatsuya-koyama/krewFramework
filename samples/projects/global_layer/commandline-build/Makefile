@@ -39,9 +39,9 @@ flash:
 	      -source-path+="../core-src/" \
 	      -source-path+="../../../../krew-framework/" \
 	      -swf-version=22 \
-	      -output="build/krew_sample_global_layer.swf" \
+	      -output="build/krew-sample-global-layer.swf" \
 	      -debug=false \
-	      ../projects/debug-project/src/WebMain.as
+	      ../projects/web-project/src/WebMain.as
 
 clean:
 	rm -f build/*.swf

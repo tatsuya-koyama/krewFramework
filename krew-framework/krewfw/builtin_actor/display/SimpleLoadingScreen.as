@@ -2,6 +2,7 @@ package krewfw.builtin_actor.display {
 
     import starling.text.TextField;
 
+    import krewfw.KrewConfig;
     import krewfw.core.KrewActor;
     import krewfw.core.KrewSystemEventType;
     import krewfw.utils.starling.TextFactory;
@@ -24,7 +25,14 @@ package krewfw.builtin_actor.display {
         private var _loadingBarBg:ColorRect;
 
         //------------------------------------------------------------
-        public function SimpleLoadingScreen(bgColor:uint=0x000000, fontName:String="_sans") {
+        /**
+         * デフォルトではバーの動きは Scene-Scope のアセット読み込みにのみ反応する。
+         * Global-Scope に反応させたい場合は globalAssetMode に true を渡してほしい
+         * （両方合わせて伸びきるようにするのは、読み込むファイルのサイズが分からないから難しいね）
+         */
+        public function SimpleLoadingScreen(bgColor:uint=0x000000, globalAssetMode:Boolean=false,
+                                            fontName:String="_sans")
+        {
             addInitializer(function():void {
                 var bg:ScreenCurtain = new ScreenCurtain(
                     bgColor, bgColor, bgColor, bgColor
@@ -37,20 +45,25 @@ package krewfw.builtin_actor.display {
                 addActor(_loadingBarFg);
 
                 addScheduledTask(0.3, function():void {
-                    addText(_makeLoadingText(fontName), 80, 380);
-                    listen(KrewSystemEventType.PROGRESS_ASSET_LOAD, _onLoadProgress);
+                    addText(
+                        _makeLoadingText(fontName),
+                        0, KrewConfig.SCREEN_HEIGHT / 2 - 25
+                    );
                 });
 
-                listen(KrewSystemEventType.COMPLETE_ASSET_LOAD, _onLoadComplete);
+                if (globalAssetMode) {
+                    listen(KrewSystemEventType.PROGRESS_GLOBAL_ASSET_LOAD, _onLoadProgress);
+                    listen(KrewSystemEventType.COMPLETE_GLOBAL_ASSET_LOAD, _onLoadComplete);
+                } else {
+                    listen(KrewSystemEventType.PROGRESS_ASSET_LOAD, _onLoadProgress);
+                    listen(KrewSystemEventType.COMPLETE_ASSET_LOAD, _onLoadComplete);
+                }
             });
         }
 
         private function _onLoadProgress(args:Object):void {
             var loadRatio:Number = args.loadRatio;
-            if (loadRatio - _loadingBarFg.scaleX > 0.1) {
-                _loadingBarFg.react();
-                _loadingBarFg.act().scaleToEaseOut(0.2, loadRatio, 1);
-            }
+            _loadingBarFg.scaleX = loadRatio;
         }
 
         private function _onLoadComplete(args:Object):void {
@@ -59,8 +72,8 @@ package krewfw.builtin_actor.display {
 
         private function _makeLoadingText(fontName:String):TextField {
             var text:TextField = TextFactory.makeText(
-                200, 50, "Loading...", 20, fontName, 0xffffff,
-                0, 0, "right", "top", false
+                KrewConfig.SCREEN_WIDTH, 50, "Loading...", 20, fontName, 0xcccccc,
+                0, 0, "center", "top", false
             );
 
             // blink animation
@@ -75,13 +88,16 @@ package krewfw.builtin_actor.display {
         private function _makeLoadingBar(topColor:uint, bottomColor:uint,
                                          padding:Number, initScaleX:Number):ColorRect
         {
+            var barWidth :Number = 280 + (padding * 2);
+            var barHeight:Number =   5 + (padding * 2);
+
             var loadingBar:ColorRect = new ColorRect(
-                280 + padding*2, 5 + padding*2, false,
+                barWidth, barHeight, false,
                 topColor, topColor, bottomColor, bottomColor
             );
             loadingBar.scaleX = initScaleX;
-            loadingBar.x =  20 - padding;
-            loadingBar.y = 420 - padding;
+            loadingBar.x = (KrewConfig.SCREEN_WIDTH - barWidth) / 2;
+            loadingBar.y = (KrewConfig.SCREEN_HEIGHT / 2 + 20) - padding;
 
             loadingBar.alpha = 0;
             loadingBar.act().wait(0.1).alphaTo(0.2, 1);

@@ -19,11 +19,13 @@ package krewdemo.scene {
         //------------------------------------------------------------
         public override function getRequiredAssets():Array {
             return [
-                 "image/atlas_game.png"
-                ,"image/atlas_game.xml"
-                ,"tilemap/testmap_001.json"
+                 "tilemap/testmap_001.json"
                 ,"tilemap/atlas_gbism.png"
             ];
+        }
+
+        public override function initLoadingView():void {
+            setUpActor('l-back', new SimpleLoadingScreen(0x333333, true));
         }
 
         public override function initAfterLoad():void {

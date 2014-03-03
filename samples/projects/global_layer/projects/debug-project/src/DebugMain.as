@@ -14,7 +14,6 @@ package {
 
             KrewConfig.IS_AIR = false;
             KrewConfig.ASSET_URL_SCHEME = "";
-            KrewConfig.ASSET_URL_SCHEME = "http://docs.tatsuya-koyama.com/assets/media/swf/krewsample/";
 
             var main:Main = new Main(this);
         }

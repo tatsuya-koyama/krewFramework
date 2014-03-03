@@ -44,11 +44,17 @@ package krewdemo.actor.title {
 
             addChild(button);
             button.validate();
-            button.x = -button.width  * 0.5;
-            button.y = -button.height * 0.5;
-            trace(button.width);
+
             x = 240;
             y = 220;
+            alpha = 0;
+
+            // なんか validate 呼んでも即座に button.width がとれなくなっちゃったな… なんで？
+            delayedFrame(function():void {
+                button.x = -button.width  * 0.5;
+                button.y = -button.height * 0.5;
+                alpha = 1;
+            });
 
             button.addEventListener(Event.TRIGGERED, function(event:Event):void {
                 touchable = false;

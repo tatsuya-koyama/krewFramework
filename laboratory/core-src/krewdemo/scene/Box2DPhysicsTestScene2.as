@@ -14,13 +14,6 @@ package krewdemo.scene {
     public class Box2DPhysicsTestScene2 extends FeatureTestSceneBase {
 
         //------------------------------------------------------------
-        public override function getRequiredAssets():Array {
-            return [
-                 "image/atlas_game.png"
-                ,"image/atlas_game.xml"
-            ];
-        }
-
         public override function initAfterLoad():void {
             _bgColor = 0x444444;
             super.initAfterLoad();

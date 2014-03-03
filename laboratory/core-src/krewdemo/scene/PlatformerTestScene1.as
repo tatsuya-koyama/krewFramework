@@ -4,10 +4,10 @@ package krewdemo.scene {
 
     import starling.text.TextField;
 
-    import krewfw.core.KrewScene;
     import krewfw.builtin_actor.ui.ImageButton;
     import krewfw.builtin_actor.display.ScreenCurtain;
     import krewfw.builtin_actor.display.SimpleLoadingScreen;
+    import krewfw.core.KrewScene;
 
     import krewdemo.GameEvent;
     import krewdemo.actor.menu.BackButton;
@@ -19,12 +19,14 @@ package krewdemo.scene {
         //------------------------------------------------------------
         public override function getRequiredAssets():Array {
             return [
-                 "image/atlas_game.png"
-                ,"image/atlas_game.xml"
-                ,"tilemap/testmap_001.json"
+                 "tilemap/testmap_001.json"
                 ,"tilemap/atlas_gbism.png"
                 ,"levelmap/level_1.json"
             ];
+        }
+
+        public override function initLoadingView():void {
+            setUpActor('l-back', new SimpleLoadingScreen(0x333333, true));
         }
 
         public override function initAfterLoad():void {

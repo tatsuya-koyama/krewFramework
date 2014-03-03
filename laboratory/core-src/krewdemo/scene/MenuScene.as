@@ -13,13 +13,6 @@ package krewdemo.scene {
     public class MenuScene extends KrewScene {
 
         //------------------------------------------------------------
-        public override function getRequiredAssets():Array {
-            return [
-                 "image/atlas_game.png"
-                ,"image/atlas_game.xml"
-            ];
-        }
-
         public override function getLayerList():Array {
             return ['l-back', 'l-front', 'l-ui', 'l-filter'];
         }

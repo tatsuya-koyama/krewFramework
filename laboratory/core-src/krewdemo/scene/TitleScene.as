@@ -4,7 +4,6 @@ package krewdemo.scene {
 
     import krewfw.core.KrewScene;
     import krewfw.builtin_actor.display.ScreenCurtain;
-    import krewfw.builtin_actor.display.SimpleLoadingScreen;
 
     import krewdemo.GameEvent;
     import krewdemo.actor.title.*;
@@ -15,19 +14,8 @@ package krewdemo.scene {
         private var _loadingBg:ScreenCurtain;
 
         //------------------------------------------------------------
-        public override function getRequiredAssets():Array {
-            return [
-                 "image/atlas_game.png"
-                ,"image/atlas_game.xml"
-            ];
-        }
-
         public override function getLayerList():Array {
             return ['l-back', 'l-front', 'l-ui', 'l-filter'];
-        }
-
-        public override function initLoadingView():void {
-            setUpActor('l-back', new SimpleLoadingScreen(0x000000));
         }
 
         public override function initAfterLoad():void {

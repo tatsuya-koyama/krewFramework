@@ -3,6 +3,7 @@ package krewfw.utils.swiss_knife {
     import flash.utils.getQualifiedClassName;
 
     import krewfw.KrewConfig;
+    import krewfw.utils.as3.KrewAsync;
 
     /**
      * Singleton Army knife for game coding.
@@ -124,6 +125,18 @@ package krewfw.utils.swiss_knife {
         }
 
         //------------------------------------------------------------
+        // Asynchronous process utils
+        //------------------------------------------------------------
+
+        /**
+         * See krewfw.utils.as3.KrewAsync.
+         */
+        public function async(asyncDef:*, onComplete:Function=null):void {
+            var async:KrewAsync = new KrewAsync(asyncDef);
+            async.go(onComplete);
+        }
+
+        //------------------------------------------------------------
         // Array utils
         //------------------------------------------------------------
 
@@ -215,97 +228,6 @@ package krewfw.utils.swiss_knife {
             for (var i:int = 0;  i < count;  ++i) {
                 func(i);
             }
-        }
-
-        //------------------------------------------------------------
-        // Data structure general utils
-        //------------------------------------------------------------
-
-        /**
-         * Traverse Object and apply function for each key-values.
-         * @param callback Function that accepts (key:String, value:*, depth:int) as its parameter.
-         */
-        public function traverse(obj:Object, callback:Function, depth:int=0):void {
-            for (var key:String in obj) {
-                var value:* = obj[key];
-                callback(key, value, depth);
-                if (typeof value == 'object') {
-                    traverse(value, callback, depth + 1);
-                }
-            }
-        }
-
-        public function traverseSortedWithKey(obj:Object, callback:Function, depth:int=0):void {
-            var keys:Array = [];
-            var key:String;
-            for (key in obj) { keys.push(key); }
-            keys.sort();
-
-            for each (key in keys) {
-                var value:* = obj[key];
-                callback(key, value, depth);
-                if (typeof value == 'object') {
-                    traverseSortedWithKey(value, callback, depth + 1);
-                }
-            }
-        }
-
-        /**
-         * Traverse Object and apply function for each key-values.
-         * The callback accepts absolute path to target key joined by dot.
-         * For example, given the following object:
-         * <pre>
-         *     {
-         *         hoge: {
-         *             fuga: {
-         *                 piyo: 123
-         *             }
-         *         }
-         *     }
-         * </pre>
-         * then callback of 'piyo: 123' key-value accepts ('piyo', 123, 'hoge.fuga.piyo')
-         * as its parameter.
-         *
-         * @param callback Function that accepts (key:String, value:*, path:String) as its parameter.
-         */
-        public function traverseWithAbsPath(obj:Object, callback:Function, path:String=''):void {
-            for (var key:String in obj) {
-                var value:* = obj[key];
-                if (getQualifiedClassName(value) == 'Object'  &&  value != null) {
-                    traverseWithAbsPath(value, callback, path + key + '.');
-                } else {
-                    callback(key, value, path + key);
-                }
-            }
-        }
-
-        /**
-         * Convert nested object into new flat object.
-         * For example, following object:
-         * <pre>
-         *     {
-         *         hoge: 123,
-         *         fuga: {
-         *             piyo: 456
-         *         }
-         *     }
-         * </pre>
-         * is converted into object as below:
-         * <pre>
-         *     {
-         *         'hoge'     : 123,
-         *         'fuga.piyo': 456
-         *     }
-         * </pre>
-         * This method is non-destructive.
-         */
-        public function flattenObject(obj:Object):Object {
-            var flattenedObj:Object = new Object();
-            var addToFlatObj:Function = function(key:String, value:*, path:String):void {
-                flattenedObj[path] = value;
-            };
-            traverseWithAbsPath(obj, addToFlatObj);
-            return flattenedObj;
         }
 
         /**
@@ -524,6 +446,97 @@ package krewfw.utils.swiss_knife {
             var dx:Number = (x2 - x1);
             var dy:Number = (y2 - y1);
             return (dx * dx) + (dy * dy);
+        }
+
+        //------------------------------------------------------------
+        // Data structure general utils
+        //------------------------------------------------------------
+
+        /**
+         * Traverse Object and apply function for each key-values.
+         * @param callback Function that accepts (key:String, value:*, depth:int) as its parameter.
+         */
+        public function traverse(obj:Object, callback:Function, depth:int=0):void {
+            for (var key:String in obj) {
+                var value:* = obj[key];
+                callback(key, value, depth);
+                if (typeof value == 'object') {
+                    traverse(value, callback, depth + 1);
+                }
+            }
+        }
+
+        public function traverseSortedWithKey(obj:Object, callback:Function, depth:int=0):void {
+            var keys:Array = [];
+            var key:String;
+            for (key in obj) { keys.push(key); }
+            keys.sort();
+
+            for each (key in keys) {
+                var value:* = obj[key];
+                callback(key, value, depth);
+                if (typeof value == 'object') {
+                    traverseSortedWithKey(value, callback, depth + 1);
+                }
+            }
+        }
+
+        /**
+         * Traverse Object and apply function for each key-values.
+         * The callback accepts absolute path to target key joined by dot.
+         * For example, given the following object:
+         * <pre>
+         *     {
+         *         hoge: {
+         *             fuga: {
+         *                 piyo: 123
+         *             }
+         *         }
+         *     }
+         * </pre>
+         * then callback of 'piyo: 123' key-value accepts ('piyo', 123, 'hoge.fuga.piyo')
+         * as its parameter.
+         *
+         * @param callback Function that accepts (key:String, value:*, path:String) as its parameter.
+         */
+        public function traverseWithAbsPath(obj:Object, callback:Function, path:String=''):void {
+            for (var key:String in obj) {
+                var value:* = obj[key];
+                if (getQualifiedClassName(value) == 'Object'  &&  value != null) {
+                    traverseWithAbsPath(value, callback, path + key + '.');
+                } else {
+                    callback(key, value, path + key);
+                }
+            }
+        }
+
+        /**
+         * Convert nested object into new flat object.
+         * For example, following object:
+         * <pre>
+         *     {
+         *         hoge: 123,
+         *         fuga: {
+         *             piyo: 456
+         *         }
+         *     }
+         * </pre>
+         * is converted into object as below:
+         * <pre>
+         *     {
+         *         'hoge'     : 123,
+         *         'fuga.piyo': 456
+         *     }
+         * </pre>
+         * This method is non-destructive.
+         */
+        public function flattenObject(obj:Object):Object {
+            var flattenedObj:Object = new Object();
+            var addToFlatObj:Function = function(key:String, value:*, path:String):void {
+                flattenedObj[path] = value;
+            };
+            traverseWithAbsPath(obj, addToFlatObj);
+            return flattenedObj;
         }
 
     }

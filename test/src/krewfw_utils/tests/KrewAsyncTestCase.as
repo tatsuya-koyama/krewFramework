@@ -5,6 +5,7 @@ package krewfw_utils.tests {
     import flash.utils.setTimeout;
 
     import krewfw.utils.as3.KrewAsync;
+    import krewfw.utils.krew;
 
     public class KrewAsyncTestCase {
 
@@ -574,6 +575,50 @@ package krewfw_utils.tests {
             }
 
             Assert.assertEquals("12[5]_[4][6][3]7a!", trail.join(''));
+        }
+
+
+        [Test]
+        public function test_KrewTopUtil():void {
+            var trail:Array = [];
+            var onTickHandlers:Array = [];
+
+            /**
+             *             |3 -------->|
+             *             |           |
+             *   1 -> 2 -> |4 --->.....| -> 7 -> anyway
+             *             |           |
+             *             |5 -> 6 ->..|
+             */
+            krew.async({
+                serial: [
+                    function(async:KrewAsync):void {
+                        trail.push("1");  async.done();
+                    },
+                    function(async:KrewAsync):void {
+                        trail.push("2");  async.done();
+                    },
+
+                    new MyAsync(onTickHandlers, trail),
+
+                    function(async:KrewAsync):void {
+                        trail.push("7");  async.done();
+                    }
+                ],
+                anyway: function():void {
+                    trail.push("a");
+                }
+            }, function():void {
+                trail.push("!!!");
+            });
+
+            for (var i:int = 0;  i < 10;  ++i) {
+                for each (var handler:Function in onTickHandlers) {
+                    handler(i);
+                }
+            }
+
+            Assert.assertEquals("12[5]_[4][6][3]7a!!!", trail.join(''));
         }
 
     }

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/4.0">
+    <id>krewfw.samples.krewasync</id>
+    <versionNumber>1.0</versionNumber>
+    <filename>krewSample_KrewAsync</filename>
+    <initialWindow>
+        <content>krew_sample_krewasync.swf</content>
+        <aspectRatio>landscape</aspectRatio>
+        <autoOrients>true</autoOrients>
+        <fullScreen>true</fullScreen>
+        <renderMode>direct</renderMode>
+        <depthAndStencil>false</depthAndStencil>
+    </initialWindow>
+    <supportedProfiles>mobileDevice</supportedProfiles>
+</application>

@@ -12,6 +12,7 @@ package krewfw.builtin_actor.ui {
 
         private var _text:TextField;
         private var _onTouchEnd:Function;
+        private var _autoTouchDisable:Boolean;
 
         //------------------------------------------------------------
         public function get text():TextField {
@@ -19,13 +20,16 @@ package krewfw.builtin_actor.ui {
         }
 
         //------------------------------------------------------------
-        public function TextButton(text:TextField, onTouchEnd:Function) {
+        public function TextButton(text:TextField, onTouchEnd:Function,
+                                   autoTouchDisable:Boolean=true)
+        {
             touchable = true;
 
             _text = text;
             addText(_text);
 
             _onTouchEnd = onTouchEnd;
+            _autoTouchDisable = autoTouchDisable;
             _text.addEventListener(TouchEvent.TOUCH, _onTouch);
         }
 
@@ -33,7 +37,7 @@ package krewfw.builtin_actor.ui {
             // ToDo: 外で指を離したときには作動させない
             var touchEnded:Touch = event.getTouch(this, TouchPhase.ENDED);
             if (touchEnded) {
-                touchable = false;
+                if (_autoTouchDisable) { touchable = false; }
                 _onTouchEnd();
             }
         }

@@ -135,6 +135,10 @@ package krewfw.utils.as3 {
             if (asyncDef is KrewAsync) {
                 _initWithKrewAsync(asyncDef);
             }
+            if (asyncDef is Array) {
+                _initWithArray(asyncDef);
+                return;
+            }
             if (asyncDef is Object) {
                 _initWithObject(asyncDef);
                 return;
@@ -228,6 +232,12 @@ package krewfw.utils.as3 {
         private function _initWithFunction(asyncDef:Function):void {
             _initWithObject({
                 single: asyncDef
+            });
+        }
+
+        private function _initWithArray(asyncDef:Array):void {
+            _initWithObject({
+                serial: asyncDef
             });
         }
 

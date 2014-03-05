@@ -214,6 +214,30 @@ package krewfw_utils.tests {
 
 
         [Test]
+        public function test_serial_from_array():void {
+            var trail:String = "";
+
+            var async:KrewAsync = new KrewAsync([
+                function(async:KrewAsync):void {
+                    trail += "d";
+                    async.done();
+                },
+                function(async:KrewAsync):void {
+                    trail += "e";
+                    async.done();
+                },
+                function(async:KrewAsync):void {
+                    trail += "f";
+                    async.done();
+                }
+            ]);
+            async.go();
+
+            Assert.assertEquals("def", trail);
+        }
+
+
+        [Test]
         public function test_parallel_success():void {
             var trail:String = "";
             var onTickHandlers:Array = [];
@@ -530,6 +554,56 @@ package krewfw_utils.tests {
             }
 
             Assert.assertEquals("125_4E1E2a!63", trail);
+        }
+
+
+        [Test]
+        public function test_serial_and_parallel_2():void {
+            var trail:String = "";
+            var onTickHandlers:Array = [];
+
+            /**
+             *   1 -> 2 -> |3 --->.....| -> 6
+             *             |           |
+             *             |4 -> 5 ->..|
+             */
+            var async:KrewAsync = new KrewAsync([
+                function(async:KrewAsync):void {
+                    trail += "1";  async.done();
+                },
+                function(async:KrewAsync):void {
+                    trail += "2";  async.done();
+                },
+                {
+                    parallel: [
+                        function(async:KrewAsync):void {
+                            onTickHandlers.push(function(count:int):void {
+                                if (count == 9) { trail += "3";  async.done(); }
+                            });
+                        },
+                        [
+                            function(async:KrewAsync):void {
+                                trail += "4";  async.done();
+                            },
+                            function(async:KrewAsync):void {
+                                trail += "5";  async.done();
+                            }
+                        ]
+                    ]
+                },
+                function(async:KrewAsync):void {
+                    trail += "6";  async.done();
+                }
+            ]);
+            async.go();
+
+            for (var i:int = 0;  i < 10;  ++i) {
+                for each (var handler:Function in onTickHandlers) {
+                    handler(i);
+                }
+            }
+
+            Assert.assertEquals("124536", trail);
         }
 
 

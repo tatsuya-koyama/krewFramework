@@ -134,6 +134,7 @@ package krewfw.utils.as3 {
             }
             if (asyncDef is KrewAsync) {
                 _initWithKrewAsync(asyncDef);
+                return;
             }
             if (asyncDef is Array) {
                 _initWithArray(asyncDef);

@@ -12,14 +12,11 @@ package krewfw.core_internal {
     //------------------------------------------------------------
     public class KrewResourceManager {
 
-        private var _urlScheme:String;
         private var _globalScopeAssets:AssetManager;
         private var _sceneScopeAssets :AssetManager;
 
         //------------------------------------------------------------
         public function KrewResourceManager() {
-            _urlScheme = KrewConfig.ASSET_URL_SCHEME;
-
             _globalScopeAssets = new KrewConfig.ASSET_MANAGER_CLASS;
             _sceneScopeAssets  = new KrewConfig.ASSET_MANAGER_CLASS;
 
@@ -172,15 +169,20 @@ package krewfw.core_internal {
             return _sceneScopeAssets.getObject(fileName);
         }
 
+        /**
+         * 現環境におけるアセットファイルの URL を取得する
+         */
+        public function getURL(fileName:String):String {
+            return KrewConfig.ASSET_URL_SCHEME + KrewConfig.ASSET_BASE_PATH + fileName;
+        }
+
         //------------------------------------------------------------
         // private
         //------------------------------------------------------------
         private function _mapToSuitablePath(fileNameList:Array):Array {
             var suitablePathList:Array = [];
             for each (var fileName:String in fileNameList) {
-                suitablePathList.push(
-                    _urlScheme + KrewConfig.ASSET_BASE_PATH + fileName
-                );
+                suitablePathList.push(getURL(fileName));
             }
             return suitablePathList;
         }

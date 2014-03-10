@@ -48,6 +48,8 @@ package krewfw.core_internal {
          *        getImage("拡張子を除くファイル名") で取得できる。
          *        画像はファイル名で引くため、全アトラスでソース画像のファイル名（というか xml 内の識別子）
          *        がユニークになっている必要がある
+         *        （これが嫌な場合は starling.utils.AssetManager を継承して getName を override
+         *          したクラスを用意し、それを KrewConfig で指定してほしい）
          *   </li>
          *   <li> mp3  はロード後 getSound()  で取得できる </li>
          *   <li> json も読める。 getObject() で取得できる </li>
@@ -75,7 +77,8 @@ package krewfw.core_internal {
         }
 
         /**
-         * シーン遷移時にこれを呼んでメモリ解放（テクスチャの dispose を呼ぶ）
+         * シーン遷移時に krewFramework がこれを呼んでメモリ解放する
+         * （テクスチャの dispose を呼ぶ）
          */
         public function purgeSceneScopeResources():void {
             _sceneScopeAssets.purge();
@@ -171,8 +174,17 @@ package krewfw.core_internal {
 
         /**
          * 現環境におけるアセットファイルの URL を取得する
+         * （fileName の先頭に KrewConfig で指定した URL スキームと、
+         *   ベースパスを足したものを返す。）
+         *
+         * fileName にコロン (:) が含まれていた場合はすでに URL スキームが
+         * 指定されているものと見なして、そのまま fileName を返す
          */
         public function getURL(fileName:String):String {
+            if (fileName.indexOf(":") != -1) {
+                return fileName;
+            }
+
             return KrewConfig.ASSET_URL_SCHEME + KrewConfig.ASSET_BASE_PATH + fileName;
         }
 

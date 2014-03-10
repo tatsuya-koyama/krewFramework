@@ -7,6 +7,7 @@ package krewfw.core {
     import krewfw.core_internal.SceneServantActor;
     import krewfw.core_internal.StageLayer;
     import krewfw.core_internal.StuntAction;
+    import krewfw.utils.as3.KrewAsync;
     import krewfw.utils.as3.KrewTimeKeeper;
 
     //------------------------------------------------------------
@@ -118,6 +119,15 @@ package krewfw.core {
         }
 
         /**
+         * initAfterLoad の前に、非同期処理を含む初期化のための処理シーケンスを
+         * 挟みたい場合はここに記述する。
+         * （サーバのレスポンスをもとにリソースを読み込みたい場合など）
+         */
+        public function hookBeforeInit(doneCallback:Function):void {
+            doneCallback();
+        }
+
+        /**
          * 全てのアセットのロード完了後の本命のシーン初期化処理
          * ここから requiredAssets で指定したアセットが使える
          */
@@ -173,20 +183,23 @@ package krewfw.core {
 
             initLoadingView();
 
-            // load global assets, load local assets, and call scene init.
-            _loadGlobalAssets(function():void {
-                _loadSceneScopeAssets(function():void {
-                    initAfterLoad();
-                });
+            // load resources from file to memory
+            krew.async({
+                serial: [
+                    _loadGlobalAssets,
+                    _loadSceneScopeAssets,
+                    _execInitHook
+                ],
+                anyway: initAfterLoad
             });
         }
 
-        private function _loadGlobalAssets(doneCallback:Function):void {
+        private function _loadGlobalAssets(async:KrewAsync):void {
             // hook onLoadCompleteGlobal
             var _onLoadComplete:Function = function():void {
                 _servantActor.sendMessage(KrewSystemEventType.COMPLETE_GLOBAL_ASSET_LOAD);
                 onLoadCompleteGlobal();
-                doneCallback();
+                async.done();
             };
             if (getAdditionalGlobalAssets().length == 0) {
                 _onLoadComplete();
@@ -207,12 +220,12 @@ package krewfw.core {
             );
         }
 
-        private function _loadSceneScopeAssets(doneCallback:Function):void {
+        private function _loadSceneScopeAssets(async:KrewAsync):void {
             // hook onLoadComplete
             var _onLoadComplete:Function = function():void {
                 _servantActor.sendMessage(KrewSystemEventType.COMPLETE_ASSET_LOAD);
                 onLoadComplete();
-                doneCallback();
+                async.done();
             };
             if (getRequiredAssets().length == 0) {
                 _onLoadComplete();
@@ -231,6 +244,10 @@ package krewfw.core {
             sharedObj.resourceManager.loadResources(
                 getRequiredAssets(), _onLoadProgress, _onLoadComplete
             );
+        }
+
+        private function _execInitHook(async:KrewAsync):void {
+            hookBeforeInit(async.done);
         }
 
         private function _setUpServantActor():void {

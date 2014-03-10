@@ -79,6 +79,14 @@ package krewfw.core {
         public function getXml    (fileName:String):XML     { return sharedObj.resourceManager.getXml    (fileName); }
         public function getObject (fileName:String):Object  { return sharedObj.resourceManager.getObject (fileName); }
 
+        public function loadResources(fileNameList:Array, onLoadProgress:Function,
+                                      onLoadComplete:Function):void
+        {
+            sharedObj.resourceManager.loadResources(
+                fileNameList, onLoadProgress, onLoadComplete
+            );
+        }
+
         //----- Sound Control
 
         /**

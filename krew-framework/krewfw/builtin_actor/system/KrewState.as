@@ -1,6 +1,7 @@
 package krewfw.builtin_actor.system {
 
     import krewfw.core.KrewActor;
+    import krewfw.core_internal.KrewSharedObjects;
     import krewfw.utils.krew;
 
     /**
@@ -194,6 +195,10 @@ package krewfw.builtin_actor.system {
 
         public function delayed(timeout:Number, task:Function):void {
             _stateMachine.delayed(timeout, task);
+        }
+
+        public function get sharedObj():KrewSharedObjects {
+            return _stateMachine.sharedObj;
         }
 
         //------------------------------------------------------------

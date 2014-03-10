@@ -18,10 +18,10 @@ package krewfw {
         public static var IS_AIR:Boolean = false;
 
         /** Virtual screen size */
-        public static var SCREEN_WIDTH :int = 480;
+        public static var SCREEN_WIDTH :Number = 480;
 
         /** Virtual screen size */
-        public static var SCREEN_HEIGHT:int = 320;
+        public static var SCREEN_HEIGHT:Number = 320;
 
         /**
          * FPS がどこまで落ちるのを許すか。

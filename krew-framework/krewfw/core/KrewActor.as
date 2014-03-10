@@ -426,6 +426,10 @@ package krewfw.core {
 
         /** Runs task 1 times after n frames. */
         public function delayedFrame(task:Function, waitFrames:int=1):void {
+            if (waitFrames <= 0) {
+                task();
+                return;
+            }
             _timeKeeper.addPeriodicFrameTask(waitFrames, task, 1);
         }
 

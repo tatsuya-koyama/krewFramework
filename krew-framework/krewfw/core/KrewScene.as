@@ -34,6 +34,7 @@ package krewfw.core {
             sharedObj.collisionSystem.removeAllGroups();
             sharedObj.resourceManager.purgeSceneScopeResources();
             _newActorPool = [];
+            KrewActorDelegate.clearSystemActor();
             onDispose();
             super.dispose();
         }
@@ -253,6 +254,7 @@ package krewfw.core {
         private function _setUpServantActor():void {
             _servantActor = new SceneServantActor();
             setUpActor('_system_', _servantActor);
+            KrewActorDelegate.setSystemActor(_servantActor);
         }
 
         /**

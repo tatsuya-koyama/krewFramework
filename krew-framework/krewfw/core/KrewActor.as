@@ -333,7 +333,7 @@ package krewfw.core {
 
         /**
          * displayOrder の値でツリーをソート。 children が皆 KrewActor である前提。
-         * tkActor.displayOrder = 1;  のように設定した上で
+         * actor.displayOrder = 1;  のように設定した上で
          * getLayer('hoge').sortDisplayOrder(); のように使う
          */
         public function sortDisplayOrder():void {

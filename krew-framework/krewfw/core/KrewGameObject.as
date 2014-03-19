@@ -29,10 +29,6 @@ package krewfw.core {
             return _sharedObj;
         }
 
-        public function set sharedObj(sharedObj:KrewSharedObjects):void {
-            _sharedObj = sharedObj;
-        }
-
         /**
          * よく使う utility への簡易アクセス
          */
@@ -49,6 +45,14 @@ package krewfw.core {
         public override function dispose():void {
             stopAllListening();
             super.dispose();
+        }
+
+        //------------------------------------------------------------
+        // Called by framework (DO NOT call manually)
+        //------------------------------------------------------------
+
+        public function set sharedObj(sharedObj:KrewSharedObjects):void {
+            _sharedObj = sharedObj;
         }
 
         /**

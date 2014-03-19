@@ -3,6 +3,7 @@ package krewfw.utils.swiss_knife {
     import flash.utils.getQualifiedClassName;
 
     import krewfw.KrewConfig;
+    import krewfw.core.KrewActorDelegate;
     import krewfw.utils.as3.KrewAsync;
 
     /**
@@ -27,6 +28,10 @@ package krewfw.utils.swiss_knife {
         //------------------------------------------------------------
         // 2nd level utilities
         //------------------------------------------------------------
+
+        public function get delegate():KrewActorDelegate {
+            return KrewActorDelegate.instance;
+        }
 
         public var str:KrewStringUtil = KrewStringUtil.instance;
         public var list:KrewListUtil  = KrewListUtil.instance;

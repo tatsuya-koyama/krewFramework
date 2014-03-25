@@ -6,6 +6,8 @@ package krewfw.core {
     import starling.display.Sprite;
     import starling.textures.Texture;
 
+    import krewfw.core_internal.KrewSharedObjects;
+
     /**
      * Scene 上にのっていない Actor が Actor めいた仕事をしたいときの委譲先。
      * バックエンドに存在する各 Scene のシステム Actor に処理を代行してもらう。
@@ -67,6 +69,8 @@ package krewfw.core {
         //------------------------------------------------------------
         // Delegate methods
         //------------------------------------------------------------
+
+        public function get sharedObj():KrewSharedObjects { return _actor.sharedObj; }
 
         public function getTexture(fileName:String):Texture { return _actor.getTexture(fileName); }
         public function getImage  (fileName:String):Image   { return _actor.getImage  (fileName); }

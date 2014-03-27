@@ -25,6 +25,7 @@ package krewfw.core {
         //------------------------------------------------------------
         public function KrewGameDirector() {
             KrewBlendMode.registerExtendedBlendModes();
+            KrewTransition.registerExtendedTransitions();
 
             var stage:Stage = NativeStageAccessor.stage;
             if (stage != null) {

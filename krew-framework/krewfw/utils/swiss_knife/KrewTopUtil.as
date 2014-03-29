@@ -443,11 +443,11 @@ package krewfw.utils.swiss_knife {
             return (a > b) ? a : b;
         }
 
-        public function getDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
-            return Math.sqrt(getSquaredDistance(x1, y1, x2, y2));
+        public function distance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
+            return Math.sqrt(squaredDistance(x1, y1, x2, y2));
         }
 
-        public function getSquaredDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
+        public function squaredDistance(x1:Number, y1:Number, x2:Number, y2:Number):Number {
             var dx:Number = (x2 - x1);
             var dy:Number = (y2 - y1);
             return (dx * dx) + (dy * dy);

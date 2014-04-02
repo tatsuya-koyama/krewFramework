@@ -187,26 +187,23 @@ package krewfw.builtin_actor.system {
                 throw new Error("[KrewFSM] stateId not registered: " + stateId);
             }
 
-            // Good bye old state
             var oldStateId:String = "null";
+            var oldState:KrewState = _currentState;
+            var newState:KrewState = _states[stateId];
+
+            // Good bye old state
             if (_currentState != null) {
                 oldStateId = _currentState.stateId;
-                _currentState.exit();
-                if (_currentState.onExitHandler != null) {
-                    _currentState.onExitHandler(_currentState);
-                }
+                oldState.exit();
+                oldState.end(newState);
             }
 
             // Hello new state
-            var newState:KrewState = _states[stateId];
             _currentState = newState;
+            newState.begin(oldState);
+            newState.enter();
 
             _log("[Info] [KrewFSM] SWITCHED: " + newState.stateId + "  <-  " + oldStateId);
-
-            newState.enter();
-            if (newState.onEnterHandler != null) {
-                newState.onEnterHandler(newState);
-            }
         }
 
         /**

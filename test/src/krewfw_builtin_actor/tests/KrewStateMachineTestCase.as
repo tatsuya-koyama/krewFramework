@@ -559,7 +559,6 @@ package krewfw_builtin_actor.tests {
 
             var scene:KrewScene = KrewTestUtil.getScene();
             scene.setUpActor(null, fsm);
-            fsm.dumpStateTree();
 
             var anActor:KrewActor = new KrewActor();
             scene.setUpActor(null, anActor);
@@ -571,6 +570,100 @@ package krewfw_builtin_actor.tests {
             anActor.sendMessage("event70_B");
             scene.mainLoop();
             Assert.assertEquals("state_71", fsm.currentState.stateId);
+        }
+
+        [Test]
+        public function test_begin_end():void {
+            var trail:String = "";
+            var run:Function = function(str:String):Function {
+                return function(state:KrewState):void { trail += str; }
+            };
+
+            var fsm:KrewStateMachine = new KrewStateMachine([
+                {
+                    id: "state_80",
+                    enter: run("a"),
+                    begin: run("b"),
+                    exit : run("A"),
+                    end  : run("B"),
+                    children: [
+                        {
+                            id: "state_80A",
+                            enter: run("c"),
+                            begin: run("d"),
+                            exit : run("C"),
+                            end  : run("D"),
+                            children: [
+                                {
+                                    id: "state_80AA",
+                                    enter: run("e"),
+                                    begin: run("f"),
+                                    exit : run("E"),
+                                    end  : run("F")
+                                }
+                            ]
+                        },
+                        {
+                            id: "state_80B",
+                            enter: run("g"),
+                            begin: run("h"),
+                            exit : run("G"),
+                            end  : run("H"),
+                            children: [
+                                {
+                                    id: "state_80BA",
+                                    enter: run("i"),
+                                    begin: run("j"),
+                                    exit : run("I"),
+                                    end  : run("J"),
+                                    children: [
+                                        {
+                                            id: "state_80BAA",
+                                            enter: run("k"),
+                                            begin: run("l"),
+                                            exit : run("K"),
+                                            end  : run("L")
+                                        }
+                                    ]
+                                },
+                                {
+                                    id: "state_80BB",
+                                    enter: run("m"),
+                                    begin: run("n"),
+                                    exit : run("M"),
+                                    end  : run("N"),
+                                    children: [
+                                        {
+                                            id: "state_80BBA",
+                                            enter: run("o"),
+                                            begin: run("p"),
+                                            exit : run("O"),
+                                            end  : run("P")
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]);
+
+            var scene:KrewScene = KrewTestUtil.getScene();
+            scene.setUpActor(null, fsm);
+
+            Assert.assertEquals("ba", trail);
+
+            fsm.changeState("state_80AA");
+            Assert.assertEquals("baAdfe", trail);
+
+            fsm.changeState("state_80AA");
+            Assert.assertEquals("baAdfeEe", trail);
+
+            fsm.changeState("state_80BB");
+            Assert.assertEquals("baAdfeEeEFDhnm", trail);
+
+            fsm.changeState("state_80A");
+            Assert.assertEquals("baAdfeEeEFDhnmMNHdc", trail);
         }
 
     }

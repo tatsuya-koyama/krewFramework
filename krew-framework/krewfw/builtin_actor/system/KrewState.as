@@ -26,6 +26,12 @@ package krewfw.builtin_actor.system {
         /** Handler called when state ends. */
         private var _onExitHandler:Function;
 
+        /** Handler called when state or child state starts and previous state is not a child. */
+        private var _onBeginHandler:Function;
+
+        /** Handler called when state or child state ends and next state is not a child. */
+        private var _onEndHandler:Function;
+
         /** Conditions of transitions by event. */
         private var _guardFunc:Function;
 
@@ -49,6 +55,8 @@ package krewfw.builtin_actor.system {
         public function get onEnterHandler() :Function { return _onEnterHandler; }
         public function get onUpdateHandler():Function { return _onUpdateHandler; }
         public function get onExitHandler()  :Function { return _onExitHandler; }
+        public function get onBeginHandler() :Function { return _onBeginHandler; }
+        public function get onEndHandler()   :Function { return _onEndHandler; }
         public function get guardFunc()      :Function { return _guardFunc; }
 
         public function get listenList():Array { return _listenList; }
@@ -71,9 +79,11 @@ package krewfw.builtin_actor.system {
          *   <li>(Optional) next    : {String} - Next state name. progress() will proceed state to the next.
          *           If omitted, next Array element is used as next state.</li>
          *   <li>(Optional) enter   : {Function(state:KrewState):void} - Called when state starts.</li>
-         *   <li>(Optional) update  : {Function(state:KrewState, passedTime:Number):void} -
-         *           Called during state or sub-state is selected.</li>
+         *   <li>(Optional) update  : {Function(state:KrewState, passedTime:Number):void}
+         *           - Called during state or sub-state is selected.</li>
          *   <li>(Optional) exit    : {Function(state:KrewState):void} - Called when state ends.</li>
+         *   <li>(Optional) begin   : {Function(state:KrewState):void} - Called when state or child state starts.</li>
+         *   <li>(Optional) end     : {Function(state:KrewState):void} - Called when state or child state ends.</li>
          *   <li>(Optional) guard   : {Function(state:KrewState):Boolean} - Called when event triggered.
          *           Return false to prevent transition and bubbling event.</li>
          *   <li>(Optional) listen  : {Object or Array} - Ex.)
@@ -105,9 +115,11 @@ package krewfw.builtin_actor.system {
             _onEnterHandler  = _getFunction(stateDef.enter , funcOwner);
             _onUpdateHandler = _getFunction(stateDef.update, funcOwner);
             _onExitHandler   = _getFunction(stateDef.exit  , funcOwner);
+            _onBeginHandler  = _getFunction(stateDef.begin , funcOwner);
+            _onEndHandler    = _getFunction(stateDef.end   , funcOwner);
             _guardFunc       = _getFunction(stateDef.guard , funcOwner);
 
-            // listen to event
+            // prepare listening to event
             if (stateDef.listen != null) {
                 if (stateDef.listen is Array) {
                     _listenList = stateDef.listen;
@@ -181,6 +193,25 @@ package krewfw.builtin_actor.system {
             _stateMachine.changeState(_nextStateId);
         }
 
+        /** Return true if arg is same state instance. */
+        public function isEqual(state:KrewState):Boolean {
+            if (state == null) { return false; }
+            return (state.stateId == this.stateId);
+        }
+
+        /** Return true if arg is my child state (grandchild is a child.) */
+        public function isChild(state:KrewState, nestCount:int=0):Boolean {
+            if (state == null) { return false; }
+
+            if (nestCount > 0  &&  state.stateId == this.stateId) { return true; }
+
+            for each (var childState:KrewState in _childStates) {
+                var isChild:Boolean = childState.isChild(state, nestCount + 1);
+                if (isChild) { return true; }
+            }
+            return false;
+        }
+
         //------------------------------------------------------------
         // Actor-mimicry interface
         //------------------------------------------------------------
@@ -206,7 +237,7 @@ package krewfw.builtin_actor.system {
         //------------------------------------------------------------
 
         /**
-         * Iterate state tree downward. Passes itself and children to iterator function.
+         * Iterate state tree downward. Passes <b>itself</b> and children to iterator function.
          * @param iterator function(state:KrewState):void
          */
         public function eachChild(iterator:Function):void {
@@ -220,7 +251,7 @@ package krewfw.builtin_actor.system {
         }
 
         /**
-         * Iterate state tree upward. Passes itself and parents to iterator function.
+         * Iterate state tree upward. Passes <b>itself</b> and parents to iterator function.
          * @param iterator function(state:KrewState):void
          */
         public function eachParent(iterator:Function):void {
@@ -250,6 +281,10 @@ package krewfw.builtin_actor.system {
                     _listenToEvent(state, event, targetState);
                 }
             });
+
+            if (_onEnterHandler != null) {
+                _onEnterHandler(this);
+            }
         }
 
         private function _listenToEvent(state:KrewState, event:String, targetState:String):void {
@@ -271,6 +306,45 @@ package krewfw.builtin_actor.system {
                     state.isListening = false;
                 }
             });
+
+            if (_onExitHandler != null) {
+                _onExitHandler(this);
+            }
+        }
+
+        /**
+         * @private
+         * 外の State から、自分か自分の子 State に入ってきたときに begin ハンドラを実行する。
+         * 直前の State が null（これが初期 State）だった場合にも実行する
+         */
+        public function begin(prevState:KrewState):void {
+            if (isEqual(prevState)) { return; }
+            if (prevState != null  &&  isChild(prevState)) { return; }
+
+            if (hasParent()) {
+                _parentState.begin(prevState);
+            }
+
+            if (_onBeginHandler != null) {
+                _onBeginHandler(this);
+            }
+        }
+
+        /**
+         * @private
+         * 自分か自分の子 State が外の State に出ていったときに end ハンドラを実行する
+         */
+        public function end(nextState:KrewState):void {
+            if (isEqual(nextState)) { return; }
+            if (isChild(nextState)) { return; }
+
+            if (_onEndHandler != null) {
+                _onEndHandler(this);
+            }
+
+            if (hasParent()) {
+                _parentState.end(nextState);
+            }
         }
 
         /**

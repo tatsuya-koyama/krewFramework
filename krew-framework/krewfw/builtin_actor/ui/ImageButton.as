@@ -20,6 +20,9 @@ package krewfw.builtin_actor.ui {
         private var _clickHandler:Function;
         private var _altKey:int = 0;
 
+        private var _buttonImageColor:uint        = 0xffffff;
+        private var _buttonImagePressedColor:uint = 0x888888;
+
         private var _isAltKeyDown:Boolean = false;
 
         //------------------------------------------------------------
@@ -34,12 +37,15 @@ package krewfw.builtin_actor.ui {
          * @param buttonY
          * @param altKey 代替キーのキーコード。0 以外を渡すと、そのキーでも押したこととみなされる。
          *               代替キーを指定しない場合は 0 を渡す。定数は flash.ui.Keyboard クラスを参照
+         * @param allowMoveMode false なら指が動いていた時に押したとみなさない
          * @see http://help.adobe.com/en_US/FlashPlatform/reference/actionscript/3/flash/ui/Keyboard.html flash.ui.Keyboard
          */
         public function ImageButton(imageName:String, clickHandler:Function,
                                     width:Number, height:Number,
                                     touchWidth:Number, touchHeight:Number,
-                                    buttonX:Number, buttonY:Number, altKey:int=0) {
+                                    buttonX:Number, buttonY:Number, altKey:int=0,
+                                    allowMoveMode:Boolean=true)
+        {
             touchable = true;
 
             _clickHandler = clickHandler;
@@ -48,7 +54,7 @@ package krewfw.builtin_actor.ui {
             addInitializer(function():void {
                 _button = new SimpleButton(
                     _onTouchEndInside, _onTouchEndOutside, _onTouchBegan,
-                    touchWidth, touchHeight
+                    touchWidth, touchHeight, allowMoveMode
                 );
                 _buttonImage = getImage(imageName);
                 _buttonImage.touchable = true;
@@ -68,6 +74,19 @@ package krewfw.builtin_actor.ui {
         }
 
         //------------------------------------------------------------
+        // Accessors
+        //------------------------------------------------------------
+
+        public function set imageColor(val:uint):void {
+            _buttonImageColor  = val;
+            _buttonImage.color = _buttonImageColor;
+        }
+
+        public function set pressedImageColor(val:uint):void {
+            _buttonImagePressedColor = val;
+        }
+
+        //------------------------------------------------------------
         // Touch Event
         //------------------------------------------------------------
 
@@ -76,7 +95,7 @@ package krewfw.builtin_actor.ui {
         }
 
         private function _onTouchBegan():void {
-            _button.color = 0x888888;
+            _button.color  = _buttonImagePressedColor;
             _buttonImage.y = 2;
         }
 
@@ -92,7 +111,7 @@ package krewfw.builtin_actor.ui {
         }
 
         private function _enableButton():void {
-            _button.color = 0xffffff;
+            _button.color  = _buttonImageColor;
             _buttonImage.y = 0;
             _button.touchable = true;
         }

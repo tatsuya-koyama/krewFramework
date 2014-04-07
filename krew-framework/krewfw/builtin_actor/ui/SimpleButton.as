@@ -16,19 +16,25 @@ package krewfw.builtin_actor.ui {
         private var _onTouchBegan:Function = null;
         private var _touchWidth:Number;
         private var _touchHeight:Number;
+        private var _allowMoveMode:Boolean;
+
+        private var _movements:Number = 0;
 
         //------------------------------------------------------------
         public function SimpleButton(onTouchEndInside:Function,
                                      onTouchEndOutside:Function=null,
                                      onTouchBegan:Function=null,
-                                     touchWidth:Number=0, touchHeight:Number=0) {
+                                     touchWidth:Number=0, touchHeight:Number=0,
+                                     allowMoveMode:Boolean=true)
+        {
             touchable = true;
 
             _onTouchEndInside  = onTouchEndInside;
             _onTouchEndOutside = onTouchEndOutside;
             _onTouchBegan      = onTouchBegan;
-            _touchWidth  = touchWidth;
-            _touchHeight = touchHeight;
+            _touchWidth        = touchWidth;
+            _touchHeight       = touchHeight;
+            _allowMoveMode     = allowMoveMode;
             addEventListener(TouchEvent.TOUCH, _onTouch);
         }
 
@@ -48,8 +54,23 @@ package krewfw.builtin_actor.ui {
                 }
             }
 
+            var touchMoved:Touch = event.getTouch(this, TouchPhase.MOVED);
+            if (touchMoved) {
+                var movement:Point = touchMoved.getMovement(this);
+                _addMovement(movement);
+            }
+
             var touchEnded:Touch = event.getTouch(this, TouchPhase.ENDED);
             if (touchEnded) {
+                // 指が動いていたから押したとは見なさない
+                if (_isMovedMeaningly()) {
+                    if (_onTouchEndOutside != null) {
+                        _onTouchEndOutside();
+                    }
+                    _resetMovement();
+                    return;
+                }
+
                 if (_isInside(touchEnded)) {
                     // ちゃんとボタンの内側で指が離された
                     event.stopPropagation();
@@ -74,6 +95,22 @@ package krewfw.builtin_actor.ui {
             if (localPos.y >  _touchHeight / 2) { return false; }
 
             return true;
+        }
+
+        private function _addMovement(mv:Point):void {
+            _movements += (mv.x * mv.x) + (mv.y * mv.y);
+        }
+
+        private function _resetMovement():void {
+            _movements = 0;
+        }
+
+        /** 押されてから指が結構動いていたら true を返す */
+        private function _isMovedMeaningly():Boolean {
+            if (_allowMoveMode) { return false; }
+
+            var tolerance:Number = 40;
+            return (_movements > tolerance * tolerance);
         }
     }
 }

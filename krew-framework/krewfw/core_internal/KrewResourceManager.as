@@ -15,6 +15,8 @@ package krewfw.core_internal {
         private var _globalScopeAssets:AssetManager;
         private var _sceneScopeAssets :AssetManager;
 
+        private var _urlResolverHook:Function = null;
+
         //------------------------------------------------------------
         public function KrewResourceManager() {
             _globalScopeAssets = new KrewConfig.ASSET_MANAGER_CLASS;
@@ -181,11 +183,24 @@ package krewfw.core_internal {
          * 指定されているものと見なして、そのまま fileName を返す
          */
         public function getURL(fileName:String):String {
+            if (_urlResolverHook != null) {
+                fileName = _urlResolverHook(fileName);
+            }
+
             if (fileName.indexOf(":") != -1) {
                 return fileName;
             }
 
             return KrewConfig.ASSET_URL_SCHEME + KrewConfig.ASSET_BASE_PATH + fileName;
+        }
+
+        /**
+         * getURL に渡す fileName を差し替えるフックを設定する
+         *
+         * @param hook function(fileName:String):String ... 新しい fileName を返す関数
+         */
+        public function setURLResolverHook(hook:Function):void {
+            _urlResolverHook = hook;
         }
 
         //------------------------------------------------------------

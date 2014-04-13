@@ -57,12 +57,13 @@ package krewfw.builtin_actor.ui {
                 _setCenterPivot(defaultStick);
                 addChild(defaultHolder);
                 addChild(defaultStick);
+                _stickImage = defaultStick;
             } else {
                 addImage(holderImage);
                 addImage(stickImage);
+                _stickImage = stickImage;
             }
 
-            _stickImage = stickImage;
 
             super.addTouchMarginNode(touchSize, touchSize);
             addEventListener(TouchEvent.TOUCH, _onTouch);

@@ -104,7 +104,7 @@ package krewfw.builtin_actor.ui {
             var stickX:Number = localPos.x;
             var stickY:Number = localPos.y;
 
-            var fingerDistance:Number = krew.getDistance(0, 0, stickX, stickY);
+            var fingerDistance:Number = krew.distance(0, 0, stickX, stickY);
             var scaleToFingerLimit:Number = fingerDistance / maxFingerMove;
             if (scaleToFingerLimit > 1) {
                 stickX /= scaleToFingerLimit;

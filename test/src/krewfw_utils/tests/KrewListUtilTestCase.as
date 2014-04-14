@@ -16,5 +16,13 @@ package krewfw_utils.tests {
             Assert.assertEquals(4, krew.list.count([2, 1, 4, 5, 8, 3, 4], filter));
         }
 
+        [Test]
+        public function test_find():void {
+            var tester:Function = function(item:*):Boolean {
+                return (item % 5 == 0);
+            };
+            Assert.assertEquals(15, krew.list.find([3, 7, 15, 8, 5, 10, 2], tester));
+        }
+
     }
 }

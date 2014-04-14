@@ -63,5 +63,20 @@ package krewfw.utils.swiss_knife {
             return list[index];
         }
 
+        /**
+         * Returns the first element that passes a test iterator.
+         * If no value passes the test, returns null.
+         * When the function finds an acceptable element, it doesn't traverse the entire list.
+         *
+         * @param list Target Array.
+         * @param iterator Tester Function: function(item:*):Boolean
+         */
+        public function find(list:Array, iterator:Function):* {
+            for each (var item:* in list) {
+                if (iterator(item)) { return item; }
+            }
+            return null;
+        }
+
     }
 }

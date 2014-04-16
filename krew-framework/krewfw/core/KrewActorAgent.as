@@ -3,7 +3,6 @@ package krewfw.core {
     import flash.media.Sound;
 
     import starling.display.Image;
-    import starling.display.Sprite;
     import starling.textures.Texture;
 
     import krewfw.core_internal.KrewSharedObjects;
@@ -15,7 +14,7 @@ package krewfw.core {
      *
      * <pre>
      *     import krewfw.utils.krew;
-     *     krew.delegate.sendMessage(...);
+     *     krew.agent.sendMessage(...);
      * </pre>
      *
      * krewFramework は Actor の集まりで構成するという設計思想を持つが、
@@ -26,7 +25,7 @@ package krewfw.core {
      * そういうことをしたくなったクラスは Actor として Scene 上に生きなければならない。
      */
     //------------------------------------------------------------
-    public class KrewActorDelegate {
+    public class KrewActorAgent {
 
         /** system actor on current scene */
         private static var _actor:KrewActor = null;
@@ -47,21 +46,21 @@ package krewfw.core {
         // Singleton interface
         //------------------------------------------------------------
 
-        private static var _instance:KrewActorDelegate;
+        private static var _instance:KrewActorAgent;
 
-        public function KrewActorDelegate() {
+        public function KrewActorAgent() {
             if (_instance) {
-                throw new Error("[KrewActorDelegate] Cannot instantiate singleton.");
+                throw new Error("[KrewActorAgent] Cannot instantiate singleton.");
             }
         }
 
-        public static function get instance():KrewActorDelegate {
+        public static function get instance():KrewActorAgent {
             if (_actor == null) {
-                throw new Error("[KrewActorDelegate] System actor is not ready.");
+                throw new Error("[KrewActorAgent] System actor is not ready.");
             }
 
             if (!_instance) {
-                _instance = new KrewActorDelegate();
+                _instance = new KrewActorAgent();
             }
             return _instance;
         }

@@ -198,12 +198,12 @@ package krewfw.builtin_actor.system {
                 oldState.end(newState);
             }
 
+            _log("[Info] [KrewFSM] SWITCHED: " + newState.stateId + "  <-  " + oldStateId);
+
             // Hello new state
             _currentState = newState;
             newState.begin(oldState);
             newState.enter();
-
-            _log("[Info] [KrewFSM] SWITCHED: " + newState.stateId + "  <-  " + oldStateId);
         }
 
         /**

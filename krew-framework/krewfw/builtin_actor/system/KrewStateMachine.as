@@ -277,6 +277,7 @@ package krewfw.builtin_actor.system {
         //------------------------------------------------------------
 
         private function _onEvent(args:Object, event:String):void {
+            _log("[Info] [KrewFSM] EVENT: " + event);
             _currentState.onEvent(args, event);
         }
 

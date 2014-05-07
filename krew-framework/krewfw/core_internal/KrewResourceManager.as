@@ -1,6 +1,7 @@
 package krewfw.core_internal {
 
     import flash.media.Sound;
+    import flash.utils.ByteArray;
 
     import starling.display.Image;
     import starling.textures.Texture;
@@ -169,9 +170,17 @@ package krewfw.core_internal {
 
             krew.fwlog('[Error] [KRM] Object not found: ' + fileName);
             return null;
+        }
 
+        public function getByteArray(fileName:String):ByteArray {
+            var byteArray:ByteArray = _sceneScopeAssets.getByteArray(fileName);
+            if (byteArray) { return byteArray; }
 
-            return _sceneScopeAssets.getObject(fileName);
+            byteArray = _globalScopeAssets.getByteArray(fileName);
+            if (byteArray) { return byteArray; }
+
+            krew.fwlog('[Error] [KRM] ByteArray not found: ' + fileName);
+            return null;
         }
 
         /**

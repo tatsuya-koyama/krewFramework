@@ -3,6 +3,7 @@ package krewfw.builtin_actor.system {
     import krewfw.core.KrewActor;
     import krewfw.core_internal.KrewSharedObjects;
     import krewfw.utils.krew;
+    import krewfw.utils.swiss_knife.KrewTopUtil;
 
     /**
      * State Object for KrewStateMachine.
@@ -230,6 +231,10 @@ package krewfw.builtin_actor.system {
 
         public function get sharedObj():KrewSharedObjects {
             return _stateMachine.sharedObj;
+        }
+
+        public function get krew():KrewTopUtil {
+            return krewfw.utils.krew;
         }
 
         //------------------------------------------------------------

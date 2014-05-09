@@ -8,6 +8,13 @@ package krewfw.builtin_actor.system {
     //------------------------------------------------------------
     public class KrewScenarioPlayer extends KrewActor {
 
+        // You can customize object keys.
+        public var TRIGGER_KEY    :String = "trigger_key";
+        public var TRIGGER_PARAMS :String = "trigger_params";
+        public var METHOD         :String = "method";
+        public var PARAMS         :String = "params";
+        public var NEXT           :String = "next";
+
         private var _eventList:Array;
         private var _eventsByTrigger:Object;
 
@@ -57,7 +64,7 @@ package krewfw.builtin_actor.system {
 
             _eventsByTrigger = {};
             for each (var eventData:Object in _eventList) {
-                var triggerKey:String = eventData.trigger_key;
+                var triggerKey:String = eventData[TRIGGER_KEY];
                 if (!triggerKey) { continue; }
 
                 if (!_eventsByTrigger[triggerKey]) {
@@ -135,7 +142,7 @@ package krewfw.builtin_actor.system {
             listen(info.eventName, function(eventArgs:Object):void {
                 for each (var eventData:Object in _eventsByTrigger[triggerKey]) {
 
-                    var triggerParams:Object = eventData.trigger_params;
+                    var triggerParams:Object = eventData[TRIGGER_PARAMS];
                     if (!info.checker(eventArgs, triggerParams)) { continue; }
 
                     _callMethod(eventData);
@@ -144,10 +151,10 @@ package krewfw.builtin_actor.system {
         }
 
         private function _callMethod(eventData:Object):void {
-            var methodName:String = eventData.method;
+            var methodName:String = eventData[METHOD];
             if (!methodName) {
                 throw new Error('[KrewEventPlayer] method name not found. (trigger: '
-                                + eventData.trigger_key + ')');
+                                + eventData[TRIGGER_KEY] + ')');
                 return;
             }
 
@@ -157,7 +164,7 @@ package krewfw.builtin_actor.system {
                 return;
             }
 
-            method(eventData.params, function():void {
+            method(eventData[PARAMS], function():void {
                 _callNextMethod(eventData);
             });
         }

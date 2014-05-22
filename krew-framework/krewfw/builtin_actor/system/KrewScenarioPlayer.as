@@ -21,6 +21,9 @@ package krewfw.builtin_actor.system {
         private var _triggers:Object = {};
         private var _methods:Object  = {};
 
+        // internal event
+        public static const ACTIVATE:String = "ksp.activate";
+
         //------------------------------------------------------------
         public function KrewScenarioPlayer() {
             displayable = false;
@@ -126,6 +129,7 @@ package krewfw.builtin_actor.system {
             for (var triggerKey:String in _eventsByTrigger) {
                 _listenEvent(triggerKey);
             }
+            sendMessage(KrewScenarioPlayer.ACTIVATE);
         }
 
         //------------------------------------------------------------

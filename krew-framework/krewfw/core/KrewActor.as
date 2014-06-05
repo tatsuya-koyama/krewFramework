@@ -243,8 +243,13 @@ package krewfw.core {
             // pivotX, Y は回転の軸だけでなく座標指定にも影響する
             // そして何故かソースの画像の解像度に対する座標で指定してやらないといけないようだ
             var textureRect:Rectangle = image.texture.frame;
-            image.pivotX = (textureRect.width  * anchorX);
-            image.pivotY = (textureRect.height * anchorY);
+            if (textureRect) {
+                image.pivotX = textureRect.width  * anchorX;
+                image.pivotY = textureRect.height * anchorY;
+            } else {
+                image.pivotX = image.texture.width  * anchorX;
+                image.pivotY = image.texture.height * anchorY;
+            }
 
             _cachedWidth  = width;
             _cachedHeight = height;

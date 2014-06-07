@@ -41,6 +41,9 @@ package krewfw.builtin_actor.ui {
         /**
          * touchWidth と touchHeight が画像の width, height を
          * 超えるような場合はこれを呼んでおく必要がある
+         *
+         * [CAUTION] これは Actor の init 後（setUpActor, addActor 以後）
+         *           に呼ばれなければならない
          */
         public override function addTouchMarginNode(touchWidth:Number=0, touchHeight:Number=0):void {
             super.addTouchMarginNode(_touchWidth, _touchHeight);

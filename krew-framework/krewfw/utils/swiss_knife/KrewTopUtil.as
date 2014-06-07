@@ -360,8 +360,8 @@ package krewfw.utils.swiss_knife {
         }
 
         public function hsv2intWithRand(hMin:Number, hMax:Number,
-                                               sMin:Number, sMax:Number,
-                                               vMin:Number, vMax:Number):uint {
+                                        sMin:Number, sMax:Number,
+                                        vMin:Number, vMax:Number):uint {
             return hsv2int(
                 randArea(hMin, hMax),
                 randArea(sMin, sMax),

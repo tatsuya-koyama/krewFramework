@@ -172,9 +172,8 @@ package krewdemo.actor.feature_test {
             for each (var el:Object in levelInfo.layers[layerName].elements) {
                 var image:Image = getImage(el.name);
 
-                var textureRect:Rectangle = image.texture.frame;
-                image.pivotX = (textureRect.width  * 0.5);
-                image.pivotY = (textureRect.height * 0.5);
+                image.pivotX = (image.texture.width  * 0.5);
+                image.pivotY = (image.texture.height * 0.5);
 
                 image.x        = el.x;
                 image.y        = el.y;

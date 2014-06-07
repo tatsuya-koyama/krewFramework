@@ -1,6 +1,7 @@
 package krewfw.core {
 
     import flash.geom.Rectangle;
+    import flash.utils.getQualifiedClassName;
 
     import starling.animation.Transitions;
     import starling.animation.Tween;
@@ -56,6 +57,12 @@ package krewfw.core {
         /** false にすると CollisionShape が衝突判定を行わない */
         public var collidable:Boolean = true;
 
+        /**
+         * true にすると再セットアップが可能な状態に dispose する。
+         * （GC を促すための null を入れることをしない）
+         */
+        public var poolable:Boolean = false;
+
         //------------------------------------------------------------
         // accessors
         //------------------------------------------------------------
@@ -104,7 +111,7 @@ package krewfw.core {
             return _hasInitialized;
         }
 
-        /** Called by StageLayerManager for re-init global actor. */
+        /** Called from StageLayerManager for re-init global actor. */
         public function set hasInitialized(value:Boolean):void {
             _hasInitialized = value;
         }
@@ -133,7 +140,9 @@ package krewfw.core {
                               layer:StageLayer, layerName:String):void
         {
             if (_hasInitialized) {
-                krew.fwlog('[Warning] KrewActor has initialized twice.');
+                if (!poolable) {
+                    krew.fwlog('[Warning] KrewActor has initialized twice.');
+                }
                 return;
             }
             _hasInitialized = true;
@@ -164,6 +173,14 @@ package krewfw.core {
             if (_hasDisposed) { return; }
             _hasDisposed = true;
 
+            if (poolable) {
+                _disposeForReuse();
+            } else {
+                _disposeForGC();
+            }
+        }
+
+        private function _disposeForGC():void {
             if (_hasInitialized) {
                 _hasInitialized = false;
                 ProfileData.countActor(-1, this.layerName);
@@ -194,6 +211,24 @@ package krewfw.core {
             super.dispose();
         }
 
+        private function _disposeForReuse():void {
+            react();
+            _timeKeeper.dispose();
+
+            onRecycle();
+        }
+
+        protected function _retrieveFromPool():void {
+            _hasDisposed    = false;
+            _markedForDeath = false;
+        }
+
+        protected function _disposeFromPool():void {
+            _hasDisposed = false;
+            poolable = false;
+            dispose();
+        }
+
         /** @private */
         protected function _disposeImageTextures():void {
             for (var i:uint=0;  i < _imageList.length;  ++i) {
@@ -220,6 +255,14 @@ package krewfw.core {
         protected function removeCollision():void {
             if (!sharedObj) { return; }
             sharedObj.collisionSystem.removeShapeWithActor(this);
+        }
+
+        /**
+         * poolable = true な Actor が dispose されるタイミングで、
+         * onDispose の代わりに呼ばれる
+         */
+        protected function onRecycle():void {
+            // Override this.
         }
 
         //------------------------------------------------------------
@@ -326,7 +369,10 @@ package krewfw.core {
             }
         }
 
-        /** for touch action */
+        /**
+         * for touch action adjustment.
+         * [CAUTION] You should call this after actor's init (setUpActor or addActor).
+         */
         public function addTouchMarginNode(touchWidth:Number=0, touchHeight:Number=0):void {
             var margin:ColorRect = new ColorRect(touchWidth, touchHeight);
             margin.touchable = true;
@@ -355,7 +401,8 @@ package krewfw.core {
 
         public function addTween(tween:Tween):void {
             if (!layer) {
-                krew.fwlog('[Error] This actor does not belong to any layer.');
+                krew.fwlog('[Error] [KrewActor::addTween] This actor does not belong to any layer.');
+                krew.fwlog('   - class: ' + getQualifiedClassName(this));
                 return;
             }
 
@@ -364,7 +411,8 @@ package krewfw.core {
 
         public function removeTweens():void {
             if (!layer) {
-                krew.fwlog('[Error] This actor does not belong to any layer.');
+                krew.fwlog('[Error] [KrewActor::removeTween] This actor does not belong to any layer.');
+                krew.fwlog('   - class: ' + getQualifiedClassName(this));
                 return;
             }
 

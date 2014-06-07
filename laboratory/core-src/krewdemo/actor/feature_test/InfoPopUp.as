@@ -34,13 +34,13 @@ package krewdemo.actor.feature_test {
                     _onTouchEndInside, _onTouchEndOutside, _onTouchBegan,
                     width + 15, height + 15
                 );
-                _button.addTouchMarginNode();
                 _buttonImage = getImage(imageName);
                 _buttonImage.touchable = true;
                 _button.addImage(_buttonImage, width, height, 0, 0, 0.5, 0.5);
                 _button.x = x;
                 _button.y = y;
                 addActor(_button);
+                _button.addTouchMarginNode();
             });
         }
 

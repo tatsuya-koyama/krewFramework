@@ -175,6 +175,7 @@ package krewdemo.actor.feature_test {
             if (_lifeTime <= 0) {
                 _dying = true;
                 act().alphaTo(0.2, 0).kill();
+                //act().alphaTo(0.2, 0).alphaTo(0, 1).alphaTo(0, 0).alphaTo(0, 1).alphaTo(0, 0).kill();
             }
         }
 

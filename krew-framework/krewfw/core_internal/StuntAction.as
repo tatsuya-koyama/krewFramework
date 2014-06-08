@@ -16,7 +16,7 @@ package krewfw.core_internal {
         private var _duration:Number = 0;
         private var _progress:Number = 0;
 
-        public var instructor:StuntActionInstructor;
+        public var actor:KrewActor;
         public var nextAction:StuntAction;
         public var updater:Function = null;      // function(action:StuntAction):void
         public var foreverMode:Boolean = false;  // これが true の間は Action を終わりにせず update を続ける
@@ -25,10 +25,6 @@ package krewfw.core_internal {
         private var _frame:int = 0;
 
         //------------------------------------------------------------
-        public function get actor():KrewActor {
-            return instructor.actor;
-        }
-
         public function get duration():Number {
             return _duration;
         }
@@ -52,7 +48,7 @@ package krewfw.core_internal {
 
         public function and(action:StuntAction):StuntAction {
             nextAction = action;
-            action.instructor = this.instructor;
+            action.actor = this.actor;
             return action;
         }
 
@@ -261,7 +257,7 @@ package krewfw.core_internal {
             var action:StuntAction = new StuntAction(0);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
-                var actor:KrewActor = _action.instructor.actor as KrewActor;
+                var actor:KrewActor = _action.actor;
                 if (actor) {
                     actor.passAway();
                 }
@@ -277,7 +273,7 @@ package krewfw.core_internal {
             var action:StuntAction = new StuntAction(0);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
-                var actor:KrewActor = _action.instructor.actor as KrewActor;
+                var actor:KrewActor = _action.actor;
                 if (actor) {
                     actor.sendMessage(eventType, eventArgs);
                 }

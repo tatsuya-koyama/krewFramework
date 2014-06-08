@@ -55,9 +55,11 @@ package krewdemo.actor.menu {
                 ,{ text: "13.Tiled Platformer",           scene: TileMapTestScene4 }
                 ,{ text: "14.Not-Tiled Platformer",       scene: PlatformerTestScene1 }
                 ,{ text: "15.Object Pooling not used",    scene: ObjectPoolingTestScene1 }
-                ,{ text: "16.Object Pooling test",        scene: ObjectPoolingTestScene2 }
-                ,{ text: "17.----", scene: null }
-                ,{ text: "18.----", scene: null }
+                ,{ text: "16.Object Pooling test 1",      scene: ObjectPoolingTestScene2 }
+                ,{ text: "17.Object Pooling test 2",      scene: ObjectPoolingTestScene3 }
+                ,{ text: "18.Object Pooling test 3",      scene: ObjectPoolingTestScene4 }
+                ,{ text: "19.----", scene: null }
+                ,{ text: "20.----", scene: null }
             ];
         }
 

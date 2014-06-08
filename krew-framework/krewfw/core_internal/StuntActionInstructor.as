@@ -4,17 +4,13 @@ package krewfw.core_internal {
 
     public class StuntActionInstructor {
 
-        private var _actor:KrewActor;
-        private var _action:StuntAction;
+        private var _actionCurrent:StuntAction;
+        private var _actionHead   :StuntAction;
         private var _isAllActionFinished:Boolean = false;
 
         //------------------------------------------------------------
-        public function get actor():KrewActor {
-            return _actor;
-        }
-
         public function get action():StuntAction {
-            return _action;
+            return _actionCurrent;
         }
 
         public function get isAllActionFinished():Boolean {
@@ -23,22 +19,36 @@ package krewfw.core_internal {
 
         //------------------------------------------------------------
         public function StuntActionInstructor(actor:KrewActor, action:StuntAction) {
-            _actor  = actor;
-            _action = (action) ? action : new StuntAction();
-            _action.instructor = this;
+            _actionCurrent = (action) ? action : new StuntAction();
+            _actionCurrent.actor = actor;
+            _actionHead = _actionCurrent;
+        }
+
+        public function dispose():void {
+
         }
 
         public function update(passedTime:Number):void {
             if (_isAllActionFinished) { return; }
 
-            _action.update(passedTime);
-            if (_action.isFinished()) {
-                if (!_action.nextAction) {
+            // 先頭の Action はメソッドチェーンのための器でしかないので飛ばす
+            if (_actionCurrent == _actionHead  &&  _actionCurrent.nextAction) {
+                _actionCurrent = _actionCurrent.nextAction;
+            }
+
+            _actionCurrent.update(passedTime);
+            if (_actionCurrent.isFinished()) {
+
+                // finish task chain
+                if (!_actionCurrent.nextAction) {
                     _isAllActionFinished = true;
-                    _action = null;
+                    _actionCurrent = null;
+                    _actionHead    = null;
                     return;
                 }
-                _action = _action.nextAction;
+
+                // proceed to next task
+                _actionCurrent = _actionCurrent.nextAction;
             }
         }
     }

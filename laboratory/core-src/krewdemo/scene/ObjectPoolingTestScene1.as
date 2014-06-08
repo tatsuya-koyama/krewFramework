@@ -21,7 +21,7 @@ package krewdemo.scene {
             setUpActor('l-front', new ObjectPoolingTester1());
 
             setUpActor('l-ui', new InfoPopUp(
-                  "- Object pooling memory consumption test 1.\n"
+                  "- Object pooling memory consumption test ver.0.\n"
                 + "- This scene does NOT use pooling.\n"
             ));
         }

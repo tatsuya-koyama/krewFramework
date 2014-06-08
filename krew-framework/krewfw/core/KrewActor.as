@@ -192,11 +192,11 @@ package krewfw.core {
 
             removeChildren(0, -1, true);
             removeCollision();
-            removeTweens();
             _disposeImageTextures();
             _disposeTexts();
             _disposeDisplayObjs();
             _timeKeeper.dispose();
+            react();
 
             _initFuncList      = null;
             _imageList         = null;
@@ -212,8 +212,8 @@ package krewfw.core {
         }
 
         private function _disposeForReuse():void {
-            react();
             _timeKeeper.dispose();
+            react();
 
             onRecycle();
         }
@@ -262,7 +262,7 @@ package krewfw.core {
          * onDispose の代わりに呼ばれる
          */
         protected function onRecycle():void {
-            // Override this.
+            // Override in subclasses.
         }
 
         //------------------------------------------------------------
@@ -437,6 +437,10 @@ package krewfw.core {
 
         // purge actions
         public function react():void {
+            for each (var actionInstructor:StuntActionInstructor in _actionInstructors) {
+                actionInstructor.dispose();
+            }
+
             _actionInstructors.length = 0;
             removeTweens();
         }

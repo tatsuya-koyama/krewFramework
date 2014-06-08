@@ -49,11 +49,11 @@ package krewfw.core_internal {
         // implementation of KrewPoolable
         //------------------------------------------------------------
 
-        public function onPooledObjectCreate(params:Object):void {
-            _duration = params.duration;
-        }
+        public function onPooledObjectCreate(params:Object):void {}
 
         public function onPooledObjectInit(params:Object):void {
+            _duration = params.duration;
+
             _progress   = 0;
             nextAction  = null;
             updater     = null;
@@ -64,9 +64,7 @@ package krewfw.core_internal {
 
         public function onRetrieveFromPool(params:Object):void {}
 
-        public function onPooledObjectRecycle():void {
-
-        }
+        public function onPooledObjectRecycle():void {}
 
         public function onDisposeFromPool():void {}
 

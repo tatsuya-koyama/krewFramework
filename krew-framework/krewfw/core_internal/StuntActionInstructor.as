@@ -25,10 +25,12 @@ package krewfw.core_internal {
         }
 
         public function dispose():void {
+            var count:int = 0; // debug
             var iter:StuntAction = _actionHead;
             while (iter != null) {
                 iter.recycle();
                 iter = iter.nextAction;
+                ++count; // debug
             }
 
             _actionHead    = null;

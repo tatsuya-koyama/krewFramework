@@ -212,6 +212,7 @@ package krewfw.core {
         }
 
         private function _disposeForReuse():void {
+            stopAllListening();
             _timeKeeper.dispose();
             react();
 
@@ -451,6 +452,7 @@ package krewfw.core {
                 actionInstructor.update(passedTime);
 
                 if (actionInstructor.isAllActionFinished) {
+                    actionInstructor.dispose();
                     _actionInstructors.splice(i, 1);  // remove instructor from Array
                     --i;
                 }

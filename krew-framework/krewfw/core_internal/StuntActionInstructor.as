@@ -19,13 +19,20 @@ package krewfw.core_internal {
 
         //------------------------------------------------------------
         public function StuntActionInstructor(actor:KrewActor, action:StuntAction) {
-            _actionCurrent = (action) ? action : new StuntAction();
+            _actionCurrent = (action) ? action : StuntAction.getObject();
             _actionCurrent.actor = actor;
             _actionHead = _actionCurrent;
         }
 
         public function dispose():void {
+            var iter:StuntAction = _actionHead;
+            while (iter != null) {
+                iter.recycle();
+                iter = iter.nextAction;
+            }
 
+            _actionHead    = null;
+            _actionCurrent = null;
         }
 
         public function update(passedTime:Number):void {
@@ -42,8 +49,6 @@ package krewfw.core_internal {
                 // finish task chain
                 if (!_actionCurrent.nextAction) {
                     _isAllActionFinished = true;
-                    _actionCurrent = null;
-                    _actionHead    = null;
                     return;
                 }
 

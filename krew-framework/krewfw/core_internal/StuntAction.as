@@ -6,12 +6,16 @@ package krewfw.core_internal {
 
     import krewfw.core.KrewActor;
     import krewfw.utils.krew;
+    import krewfw.utils.as3.KrewObjectPool;
+    import krewfw.utils.as3.KrewPoolable;
 
     /**
      * StuntAction means Actor's Tween Animation.
      */
     //------------------------------------------------------------
-    public class StuntAction {
+    public class StuntAction implements KrewPoolable {
+
+        private static var _objectPool:KrewObjectPool = new KrewObjectPool(StuntAction, 1024);
 
         private var _duration:Number = 0;
         private var _progress:Number = 0;
@@ -42,9 +46,45 @@ package krewfw.core_internal {
         }
 
         //------------------------------------------------------------
-        public function StuntAction(duration:Number=0) {
-            _duration = duration;
+        // implementation of KrewPoolable
+        //------------------------------------------------------------
+
+        public function onPooledObjectCreate(params:Object):void {
+            _duration = params.duration;
         }
+
+        public function onPooledObjectInit(params:Object):void {
+            _progress   = 0;
+            nextAction  = null;
+            updater     = null;
+            foreverMode = false;
+            _passedTime = 0;
+            _frame      = 0;
+        }
+
+        public function onRetrieveFromPool(params:Object):void {}
+
+        public function onPooledObjectRecycle():void {
+
+        }
+
+        public function onDisposeFromPool():void {}
+
+        //------------------------------------------------------------
+        // pooling interface
+        //------------------------------------------------------------
+
+        public static function getObject(duration:Number=0):StuntAction {
+            var params:Object = {duration: duration};
+            return _objectPool.getObject(params) as StuntAction;
+        }
+
+        public function recycle():void {
+            _objectPool.recycle(this);
+        }
+
+        //------------------------------------------------------------
+        public function StuntAction() {}
 
         public function and(action:StuntAction):StuntAction {
             nextAction = action;
@@ -71,13 +111,13 @@ package krewfw.core_internal {
         // Shortcuts
         //------------------------------------------------------------
         public function wait(duration:Number):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+            var action:StuntAction = StuntAction.getObject(duration);
             return this.and(action);
         }
 
         /** １回だけ実行して、duration 秒待つ。コールバックの引数には StuntAction を渡す */
         public function doit(duration:Number, anUpdater:Function):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 anUpdater(_action);
@@ -90,7 +130,7 @@ package krewfw.core_internal {
          * ToDo: AS3 のコールバックの引数の型の扱いよくわかってない
          */
         public function justdoit(duration:Number, anUpdater:Function):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 anUpdater();
@@ -100,7 +140,7 @@ package krewfw.core_internal {
 
         /** 関数を duration 秒間、実行し続ける */
         public function goon(duration:Number, anUpdater:Function):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 anUpdater(_action);
             };
@@ -112,7 +152,7 @@ package krewfw.core_internal {
          * @param anUpdater schema: function(passedTime:Number):Boolean
          */
         public function until(anUpdater:Function):StuntAction {
-            var action:StuntAction = new StuntAction(0);
+            var action:StuntAction = StuntAction.getObject(0);
             action.foreverMode = true;
 
             action.updater = function(_action:StuntAction):void {
@@ -126,8 +166,9 @@ package krewfw.core_internal {
         // move tween
         //------------------------------------------------------------
         public function move(duration:Number, dx:Number, dy:Number,
-                             transition:String=Transitions.LINEAR):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                             transition:String=Transitions.LINEAR):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 var tween:Tween = _action.actor.enchant(duration, transition);
@@ -146,8 +187,9 @@ package krewfw.core_internal {
         }
 
         public function moveTo(duration:Number, x:Number, y:Number,
-                               transition:String=Transitions.LINEAR):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                               transition:String=Transitions.LINEAR):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 _action.actor.enchant(duration, transition).moveTo(x, y);
@@ -167,8 +209,9 @@ package krewfw.core_internal {
         // scale tween
         //------------------------------------------------------------
         public function scaleTo(duration:Number, scaleX:Number, scaleY:Number,
-                               transition:String=Transitions.LINEAR):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                               transition:String=Transitions.LINEAR):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 var tween:Tween = _action.actor.enchant(duration, transition);
@@ -190,8 +233,9 @@ package krewfw.core_internal {
         // alpha tween
         //------------------------------------------------------------
         public function alphaTo(duration:Number, alpha:Number,
-                                transition:String=Transitions.LINEAR):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                                transition:String=Transitions.LINEAR):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 _action.actor.enchant(duration, transition).fadeTo(alpha);
@@ -211,8 +255,9 @@ package krewfw.core_internal {
         // rotate tween
         //------------------------------------------------------------
         public function rotate(duration:Number, rotation:Number,
-                               transition:String=Transitions.LINEAR):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                               transition:String=Transitions.LINEAR):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 _action.actor.enchant(duration, transition)
@@ -230,8 +275,9 @@ package krewfw.core_internal {
         }
 
         public function rotateTo(duration:Number, rotation:Number,
-                                 transition:String=Transitions.LINEAR):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                                 transition:String=Transitions.LINEAR):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 _action.actor.enchant(duration, transition)
@@ -254,7 +300,7 @@ package krewfw.core_internal {
          * KrewActor 以外に使うと何も起こらない
          */
         public function kill():StuntAction {
-            var action:StuntAction = new StuntAction(0);
+            var action:StuntAction = StuntAction.getObject(0);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 var actor:KrewActor = _action.actor;
@@ -270,7 +316,7 @@ package krewfw.core_internal {
          * KrewActor 以外に使うと何も起こらない
          */
         public function send(eventType:String, eventArgs:Object=null):StuntAction {
-            var action:StuntAction = new StuntAction(0);
+            var action:StuntAction = StuntAction.getObject(0);
             action.updater = function(_action:StuntAction):void {
                 if (_action.frame > 1) { return; }
                 var actor:KrewActor = _action.actor;
@@ -283,8 +329,9 @@ package krewfw.core_internal {
 
         /** １回暗くなって明るくなる */
         public function blink(displayObj:DisplayObject,
-                              duration:Number=0.25, alphaMin:Number=0.3):StuntAction {
-            var action:StuntAction = new StuntAction(duration);
+                              duration:Number=0.25, alphaMin:Number=0.3):StuntAction
+        {
+            var action:StuntAction = StuntAction.getObject(duration);
 
             action.updater = function(_action:StuntAction):void {
                 var halfTime:Number = _action.duration / 2;

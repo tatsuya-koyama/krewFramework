@@ -28,21 +28,19 @@ package krewdemo.actor.feature_test {
         // KrewPoolable handlers
         //------------------------------------------------------------
 
-        public override function onPooledObjectCreate(params:Object):void {
+        public override function onPoolableInit(params:Object):void {
             ++numCreate;
             var depth:Number = params.depth;
             var color:Number = params.color;
 
-            addInitializer(function():void {
-                var size:Number = 40;
-                var image:Image = getImage('star');
-                image.blendMode = KrewBlendMode.SCREEN;
-                image.color     = color;
-                addImage(image, size, size);
-            });
+            var size:Number = 40;
+            var image:Image = getImage('star');
+            image.blendMode = KrewBlendMode.SCREEN;
+            image.color     = color;
+            addImage(image, size, size);
         }
 
-        public override function onPooledObjectInit(params:Object):void {
+        public override function onPoolableReinit(params:Object):void {
             var depth:Number = params.depth;
             var color:Number = params.color;
 
@@ -62,15 +60,15 @@ package krewdemo.actor.feature_test {
             _vecY = Math.sin(rad);
         }
 
-        //------------------------------------------------------------
-        // For Pooling
-        //------------------------------------------------------------
-
         protected override function onRecycle():void {
             _objectPool.recycle(this);
             --numExists;
             numPooled = _objectPool.numPooled;
         }
+
+        //------------------------------------------------------------
+        // For Pooling
+        //------------------------------------------------------------
 
         public static function getObject(depth:Number, color:uint):StarParticlePooled3 {
             var params:Object = {

@@ -46,19 +46,36 @@ package krewfw.core {
         }
 
         //------------------------------------------------------------
+        // KrewPoolableActor's new init handlers
+        //------------------------------------------------------------
+
+        /** Called after init() */
+        public function onPoolableInit(params:Object):void {
+            // Override in subclasses
+        }
+
+        /** Called after init() and when actor comes back from pool. */
+        public function onPoolableReinit(params:Object):void {
+            // Override in subclasses
+        }
+
+        //------------------------------------------------------------
         // implementation of KrewPoolable
+        // (No need to override)
         //------------------------------------------------------------
 
         public function onPooledObjectCreate(params:Object):void {
-            // Override in subclasses
+            addInitializer(function():void {
+                onPoolableInit(params);
+                onPoolableReinit(params);
+            });
         }
 
-        public function onPooledObjectInit(params:Object):void {
-            // Override in subclasses
-        }
+        public function onPooledObjectInit(params:Object):void {}
 
         public function onRetrieveFromPool(params:Object):void {
             _retrieveFromPool();
+            onPoolableReinit(params);
         }
 
         public function onPooledObjectRecycle():void {}

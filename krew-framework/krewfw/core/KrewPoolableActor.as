@@ -39,7 +39,7 @@ package krewfw.core {
         /**
          * Poolable actor's constructor should be able to receive zero arguments
          * because KrewObjectPool instanciates it with no arguments.
-         * You can init instance in onPooledObjectCreate() handler.
+         * You can init instance in onPoolableInit() handler.
          */
         public function KrewPoolableActor() {
             poolable = true;

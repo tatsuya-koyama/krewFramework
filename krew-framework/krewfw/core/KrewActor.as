@@ -421,8 +421,15 @@ package krewfw.core {
         }
 
         public function enchant(duration:Number, transition:String=Transitions.LINEAR):Tween {
-            var tween:Tween = new Tween(this, duration, transition);
-            addTween(tween);
+            if (!layer) {
+                krew.fwlog('[Error] [KrewActor::enchant] This actor does not belong to any layer.');
+                krew.fwlog('   - class: ' + getQualifiedClassName(this));
+                return null;
+            }
+
+            // * juggler.tween use object pooling internally
+            var tween:Tween = layer.juggler.tween(this, duration, {transition: transition}) as Tween;
+
             return tween;
         }
 

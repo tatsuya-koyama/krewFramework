@@ -6,6 +6,7 @@ package krewdemo.scene {
     import krewfw.builtin_actor.display.ScreenCurtain;
 
     import krewdemo.GameEvent;
+    import krewdemo.actor.common.ScreenFilter;
     import krewdemo.actor.title.*;
 
     //------------------------------------------------------------
@@ -14,16 +15,23 @@ package krewdemo.scene {
         private var _loadingBg:ScreenCurtain;
 
         //------------------------------------------------------------
+        public override function getRequiredAssets():Array {
+            return [
+                 "image/atlas_filter.png"
+                ,"image/atlas_filter.xml"
+            ];
+        }
+
         public override function getLayerList():Array {
             return ['l-back', 'l-front', 'l-ui', 'l-filter'];
         }
 
         public override function initAfterLoad():void {
-            var color:int = 0x555555;
-            setUpActor('l-back', new ScreenCurtain(color, color, color, color));
-
-            setUpActor('l-ui',   new TitleLogo());
-            setUpActor('l-ui',   new StartButton());
+            setUpActor('l-back',   new ScreenCurtain(0xcce877));
+            setUpActor('l-front',  new TileEffect());
+            setUpActor('l-ui',     new TitleLogo());
+            setUpActor('l-ui',     new StartButton());
+            setUpActor('l-filter', new ScreenFilter());
 
             blackIn(0.3);
 

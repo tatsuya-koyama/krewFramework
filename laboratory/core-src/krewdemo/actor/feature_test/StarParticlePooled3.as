@@ -81,6 +81,7 @@ package krewdemo.actor.feature_test {
         public static function disposePool():void {
             _objectPool.dispose();
             numPooled = _objectPool.numPooled;
+            numCreate = 0;
         }
 
         //------------------------------------------------------------

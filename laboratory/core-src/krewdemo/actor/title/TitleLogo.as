@@ -3,6 +3,7 @@ package krewdemo.actor.title {
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;
+    import krewfw.core.KrewBlendMode;
     import krewfw.utils.starling.TextFactory;
 
     //------------------------------------------------------------
@@ -11,18 +12,19 @@ package krewdemo.actor.title {
         //------------------------------------------------------------
         public override function init():void {
             var text:TextField = _makeTitleLogo();
-            addText(text, 0, 70 + 3);
+            addText(text, 0, 80 + 8);
 
             alpha = 0;
             act().alphaTo(0.4, 1);
-            act().moveEaseOut(0.5, 0, -3);
+            act().moveEaseOut(0.5, 0, -8);
         }
 
         private function _makeTitleLogo():TextField {
             var text:TextField = TextFactory.makeText(
-                480, 100, "krewFramework\nLaboratory", 30, "tk_courier", 0xffcc55,
+                480, 100, "krewFramework\nLaboratory", 40, "tk_courier", 0xffffff - 0xaa6611,
                 0, 0, "center", "top", false
             );
+            text.blendMode = KrewBlendMode.SUB;
             return text;
         }
     }

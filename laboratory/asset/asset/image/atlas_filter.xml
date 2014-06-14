@@ -1,0 +1,3 @@
+<TextureAtlas imagePath='atlas_filter.png'>
+  <SubTexture name='screen_filter' x='0' y='0' width='480.0' height='320.0'/>
+</TextureAtlas>

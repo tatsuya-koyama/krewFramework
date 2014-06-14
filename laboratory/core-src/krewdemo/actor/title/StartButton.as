@@ -24,7 +24,7 @@ package krewdemo.actor.title {
             var button:Button = new Button();
             button.label = "Tap to Start";
             button.defaultLabelProperties.textFormat = new BitmapFontTextFormat(
-                "tk_courier", 24, 0x1a1816, "center"
+                "tk_courier", 24, 0x776044, "center"
             );
 
             button.paddingTop    = 10;
@@ -35,6 +35,7 @@ package krewdemo.actor.title {
             var getBlankImageWithColor:Function = function(color:uint):Image {
                 var image:Image = getImage('white');
                 image.color = color;
+                image.alpha = 0.6;
                 return image;
             };
             button.defaultSkin = getBlankImageWithColor(0xee9999);

@@ -28,6 +28,20 @@ package krewfw.core_internal {
         private var _passedTime:Number = 0;
         private var _frame:int = 0;
 
+        private static const ENCHANT_NONE     :int = 0;
+        private static const ENCHANT_MOVE     :int = 1;
+        private static const ENCHANT_MOVE_TO  :int = 2;
+        private static const ENCHANT_SCALE    :int = 3;
+        private static const ENCHANT_SCALE_TO :int = 4;
+        private static const ENCHANT_ALPHA_TO :int = 5;
+        private static const ENCHANT_ROTATE   :int = 6;
+        private static const ENCHANT_ROTATE_TO:int = 7;
+        private static const ENCHANT_KILL     :int = 8;
+        private var _enchantType:int = 0;
+        private var _transition:String;
+        private var _value1:Number;
+        private var _value2:Number;
+
         //------------------------------------------------------------
         public function get duration():Number {
             return _duration;
@@ -60,6 +74,8 @@ package krewfw.core_internal {
             foreverMode = false;
             _passedTime = 0;
             _frame      = 0;
+
+            _enchantType = ENCHANT_NONE;
         }
 
         public function onRetrieveFromPool(params:Object):void {}
@@ -94,8 +110,57 @@ package krewfw.core_internal {
             ++_frame;
             _progress += passedTime;
             _passedTime = passedTime;
+
+            if (_frame == 1) { _enchant(); }
+
             if (updater != null) {
                 updater(this);
+            }
+        }
+
+        /**
+         * Actor が layer に乗った後、初回フレームに Tween の登録や
+         * ショートカット処理の実行を行う。
+         * 以前は move や kill のメソッドの中で Function を登録する形にしていたが、
+         * クロージャを作るのが意外とメモリを食ったので、GC を避けるためにこのやり方にした
+         */
+        private function _enchant():void {
+            if (_enchantType == ENCHANT_NONE) { return; }
+
+            switch (_enchantType) {
+            case ENCHANT_MOVE:
+                var tween:Tween = actor.enchant(_duration, _transition);
+                tween.animate('x', actor.x + _value1);
+                tween.animate('y', actor.y + _value2);
+                break;
+
+            case ENCHANT_MOVE_TO:
+                actor.enchant(_duration, _transition).moveTo(_value1, _value2);
+                break;
+
+            case ENCHANT_SCALE_TO:
+                var tween:Tween = actor.enchant(_duration, _transition);
+                tween.animate('scaleX', _value1);
+                tween.animate('scaleY', _value2);
+                break;
+
+            case ENCHANT_ALPHA_TO:
+                actor.enchant(_duration, _transition).fadeTo(_value1);
+                break;
+
+            case ENCHANT_ROTATE:
+                actor.enchant(_duration, _transition)
+                    .animate("rotation", actor.rotation + krew.deg2rad(_value1));
+                break;
+
+            case ENCHANT_ROTATE_TO:
+                actor.enchant(_duration, _transition)
+                    .animate("rotation", krew.deg2rad(_value1));
+                break;
+
+            case ENCHANT_KILL:
+                if (actor) { actor.passAway(); }
+                break;
             }
         }
 
@@ -167,12 +232,10 @@ package krewfw.core_internal {
                              transition:String=Transitions.LINEAR):StuntAction
         {
             var action:StuntAction = StuntAction.getObject(duration);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                var tween:Tween = _action.actor.enchant(duration, transition);
-                tween.animate('x', _action.actor.x + dx);
-                tween.animate('y', _action.actor.y + dy);
-            };
+            action._enchantType = ENCHANT_MOVE;
+            action._transition  = transition;
+            action._value1      = dx;
+            action._value2      = dy;
             return this.and(action);
         }
 
@@ -188,10 +251,10 @@ package krewfw.core_internal {
                                transition:String=Transitions.LINEAR):StuntAction
         {
             var action:StuntAction = StuntAction.getObject(duration);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                _action.actor.enchant(duration, transition).moveTo(x, y);
-            };
+            action._enchantType = ENCHANT_MOVE_TO;
+            action._transition  = transition;
+            action._value1      = x;
+            action._value2      = y;
             return this.and(action);
         }
 
@@ -207,15 +270,13 @@ package krewfw.core_internal {
         // scale tween
         //------------------------------------------------------------
         public function scaleTo(duration:Number, scaleX:Number, scaleY:Number,
-                               transition:String=Transitions.LINEAR):StuntAction
+                                transition:String=Transitions.LINEAR):StuntAction
         {
             var action:StuntAction = StuntAction.getObject(duration);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                var tween:Tween = _action.actor.enchant(duration, transition);
-                tween.animate('scaleX', scaleX);
-                tween.animate('scaleY', scaleY);
-            };
+            action._enchantType = ENCHANT_SCALE_TO;
+            action._transition  = transition;
+            action._value1      = scaleX;
+            action._value2      = scaleY;
             return this.and(action);
         }
 
@@ -234,10 +295,9 @@ package krewfw.core_internal {
                                 transition:String=Transitions.LINEAR):StuntAction
         {
             var action:StuntAction = StuntAction.getObject(duration);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                _action.actor.enchant(duration, transition).fadeTo(alpha);
-            };
+            action._enchantType = ENCHANT_ALPHA_TO;
+            action._transition  = transition;
+            action._value1      = alpha;
             return this.and(action);
         }
 
@@ -256,11 +316,9 @@ package krewfw.core_internal {
                                transition:String=Transitions.LINEAR):StuntAction
         {
             var action:StuntAction = StuntAction.getObject(duration);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                _action.actor.enchant(duration, transition)
-                    .animate("rotation", _action.actor.rotation + krew.deg2rad(rotation));
-            };
+            action._enchantType = ENCHANT_ROTATE;
+            action._transition  = transition;
+            action._value1      = rotation;
             return this.and(action);
         }
 
@@ -276,11 +334,9 @@ package krewfw.core_internal {
                                  transition:String=Transitions.LINEAR):StuntAction
         {
             var action:StuntAction = StuntAction.getObject(duration);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                _action.actor.enchant(duration, transition)
-                    .animate("rotation", krew.deg2rad(rotation));
-            };
+            action._enchantType = ENCHANT_ROTATE_TO;
+            action._transition  = transition;
+            action._value1      = rotation;
             return this.and(action);
         }
 
@@ -299,13 +355,7 @@ package krewfw.core_internal {
          */
         public function kill():StuntAction {
             var action:StuntAction = StuntAction.getObject(0);
-            action.updater = function(_action:StuntAction):void {
-                if (_action.frame > 1) { return; }
-                var actor:KrewActor = _action.actor;
-                if (actor) {
-                    actor.passAway();
-                }
-            };
+            action._enchantType = ENCHANT_KILL;
             return this.and(action);
         }
 

@@ -7,22 +7,31 @@ package krewdemo.scene {
     import krewfw.builtin_actor.display.SimpleLoadingScreen;
 
     import krewdemo.GameEvent;
+    import krewdemo.actor.common.ScreenFilter;
     import krewdemo.actor.menu.BackButton;
     import krewdemo.actor.feature_test.*;
+    import krewdemo.actor.title.TileEffect;
 
     //------------------------------------------------------------
-    public class CreateActorTestScene extends FeatureTestSceneBase {
+    public class TweenTestScene extends FeatureTestSceneBase {
 
         //------------------------------------------------------------
+        public override function getRequiredAssets():Array {
+            return [
+                 "image/atlas_filter.png"
+                ,"image/atlas_filter.xml"
+            ];
+        }
+
         public override function initAfterLoad():void {
-            _bgColor = 0x444444;
+            _bgColor = 0x386611;
             super.initAfterLoad();
 
-            setUpActor('l-front', new CreateActorTester());
+            setUpActor('l-front',  new TileEffect());
+            setUpActor('l-filter', new ScreenFilter());
 
             setUpActor('l-ui', new InfoPopUp(
-                  "- krewFramework actor-system memory consumption test\n"
-                + "- (Not using Actor's object pooling.)"
+                  "- Actor's Tween test.\n"
             ));
         }
 

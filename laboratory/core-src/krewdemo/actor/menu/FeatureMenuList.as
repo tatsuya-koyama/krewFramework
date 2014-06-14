@@ -58,8 +58,9 @@ package krewdemo.actor.menu {
                 ,{ text: "16.Object Pooling test 1",      scene: ObjectPoolingTestScene2 }
                 ,{ text: "17.Object Pooling test 2",      scene: ObjectPoolingTestScene3 }
                 ,{ text: "18.Object Pooling test 3",      scene: ObjectPoolingTestScene4 }
-                ,{ text: "19.----", scene: null }
+                ,{ text: "19.Tween test",                 scene: TweenTestScene }
                 ,{ text: "20.----", scene: null }
+                ,{ text: "21.----", scene: null }
             ];
         }
 
@@ -104,7 +105,7 @@ package krewdemo.actor.menu {
                 renderer.defaultSelectedSkin = _getBlankImageWithColor(0xccaa55);
 
                 renderer.defaultLabelProperties.textFormat = new BitmapFontTextFormat(
-                    "tk_courier", 18, 0x1a1816, "center"
+                    "tk_courier", 18, 0x2a2826, "center"
                 );
                 renderer.labelField = "text";
                 renderer.horizontalAlign = Button.HORIZONTAL_ALIGN_LEFT;

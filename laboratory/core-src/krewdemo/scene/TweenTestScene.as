@@ -8,7 +8,6 @@ package krewdemo.scene {
 
     import krewdemo.GameEvent;
     import krewdemo.actor.common.ScreenFilter;
-    import krewdemo.actor.menu.BackButton;
     import krewdemo.actor.feature_test.*;
     import krewdemo.actor.title.TileEffect;
 

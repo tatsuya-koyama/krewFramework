@@ -64,5 +64,11 @@ package krewfw.core {
 
         /** Expected args: {fadeTime:Number, color1:int, color2:int, color3:int, color4:int} */
         public static const CHANGE_BG_COLOR:String = 'krew.changeBgColor';
+
+        /** args: {keyEvent:flash.events.KeyboardEvent} */
+        public static const KEY_DOWN:String = 'krew.keyDown';
+
+        /** args: {keyEvent:flash.events.KeyboardEvent} */
+        public static const KEY_UP:String = 'krew.keyUp';
     }
 }

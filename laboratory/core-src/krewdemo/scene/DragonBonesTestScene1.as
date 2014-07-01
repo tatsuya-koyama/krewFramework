@@ -15,6 +15,7 @@ package krewdemo.scene {
     import krewfw.builtin_actor.display.ScreenCurtain;
     import krewfw.builtin_actor.display.SimpleLoadingScreen;
     import krewfw.builtin_actor.ui.KeyboardStatus;
+    import krewfw.builtin_actor.ui.SimpleVirtualJoystick;
     import krewfw.utils.starling.TextFactory;
 
     import krewdemo.GameEvent;
@@ -31,6 +32,9 @@ package krewdemo.scene {
 
         private var _key:KeyboardStatus;
         private var _currentAnimation:String;
+
+        private var _velocityX:Number = 0;
+        private var _velocityY:Number = 0;
 
         //------------------------------------------------------------
         public override function getRequiredAssets():Array {
@@ -59,9 +63,12 @@ package krewdemo.scene {
             _key = new KeyboardStatus();
             setUpActor('l-ui', _key);
 
+            setUpActor('l-ui', new VirtualJoystick(75, 260, 80));
+
             setUpActor('l-ui', new InfoPopUp(
                   "- Bone animation test.\n"
                 + "- Powered by DragonBones with XML-marged PNG file.\n"
+                + "- You can also use keyboard.\n"
             ));
 
             getLayer("l-front").addText(_makeText(
@@ -69,6 +76,8 @@ package krewdemo.scene {
                 + "<: Move left\n"
                 + "^: Look up\n"
             ));
+
+            listen(SimpleVirtualJoystick.UPDATE_JOYSTICK, _onUpdateJoystick);
 
             _initDragonBones();
         }
@@ -122,6 +131,30 @@ package krewdemo.scene {
                 _setAnimation("walk");
             }
             else if (_key.isPressed(Keyboard.LEFT)) {
+                _armatureSprite.x -= 80 * passedTime;
+                _armatureSprite.scaleX = -0.5;
+                _setAnimation("walk");
+            }
+            else {
+                _onUpdateWithJoystick(passedTime);
+            }
+        }
+
+        protected function _onUpdateJoystick(args:Object):void {
+            _velocityX = args.velocityX;
+            _velocityY = args.velocityY;
+        }
+
+        private function _onUpdateWithJoystick(passedTime:Number):void {
+            if (_velocityY < -0.5) {
+                _setAnimation("look_up");
+            }
+            else if (_velocityX > 0.5) {
+                _armatureSprite.x += 80 * passedTime;
+                _armatureSprite.scaleX = 0.5;
+                _setAnimation("walk");
+            }
+            else if (_velocityX < -0.5) {
                 _armatureSprite.x -= 80 * passedTime;
                 _armatureSprite.scaleX = -0.5;
                 _setAnimation("walk");

@@ -10,25 +10,27 @@ package krewdemo.actor.feature_test {
     //------------------------------------------------------------
     public class VirtualJoystick extends KrewActor {
 
-        public override function init():void {
-            touchable = true;
-            var holderImage:Image = getImage('joystick_holder');
-            var stickImage :Image = getImage('joystick_ball');
+        public function VirtualJoystick(stickX:Number=100, stickY:Number=240, size:Number=100) {
+            addInitializer(function():void {
+                touchable = true;
+                var holderImage:Image = getImage('joystick_holder');
+                var stickImage :Image = getImage('joystick_ball');
 
-            holderImage.width  = 100;
-            holderImage.height = 100;
+                holderImage.width  = size;
+                holderImage.height = size;
 
-            stickImage.width  = 50;
-            stickImage.height = 50;
+                stickImage.width  = size * 0.5;
+                stickImage.height = size * 0.5;
 
-            var joystick:SimpleVirtualJoystick = new SimpleVirtualJoystick(
-                holderImage, stickImage, 130
-            );
-            addActor(joystick);
+                var joystick:SimpleVirtualJoystick = new SimpleVirtualJoystick(
+                    holderImage, stickImage, size * 1.3
+                );
+                addActor(joystick);
 
-            joystick.x = 100;
-            joystick.y = 240;
-            joystick.alpha = 0.7;
+                joystick.x = stickX;
+                joystick.y = stickY;
+                joystick.alpha = 0.7;
+            });
         }
 
     }

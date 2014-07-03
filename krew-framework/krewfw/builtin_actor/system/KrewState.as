@@ -85,8 +85,9 @@ package krewfw.builtin_actor.system {
          *   <li>(Optional) exit    : {Function(state:KrewState):void} - Called when state ends.</li>
          *   <li>(Optional) begin   : {Function(state:KrewState):void} - Called when state or child state starts.</li>
          *   <li>(Optional) end     : {Function(state:KrewState):void} - Called when state or child state ends.</li>
-         *   <li>(Optional) guard   : {Function(state:KrewState):Boolean} - Called when event triggered.
-         *           Return false to prevent transition and bubbling event.</li>
+         *   <li>(Optional) guard   : {Function(state:KrewState, event:String, args:Object):Boolean}
+         *           - Called when event is triggered.
+         *             Return false to prevent transition and bubbling event.</li>
          *   <li>(Optional) listen  : {Object or Array} - Ex.)
          *           [{event: "event_name", to:"target_state_name", hook:hookFunc}]
          *           - event で指定したイベントを受け取ったとき、to で指定した state に遷移する。
@@ -362,7 +363,7 @@ package krewfw.builtin_actor.system {
          */
         public function onEvent(args:Object, event:String):void {
             if (_isListeningTo(event)) {
-                if (_guardFunc != null  &&  !_guardFunc(this)) { return; }
+                if (_guardFunc != null  &&  !_guardFunc(this, event, args)) { return; }
 
                 var eventHook:Function = _getEventHookWith(event);
                 if (eventHook != null) { eventHook(this, args); }

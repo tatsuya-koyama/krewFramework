@@ -377,7 +377,9 @@ package krewfw_builtin_actor.tests {
                 {
                     id: "state_40",
                     listen: {event: "event40_A", to: "state_40_3_1_1"},
-                    guard : function(state:KrewState):Boolean { return (condition > 100); },
+                    guard : function(state:KrewState, event:String, args:Object):Boolean {
+                        return (condition > 100);
+                    },
                     children: [
                         {
                             id: "state_40_1"
@@ -394,7 +396,9 @@ package krewfw_builtin_actor.tests {
                                     children: [
                                         {
                                             id: "state_40_3_1_1",
-                                            guard : function(state:KrewState):Boolean { return false; }
+                                            guard : function(state:KrewState, event:String, args:Object):Boolean {
+                                                return false;
+                                            }
                                         }
                                     ]
                                 },

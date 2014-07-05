@@ -13,6 +13,8 @@ package krewfw.core_internal {
         private var _listenerCount:int = 0;
         private var _numListener:int = 0;
 
+        private var _callbacksWorkSpace:Array = [];
+
         //------------------------------------------------------------
         public function get numListener():int {
             return _numListener;
@@ -50,7 +52,14 @@ package krewfw.core_internal {
         }
 
         public function publish(eventArgs:Object):void {
+            // lister の callback を呼んでいる最中に add / removeListener が呼ばれて
+            // _listeners の内容が変化することがあるため、作業変数にコピー
+            _callbacksWorkSpace.length = 0;
             for each (var callback:Function in _listeners) {
+                _callbacksWorkSpace.push(callback);
+            }
+
+            for each (var callback:Function in _callbacksWorkSpace) {
                 callback(eventArgs);
             }
         }

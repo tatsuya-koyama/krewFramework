@@ -2,6 +2,7 @@ package krewfw.core_internal {
 
     import flash.utils.Dictionary;
 
+    import krewfw.KrewConfig;
     import krewfw.core.KrewGameObject;
     import krewfw.utils.krew;
 
@@ -21,7 +22,10 @@ package krewfw.core_internal {
                                     eventType:String, callback:Function):void {
             if (!_publishers[eventType]) {
                 _publishers[eventType] = new NotificationPublisher(eventType);
-                krew.fwlog('+++ create publisher: ' + eventType + ' +++');
+
+                if (KrewConfig.PUBLISHER_VERBOSE) {
+                    krew.fwlog('+++ create publisher: ' + eventType + ' +++');
+                }
             }
 
             _publishers[eventType].addListener(listener, callback);
@@ -36,7 +40,10 @@ package krewfw.core_internal {
             _publishers[eventType].removeListener(listener);
             if (_publishers[eventType].numListener == 0) {
                 delete _publishers[eventType];
-                krew.fwlog('--- delete publisher: ' + eventType + ' ---');
+
+                if (KrewConfig.PUBLISHER_VERBOSE) {
+                    krew.fwlog('--- delete publisher: ' + eventType + ' ---');
+                }
             }
             return true;
         }
@@ -52,7 +59,7 @@ package krewfw.core_internal {
             if (_messageQueue.length == 0) { return; }
 
             var processingMsgs:Vector.<Object> = _messageQueue.slice(); // copy vector
-            _messageQueue = new Vector.<Object>(); // clear vector
+            _messageQueue.length = 0; // clear vector
 
             for each (var msg:Object in processingMsgs) {
                 var eventType:String = msg.type;
@@ -76,7 +83,7 @@ package krewfw.core_internal {
                 // * そもそもここが呼ばれる場合は設計が間違っている。
                 //   このログは出力されないべきである
                 dumpMessageQueue();
-                _messageQueue = new Vector.<Object>();
+                _messageQueue.length = 0;
                 krew.fwlog('[Warning!!] Event handling seems to be infinite loop!');
             }
         }

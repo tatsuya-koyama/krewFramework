@@ -89,5 +89,12 @@ package krewfw {
 
         /** true にすると starling.utils.AssetMamager のログを吐く */
         public static var ASSET_MANAGER_VERBOSE:Boolean = false;
+
+        /** true にすると Pub/Sub の Publisher が生まれる・消えるタイミングでログを吐く */
+        public static var PUBLISHER_VERBOSE:Boolean = false;
+
+        /** true にすると Scene のアセットロード時に進捗率などのログを吐く */
+        public static var SCENE_ASSET_LOAD_VERBOSE:Boolean = false;
+
     }
 }

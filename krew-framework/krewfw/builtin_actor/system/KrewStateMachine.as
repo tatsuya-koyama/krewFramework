@@ -346,5 +346,29 @@ package krewfw.builtin_actor.system {
             krew.log(krew.str.repeat("^", 50));
         }
 
+        public function dumpListeningEvents():void {
+            krew.log(krew.str.repeat("-", 50));
+            krew.log(" KrewStateMachine listening events dump");
+            krew.log(krew.str.repeat("-", 50));
+
+            var events:Array = [];
+            for (var event:String in _listenMap) {
+                events.push(event);
+            }
+            events.sort();
+
+            for each (var event:String in events) {
+                if (_listenMap[event]) { krew.log("   true : " + event); }
+            }
+
+            krew.log("");
+
+            for each (var event:String in events) {
+                if (!_listenMap[event]) { krew.log("   false: " + event); }
+            }
+
+            krew.log(krew.str.repeat("^", 50));
+        }
+
     }
 }

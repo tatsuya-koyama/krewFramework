@@ -4,6 +4,7 @@ package krewfw.core {
     import starling.events.EnterFrameEvent;
     import starling.events.Event;
 
+    import krewfw.KrewConfig;
     import krewfw.core_internal.SceneServantActor;
     import krewfw.core_internal.StageLayer;
     import krewfw.core_internal.StuntAction;
@@ -84,7 +85,9 @@ package krewfw.core {
          * ここでセットする Actor はグローバルに保持しているリソースを使う必要がある
          */
         public function initLoadingView():void {
-            krew.fwlog(' - default initLoadingView called.');
+            if (KrewConfig.SCENE_ASSET_LOAD_VERBOSE) {
+                krew.fwlog(' - default initLoadingView called.');
+            }
         }
 
         /**
@@ -92,7 +95,9 @@ package krewfw.core {
          * アセットの指定があれば最低 1 回は呼ばれ、最後の呼び出しでは loadRatio = 1 となる
          */
         public function onLoadProgressGlobal(loadRatio:Number):void {
-            krew.fwlog(' - - default onLoadProgressGlobal called: ' + loadRatio);
+            if (KrewConfig.SCENE_ASSET_LOAD_VERBOSE) {
+                krew.fwlog(' - - default onLoadProgressGlobal called: ' + loadRatio);
+            }
         }
 
         /**
@@ -100,7 +105,9 @@ package krewfw.core {
          * （これの直後に getRequiredAssets で指定したアセットの読み込みが始まる）
          */
         public function onLoadCompleteGlobal():void {
-            krew.fwlog(' - - - default onLoadCompleteGlobal called.');
+            if (KrewConfig.SCENE_ASSET_LOAD_VERBOSE) {
+                krew.fwlog(' - - - default onLoadCompleteGlobal called.');
+            }
         }
 
         /**
@@ -108,7 +115,9 @@ package krewfw.core {
          * アセットの指定があれば最低 1 回は呼ばれ、最後の呼び出しでは loadRatio = 1 となる
          */
         public function onLoadProgress(loadRatio:Number):void {
-            krew.fwlog(' - - - - default onLoadProgress called: ' + loadRatio);
+            if (KrewConfig.SCENE_ASSET_LOAD_VERBOSE) {
+                krew.fwlog(' - - - - default onLoadProgress called: ' + loadRatio);
+            }
         }
 
         /**
@@ -116,7 +125,9 @@ package krewfw.core {
          * （これの直後に initAfterLoad が呼ばれる）
          */
         public function onLoadComplete():void {
-            krew.fwlog(' - - - - - default onLoadComplete called.');
+            if (KrewConfig.SCENE_ASSET_LOAD_VERBOSE) {
+                krew.fwlog(' - - - - - default onLoadComplete called.');
+            }
         }
 
         /**
@@ -133,7 +144,9 @@ package krewfw.core {
          * ここから requiredAssets で指定したアセットが使える
          */
         public function initAfterLoad():void {
-            krew.fwlog(' - - - - - - default initAfterLoad called.');
+            if (KrewConfig.SCENE_ASSET_LOAD_VERBOSE) {
+                krew.fwlog(' - - - - - - default initAfterLoad called.');
+            }
         }
 
         /**

@@ -5,6 +5,7 @@ package krewfw.utils.swiss_knife {
     import krewfw.KrewConfig;
     import krewfw.core.KrewActorAgent;
     import krewfw.utils.as3.KrewAsync;
+    import krewfw.utils.as3.KrewRandom;
 
     /**
      * Singleton Army knife for game coding.
@@ -419,6 +420,17 @@ package krewfw.utils.swiss_knife {
             return val;
         }
 
+        public function randIntSeeded(seed:uint, min:int=0, max:int=int.MAX_VALUE):int {
+            if (min > max) {
+                var tmp:int = min;
+                min = max;
+                max = tmp;
+            }
+
+            var val:uint = KrewRandom.getUintWithSeed(seed);
+            return min + (val % (max - min + 1));
+        }
+
         public function rad2deg(rad:Number):Number {
             return rad / Math.PI * 180.0;
         }
@@ -451,6 +463,20 @@ package krewfw.utils.swiss_knife {
             var dx:Number = (x2 - x1);
             var dy:Number = (y2 - y1);
             return (dx * dx) + (dy * dy);
+        }
+
+        //------------------------------------------------------------
+        // Date utils
+        //------------------------------------------------------------
+
+        /**
+         * If today is 2014-07-08, returns int value 20140708.
+         */
+        public function dateVal():uint {
+            var date:Date = new Date();
+            return   (date.fullYear * 10000)
+                  + ((date.month + 1) * 100)
+                  +   date.date;
         }
 
         //------------------------------------------------------------

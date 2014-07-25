@@ -10,21 +10,21 @@ package krewfw.core_internal {
     import krewfw.KrewConfig;
     import krewfw.utils.krew;
 
+    /**
+     * Scene, Chapter, Global の 3 種類のスコープでリソースを管理する。
+     */
     //------------------------------------------------------------
     public class KrewResourceManager {
 
-        private var _globalScopeAssets:AssetManager;
-        private var _sceneScopeAssets :AssetManager;
+        private var _sceneResource:KrewResource;
+        private var _globalResource:KrewResource;
 
         private var _urlResolverHook:Function = null;
 
         //------------------------------------------------------------
         public function KrewResourceManager() {
-            _globalScopeAssets = new KrewConfig.ASSET_MANAGER_CLASS;
-            _sceneScopeAssets  = new KrewConfig.ASSET_MANAGER_CLASS;
-
-            _globalScopeAssets.verbose = KrewConfig.ASSET_MANAGER_VERBOSE;
-            _sceneScopeAssets .verbose = KrewConfig.ASSET_MANAGER_VERBOSE;
+            _sceneResource  = new KrewResource("Scene");
+            _globalResource = new KrewResource("Global");
         }
 
         //------------------------------------------------------------
@@ -32,51 +32,26 @@ package krewfw.core_internal {
         //------------------------------------------------------------
 
         public function get globalAssetManager():AssetManager {
-            return _globalScopeAssets;
+            return _globalResource.assetManager;
         }
 
         public function get sceneAssetManager():AssetManager {
-            return _sceneScopeAssets;
+            return _sceneResource.assetManager;
         }
 
         //------------------------------------------------------------
+        // load and purge
+        //------------------------------------------------------------
 
         /**
-         * シーン単位で使いたいリソースのロード.
-         * 基本的に starling.utils.AssetManager をラップしているだけなので
-         * そちらのドキュメントを見よ。
-         *
-         * <ul>
-         *   <li> テクスチャアトラスを読み込む場合は単純に png と xml の 2 つを指定すればよい。
-         *        getImage("拡張子を除くファイル名") で取得できる。
-         *        画像はファイル名で引くため、全アトラスでソース画像のファイル名（というか xml 内の識別子）
-         *        がユニークになっている必要がある
-         *        （これが嫌な場合は starling.utils.AssetManager を継承して getName を override
-         *          したクラスを用意し、それを KrewConfig で指定してほしい）
-         *   </li>
-         *   <li> mp3  はロード後 getSound()  で取得できる </li>
-         *   <li> json も読める。 getObject() で取得できる </li>
-         *   <li> xml  も読める。 getXml()    で取得できる </li>
-         *
-         *   <li> ビットマップフォントは png と fnt を読み込み後、自動的に
-         *        starling.text.TextField で使用可能になる
-         *   </li>
-         * </ul>
+         * シーン単位で使いたいリソースのロード。シーン遷移時に破棄される。
+         * KrewResource および starling.utils.AssetManager のドキュメントを見よ。
          */
         public function loadResources(fileNameList:Array, onLoadProgress:Function,
                                       onLoadComplete:Function):void
         {
             var suitablePathList:Array = _mapToSuitablePath(fileNameList);
-            _sceneScopeAssets.enqueue(suitablePathList);
-
-            _sceneScopeAssets.loadQueue(function(loadRatio:Number):void {
-                if (onLoadProgress != null) {
-                    onLoadProgress(loadRatio);
-                }
-                if (loadRatio == 1) {
-                    onLoadComplete();
-                }
-            });
+            _sceneResource.loadResources(suitablePathList, onLoadProgress, onLoadComplete);
         }
 
         /**
@@ -84,14 +59,15 @@ package krewfw.core_internal {
          * （テクスチャの dispose を呼ぶ）
          */
         public function purgeSceneScopeResources():void {
-            _sceneScopeAssets.purge();
+            _sceneResource.purge();
         }
 
         /**
-         * ゲームを通してずっとメモリに保持しておくリソースのロード.
+         * ゲームを通してずっとメモリに保持しておくリソースのロード。
          * （Loading 画面のアセットなど）
          * 使い方は loadResources と同じ。
-         * ロードしたものの取得は getGlobalImage() などと Global がついたメソッドで。
+         * Scene スコープのものと同様に、getImage() などで取得できる。
+         * （同じキーのものが両方にある場合、Scene スコープのものが優先される）
          *
          * 現状はゲームの起動時に 1 回実行することを想定。
          */
@@ -99,16 +75,7 @@ package krewfw.core_internal {
                                             onLoadComplete:Function):void
         {
             var suitablePathList:Array = _mapToSuitablePath(fileNameList);
-            _globalScopeAssets.enqueue(suitablePathList);
-
-            _globalScopeAssets.loadQueue(function(loadRatio:Number):void {
-                if (onLoadProgress != null) {
-                    onLoadProgress(loadRatio);
-                }
-                if (loadRatio == 1) {
-                    onLoadComplete();
-                }
-            });
+            _globalResource.loadResources(suitablePathList, onLoadProgress, onLoadComplete);
         }
 
         //------------------------------------------------------------
@@ -116,8 +83,9 @@ package krewfw.core_internal {
         //------------------------------------------------------------
 
         /**
-         * 拡張子無しのファイル名を指定。シーンスコープのアセットから検索し、
-         * 見つからなければグローバルスコープのアセットから検索して返す。
+         * ロード済みの画像アセットをもとに、Image を作って返す。
+         * 拡張子無しのファイル名を指定。Scene スコープのアセットから検索し、
+         * 見つからなければ Global スコープのアセットから検索して返す。
          * （他の getter でも同様）
          */
         public function getImage(fileName:String):Image {
@@ -128,55 +96,60 @@ package krewfw.core_internal {
             return null;
         }
 
+        /** ロード済みの Texture を返す */
         public function getTexture(fileName:String):Texture {
-            var texture:Texture = _sceneScopeAssets.getTexture(fileName);
+            var texture:Texture = _sceneResource.getTexture(fileName);
             if (texture) { return texture; }
 
-            texture = _globalScopeAssets.getTexture(fileName);
+            texture = _globalResource.getTexture(fileName);
             if (texture) { return texture; }
 
             krew.fwlog('[Error] [KRM] Texture not found: ' + fileName);
             return null;
         }
 
+        /** ロード済みの Sound を返す */
         public function getSound(fileName:String):Sound {
-            var sound:Sound = _sceneScopeAssets.getSound(fileName);
+            var sound:Sound = _sceneResource.getSound(fileName);
             if (sound) { return sound; }
 
-            sound = _globalScopeAssets.getSound(fileName);
+            sound = _globalResource.getSound(fileName);
             if (sound) { return sound; }
 
             krew.fwlog('[Error] [KRM] Sound not found: ' + fileName);
             return null;
         }
 
+        /** ロード済みの XML を返す */
         public function getXml(fileName:String):XML {
-            var xml:XML = _sceneScopeAssets.getXml(fileName);
+            var xml:XML = _sceneResource.getXml(fileName);
             if (xml) { return xml; }
 
-            xml = _globalScopeAssets.getXml(fileName);
+            xml = _globalResource.getXml(fileName);
             if (xml) { return xml; }
 
             krew.fwlog('[Error] [KRM] XML not found: ' + fileName);
             return null;
         }
 
+        /** ロード済みの JSON を返す */
         public function getObject(fileName:String):Object {
-            var obj:Object = _sceneScopeAssets.getObject(fileName);
+            var obj:Object = _sceneResource.getObject(fileName);
             if (obj) { return obj; }
 
-            obj = _globalScopeAssets.getObject(fileName);
+            obj = _globalResource.getObject(fileName);
             if (obj) { return obj; }
 
             krew.fwlog('[Error] [KRM] Object not found: ' + fileName);
             return null;
         }
 
+        /** ロード済みの ByteArray を返す */
         public function getByteArray(fileName:String):ByteArray {
-            var byteArray:ByteArray = _sceneScopeAssets.getByteArray(fileName);
+            var byteArray:ByteArray = _sceneResource.getByteArray(fileName);
             if (byteArray) { return byteArray; }
 
-            byteArray = _globalScopeAssets.getByteArray(fileName);
+            byteArray = _globalResource.getByteArray(fileName);
             if (byteArray) { return byteArray; }
 
             krew.fwlog('[Error] [KRM] ByteArray not found: ' + fileName);
@@ -210,6 +183,17 @@ package krewfw.core_internal {
          */
         public function setURLResolverHook(hook:Function):void {
             _urlResolverHook = hook;
+        }
+
+        //------------------------------------------------------------
+        // debug
+        //------------------------------------------------------------
+
+        public function traceResources():void {
+            trace("");
+            _sceneResource .traceResources();
+            _globalResource.traceResources();
+            trace("");
         }
 
         //------------------------------------------------------------

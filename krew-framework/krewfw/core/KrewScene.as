@@ -235,13 +235,15 @@ package krewfw.core {
         }
 
         private function _loadSceneScopeAssets(async:KrewAsync):void {
+            var requiredAssets:Array = getRequiredAssets();
+
             // hook onLoadComplete
             var _onLoadComplete:Function = function():void {
                 _servantActor.sendMessage(KrewSystemEventType.COMPLETE_ASSET_LOAD);
                 onLoadComplete();
                 async.done();
             };
-            if (getRequiredAssets().length == 0) {
+            if (requiredAssets.length == 0) {
                 _onLoadComplete();
                 return;
             }
@@ -256,7 +258,7 @@ package krewfw.core {
 
             // start loading assets
             sharedObj.resourceManager.loadResources(
-                getRequiredAssets(), _onLoadProgress, _onLoadComplete
+                requiredAssets, _onLoadProgress, _onLoadComplete
             );
         }
 

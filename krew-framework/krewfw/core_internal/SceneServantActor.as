@@ -19,9 +19,13 @@ package krewfw.core_internal {
             listen(KrewSystemEventType.SYSTEM_ACTIVATE,   _onSystemActivate);
             listen(KrewSystemEventType.SYSTEM_DEACTIVATE, _onSystemDeactivate);
 
-            // for debug: set profiling task
+            //--- for debug: set profiling task
             if (KrewConfig.WATCH_NUM_ACTOR) {
                 addPeriodicTask(1.0, ProfileData.traceNumActor);
+            }
+
+            if (KrewConfig.WATCH_LOADED_RESOURCES) {
+                addPeriodicTask(3.0, sharedObj.resourceManager.traceResources);
             }
         }
 

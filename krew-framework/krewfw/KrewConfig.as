@@ -84,8 +84,11 @@ package krewfw {
          */
         public static var GAME_LOG_VERBOSE:int = 1;
 
-        /** true にすると１秒に１回各 layer の Actor 数をログに吐く */
+        /** true にすると 1 秒に 1 回各 layer の Actor 数をログに吐く */
         public static var WATCH_NUM_ACTOR:Boolean = false;
+
+        /** true にすると 3 秒に 1 回、現在読み込まれているリソースの file path を吐く */
+        public static var WATCH_LOADED_RESOURCES:Boolean = false;
 
         /** true にすると starling.utils.AssetMamager のログを吐く */
         public static var ASSET_MANAGER_VERBOSE:Boolean = false;

@@ -112,7 +112,11 @@ package krewfw.core_internal {
 
         public function purge():void {
             _assetManager.purge();
-            _loadedFilePaths = new Dictionary();
+
+            // clear Dictionary
+            for (var key:* in _loadedFilePaths) {
+                delete _loadedFilePaths[key];
+            }
         }
 
         //------------------------------------------------------------

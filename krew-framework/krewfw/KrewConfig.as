@@ -88,7 +88,7 @@ package krewfw {
         public static var WATCH_NUM_ACTOR:Boolean = false;
 
         /** true にすると 2 秒に 1 回、現在読み込まれているリソースの file path を吐く */
-        public static var WATCH_LOADED_RESOURCES:Boolean = true;
+        public static var WATCH_LOADED_RESOURCES:Boolean = false;
 
         /** true にすると starling.utils.AssetMamager のログを吐く */
         public static var ASSET_MANAGER_VERBOSE:Boolean = false;

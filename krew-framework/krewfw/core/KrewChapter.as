@@ -17,11 +17,13 @@ package krewfw.core {
 
         private var _sceneClasses:Vector.<Class>;
         private var _requiredAssets:Array;
+        private var _footPrints:Dictionary;
 
         //------------------------------------------------------------
         public function KrewChapter() {
-            _sceneClasses = Vector.<Class>(getSceneClassList());
+            _sceneClasses   = Vector.<Class>(getSceneClassList());
             _requiredAssets = getRequiredAssets();
+            _footPrints     = new Dictionary();
         }
 
         //------------------------------------------------------------
@@ -61,6 +63,15 @@ package krewfw.core {
          */
         protected function onExit():void {}
 
+        /**
+         * Chapter に入ってから、初めて遷移する Scene に入るときに呼ばれる。
+         * これは Scene のリソース読み込みや初期化よりも先に呼ばれる。
+         * override する場合、最後に onComplete を呼ぶことを忘れずに。
+         */
+        protected function onEnterSceneFirst(scene:KrewScene, onComplete:Function):void {
+            onComplete();
+        }
+
         //------------------------------------------------------------
         // Called from framework
         //------------------------------------------------------------
@@ -69,7 +80,10 @@ package krewfw.core {
          * @private
          * Chapter の外から Chapter の内側に入ってきたなら、
          * 初期化用の Function を返す。そうでなければ null を返す。
+         *
          * 返り値の Function は KrewAsync で使用することを想定している。
+         * これは getRequiredAssets で定義されたリソースの読み込みと、
+         * onEnter の呼び出しを行う。
          */
         public function getInitializer(prevScene:KrewScene, currentScene:KrewScene):Function {
             // 遷移先が Chapter 内ではない
@@ -101,7 +115,28 @@ package krewfw.core {
             if (!_containsScene(prevScene)) { return; }
 
             onExit();
+
+            for (var key:* in _footPrints) {
+                delete _footPrints[key];
+            }
+
             krew.agent.sharedObj.resourceManager.purgeChapterScopeResources(this);
+        }
+
+        /**
+         * @private
+         * Chapter に入ってから、初めて遷移する Scene であればハンドラを呼ぶ
+         */
+        public function getOnEnterSceneFirst(currentScene:KrewScene):Function {
+            var sceneClass:Class = _findSceneClass(currentScene);
+            if (!sceneClass) { return null; }
+
+            if (_footPrints[sceneClass]) { return null; }
+            _footPrints[sceneClass] = true;
+
+            return function(async:KrewAsync):void {
+                onEnterSceneFirst(currentScene, async.done);
+            };
         }
 
         //------------------------------------------------------------
@@ -117,6 +152,17 @@ package krewfw.core {
                 }
             }
             return false;
+        }
+
+        private function _findSceneClass(scene:KrewScene):Class {
+            if (_sceneClasses.length == 0) { return null; }
+
+            for each (var sceneClass:Class in _sceneClasses) {
+                if (scene is sceneClass) {
+                    return sceneClass;
+                }
+            }
+            return null;
         }
 
     }

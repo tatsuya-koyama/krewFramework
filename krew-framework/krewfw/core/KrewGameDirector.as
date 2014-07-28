@@ -130,8 +130,16 @@ package krewfw.core {
             if (_chapters.length == 0) { onComplete(); return; }
 
             var tasks:Array = [];
+
+            // 各 Chapter のリソース読み込み & 初期化シーケンスを取得
             for each (var chapter:KrewChapter in _chapters) {
                 var task:Function = chapter.getInitializer(prevScene, currentScene);
+                if (task != null) { tasks.push(task); }
+            }
+
+            // 各 Chapter に入ってから初めて遷移する Scene があればハンドラを取得
+            for each (var chapter:KrewChapter in _chapters) {
+                var task:Function = chapter.getOnEnterSceneFirst(currentScene);
                 if (task != null) { tasks.push(task); }
             }
 

@@ -186,23 +186,25 @@ package krewfw.core {
         }
 
         //------------------------------------------------------------
-        // Automatically called by framework
+        // Automatically called from framework
         //------------------------------------------------------------
 
         /** @private */
-        public function startInitSceneSequence():void {
+        public function setUpLayers():void {
             sharedObj.layerManager.setUpLayers(this, getLayerList());
             sharedObj.collisionSystem.setUpGroups(getCollisionGroups());
             _setUpServantActor();
-
             initLoadingView();
+        }
 
+        /** @private */
+        public function startInitSceneSequence():void {
             // load resources from file to memory
             krew.async({
                 serial: [
                     _loadGlobalAssets,
                     _loadSceneScopeAssets,
-                    _execInitHook
+                    _execHookBeforeInit
                 ],
                 anyway: initAfterLoad
             });
@@ -262,7 +264,7 @@ package krewfw.core {
             );
         }
 
-        private function _execInitHook(async:KrewAsync):void {
+        private function _execHookBeforeInit(async:KrewAsync):void {
             hookBeforeInit(async.done);
         }
 

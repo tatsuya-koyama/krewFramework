@@ -2,12 +2,15 @@ package krewfw.core_internal {
 
     import flash.media.Sound;
     import flash.utils.ByteArray;
+    import flash.utils.Dictionary;
+    import flash.utils.getQualifiedClassName;
 
     import starling.display.Image;
     import starling.textures.Texture;
     import starling.utils.AssetManager;
 
     import krewfw.KrewConfig;
+    import krewfw.core.KrewChapter;
     import krewfw.utils.krew;
 
     /**
@@ -18,6 +21,8 @@ package krewfw.core_internal {
 
         private var _sceneResource:KrewResource;
         private var _globalResource:KrewResource;
+        private var _chapterResources:Dictionary;
+        private var _numActiveChapter:int = 0;
 
         private var _urlResolverHook:Function = null;
 
@@ -25,6 +30,7 @@ package krewfw.core_internal {
         public function KrewResourceManager() {
             _sceneResource  = new KrewResource("Scene");
             _globalResource = new KrewResource("Global");
+            _chapterResources = new Dictionary();
         }
 
         //------------------------------------------------------------
@@ -69,13 +75,56 @@ package krewfw.core_internal {
          * Scene スコープのものと同様に、getImage() などで取得できる。
          * （同じキーのものが両方にある場合、Scene スコープのものが優先される）
          *
-         * 現状はゲームの起動時に 1 回実行することを想定。
+         * KrewGameDirector の getInitialGlobalAssets を override するか、
+         * KrewScene の getAdditionalGlobalAssets を override することで、
+         * フレームワークが内部的に呼ぶ。
+         * （krewFramework の利用者は直接この関数を呼ぶべきではない）
          */
         public function loadGlobalResources(fileNameList:Array, onLoadProgress:Function,
                                             onLoadComplete:Function):void
         {
             var suitablePathList:Array = _mapToSuitablePath(fileNameList);
             _globalResource.loadResources(suitablePathList, onLoadProgress, onLoadComplete);
+        }
+
+        /**
+         * Scene を複数まとめた Chapter スコープで保持しておきたいリソースのロード。
+         * KrewChapter を KrewGameDirector に登録することによって、フレームワークが内部的に呼ぶ。
+         * （krewFramework の利用者は直接この関数を呼ぶべきではない）
+         */
+        public function loadChapterResources(chapter:KrewChapter,
+                                             fileNameList:Array, onLoadProgress:Function,
+                                             onLoadComplete:Function):void
+        {
+            if (_chapterResources[chapter]) {
+                krew.fwlog("[Error] [KRM] Chapter-scope resources are already exists.");
+                krew.fwlog('   - class: ' + getQualifiedClassName(chapter));
+            }
+
+            var resource:KrewResource = new KrewResource("Chapter");
+            _chapterResources[chapter] = resource;
+            ++_numActiveChapter;
+
+            var suitablePathList:Array = _mapToSuitablePath(fileNameList);
+            resource.loadResources(suitablePathList, onLoadProgress, onLoadComplete);
+        }
+
+        /**
+         * Chapter スコープのリソースを破棄。
+         * この関数は krewFramework が内部的に呼ぶ。
+         * （krewFramework の利用者は直接この関数を呼ぶべきではない）
+         */
+        public function purgeChapterScopeResources(chapter:KrewChapter):void {
+            if (!_chapterResources[chapter]) {
+                krew.fwlog("[Error] [KRM] Chapter-scope resources not found.");
+                krew.fwlog('   - class: ' + getQualifiedClassName(chapter));
+                return;
+            }
+
+            var resource:KrewResource = _chapterResources[chapter];
+            resource.purge();
+            delete _chapterResources[chapter];
+            --_numActiveChapter;
         }
 
         //------------------------------------------------------------
@@ -85,7 +134,7 @@ package krewfw.core_internal {
         /**
          * ロード済みの画像アセットをもとに、Image を作って返す。
          * 拡張子無しのファイル名を指定。Scene スコープのアセットから検索し、
-         * 見つからなければ Global スコープのアセットから検索して返す。
+         * 見つからなければ Chapter スコープ、Global スコープの順で検索して返す。
          * （他の getter でも同様）
          */
         public function getImage(fileName:String):Image {
@@ -101,6 +150,13 @@ package krewfw.core_internal {
             var texture:Texture = _sceneResource.getTexture(fileName);
             if (texture) { return texture; }
 
+            if (_numActiveChapter > 0) {
+                for each (var chapterResource:KrewResource in _chapterResources) {
+                    texture = chapterResource.getTexture(fileName);
+                    if (texture) { return texture; }
+                }
+            }
+
             texture = _globalResource.getTexture(fileName);
             if (texture) { return texture; }
 
@@ -112,6 +168,13 @@ package krewfw.core_internal {
         public function getSound(fileName:String):Sound {
             var sound:Sound = _sceneResource.getSound(fileName);
             if (sound) { return sound; }
+
+            if (_numActiveChapter > 0) {
+                for each (var chapterResource:KrewResource in _chapterResources) {
+                    sound = chapterResource.getSound(fileName);
+                    if (sound) { return sound; }
+                }
+            }
 
             sound = _globalResource.getSound(fileName);
             if (sound) { return sound; }
@@ -125,6 +188,13 @@ package krewfw.core_internal {
             var xml:XML = _sceneResource.getXml(fileName);
             if (xml) { return xml; }
 
+            if (_numActiveChapter > 0) {
+                for each (var chapterResource:KrewResource in _chapterResources) {
+                    xml = chapterResource.getXml(fileName);
+                    if (xml) { return xml; }
+                }
+            }
+
             xml = _globalResource.getXml(fileName);
             if (xml) { return xml; }
 
@@ -137,6 +207,13 @@ package krewfw.core_internal {
             var obj:Object = _sceneResource.getObject(fileName);
             if (obj) { return obj; }
 
+            if (_numActiveChapter > 0) {
+                for each (var chapterResource:KrewResource in _chapterResources) {
+                    obj = chapterResource.getObject(fileName);
+                    if (obj) { return obj; }
+                }
+            }
+
             obj = _globalResource.getObject(fileName);
             if (obj) { return obj; }
 
@@ -148,6 +225,13 @@ package krewfw.core_internal {
         public function getByteArray(fileName:String):ByteArray {
             var byteArray:ByteArray = _sceneResource.getByteArray(fileName);
             if (byteArray) { return byteArray; }
+
+            if (_numActiveChapter > 0) {
+                for each (var chapterResource:KrewResource in _chapterResources) {
+                    byteArray = chapterResource.getByteArray(fileName);
+                    if (byteArray) { return byteArray; }
+                }
+            }
 
             byteArray = _globalResource.getByteArray(fileName);
             if (byteArray) { return byteArray; }
@@ -191,7 +275,12 @@ package krewfw.core_internal {
 
         public function traceResources():void {
             trace("");
-            _sceneResource .traceResources();
+            _sceneResource.traceResources();
+            for (var chapter:* in _chapterResources) {
+                _chapterResources[chapter].traceResources(
+                    "Chapter (" + getQualifiedClassName(chapter) + ")"
+                );
+            }
             _globalResource.traceResources();
             trace("");
         }

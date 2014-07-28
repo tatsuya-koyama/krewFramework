@@ -9,6 +9,7 @@ package krewfw.core {
 
     import krewfw.NativeStageAccessor;
     import krewfw.core_internal.KrewSharedObjects;
+    import krewfw.utils.krew;
 
     /**
      * Take responsibility for direction of game sequence.
@@ -20,10 +21,15 @@ package krewfw.core {
     public class KrewGameDirector extends Sprite {
 
         private var _currentScene:KrewScene = null;
+        private var _prevScene   :KrewScene = null;
+
         private var _sharedObj:KrewSharedObjects;
+        private var _chapters:Vector.<KrewChapter>;
 
         //------------------------------------------------------------
         public function KrewGameDirector() {
+            _chapters = Vector.<KrewChapter>(getChapterList());
+
             KrewBlendMode.registerExtendedBlendModes();
             KrewTransition.registerExtendedTransitions();
 
@@ -53,6 +59,15 @@ package krewfw.core {
          * @return Example: ['global-header', 'global-ui']
          */
         protected function getGlobalLayerList():Array {
+            return [];
+        }
+
+        /**
+         * Scene をまとめて扱う Chapter を定義したい場合は、これを override する。
+         * KrewChapter の subclass の instance のリストが返ることを期待。
+         * @return Example: [new YourChapterClass()]
+         */
+        protected function getChapterList():Array {
             return [];
         }
 
@@ -90,13 +105,50 @@ package krewfw.core {
         }
 
         private function _startScene(scene:KrewScene):void {
+            _prevScene    = _currentScene;
             _currentScene = scene;
 
-            scene.sharedObj = _sharedObj;
-            scene.startInitSceneSequence();
+            _currentScene.sharedObj = _sharedObj;
+            _currentScene.setUpLayers();
 
-            addChild(scene);
+            _exitChapter(_prevScene, _currentScene);
+
+            _startChapter(
+                _prevScene, _currentScene,
+                function():void {
+                    _currentScene.startInitSceneSequence();
+                }
+            );
+
+            addChild(_currentScene);
             _currentScene.addEventListener(KrewSystemEventType.EXIT_SCENE, _onExitScene);
+        }
+
+        private function _startChapter(prevScene:KrewScene, currentScene:KrewScene,
+                                       onComplete:Function):void
+        {
+            if (_chapters.length == 0) { onComplete(); return; }
+
+            var tasks:Array = [];
+            for each (var chapter:KrewChapter in _chapters) {
+                var task:Function = chapter.getInitializer(prevScene, currentScene);
+                if (task != null) { tasks.push(task); }
+            }
+
+            if (tasks.length == 0) { onComplete(); return; }
+
+            krew.async({
+                serial: tasks,
+                anyway: onComplete
+            });
+        }
+
+        private function _exitChapter(prevScene:KrewScene, currentScene:KrewScene):void {
+            if (_chapters.length == 0) { return; }
+
+            for each (var chapter:KrewChapter in _chapters) {
+                chapter.finalize(prevScene, currentScene);
+            }
         }
 
         private function _onSystemActivate(event:flash.events.Event=null):void {
@@ -128,5 +180,6 @@ package krewfw.core {
             // call Garbage Collection manually
             System.gc();
         }
+
     }
 }

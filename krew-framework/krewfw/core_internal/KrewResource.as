@@ -93,7 +93,7 @@ package krewfw.core_internal {
         {
             for each (var filePath:String in filePathList) {
                 if (_loadedFilePaths[filePath]) {
-                    _log("[Warning] Asset is already loaded: " + filePath);
+                    _log("[Info] Asset is already loaded: " + filePath);
                     break;
                 }
                 _loadedFilePaths[filePath] = true;
@@ -119,8 +119,9 @@ package krewfw.core_internal {
         // debug
         //------------------------------------------------------------
 
-        public function traceResources():void {
-            trace('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv [KrewResource ::', _scopeName + ']');
+        public function traceResources(scopeName:String=null):void {
+            if (!scopeName) { scopeName = _scopeName; }
+            trace('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv [KrewResource ::', scopeName + ']');
 
             var paths:Array = [];
             for (var path:String in _loadedFilePaths) {

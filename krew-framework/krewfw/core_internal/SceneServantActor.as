@@ -25,7 +25,7 @@ package krewfw.core_internal {
             }
 
             if (KrewConfig.WATCH_LOADED_RESOURCES) {
-                addPeriodicTask(3.0, sharedObj.resourceManager.traceResources);
+                addPeriodicTask(2.0, sharedObj.resourceManager.traceResources);
             }
         }
 

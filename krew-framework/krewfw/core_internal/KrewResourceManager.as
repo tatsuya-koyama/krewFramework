@@ -90,7 +90,8 @@ package krewfw.core_internal {
         /**
          * Scene を複数まとめた Chapter スコープで保持しておきたいリソースのロード。
          * KrewChapter を KrewGameDirector に登録することによって、フレームワークが内部的に呼ぶ。
-         * （krewFramework の利用者は直接この関数を呼ぶべきではない）
+         * （krewFramework の利用者は直接この関数を呼ぶべきではない。
+         *   Scene の途中で動的に読み込みを行いたい場合には KrewChapter のインタフェースを通して呼ぶ）
          */
         public function loadChapterResources(chapter:KrewChapter,
                                              fileNameList:Array, onLoadProgress:Function,

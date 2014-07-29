@@ -73,6 +73,32 @@ package krewfw.core {
         }
 
         //------------------------------------------------------------
+        // Chapter Utilities
+        //------------------------------------------------------------
+
+        /**
+         * Scene スコープでリソースを読み込む
+         */
+        protected function loadResources(fileNameList:Array, onLoadProgress:Function,
+                                         onLoadComplete:Function):void
+        {
+            krew.agent.sharedObj.resourceManager.loadResources(
+                fileNameList, onLoadProgress, onLoadComplete
+            );
+        }
+
+        /**
+         * Chapter スコープでリソースを読み込む
+         */
+        protected function loadChapterResources(fileNameList:Array, onLoadProgress:Function,
+                                                onLoadComplete:Function):void
+        {
+            krew.agent.sharedObj.resourceManager.loadChapterResources(
+                this, fileNameList, onLoadProgress, onLoadComplete
+            );
+        }
+
+        //------------------------------------------------------------
         // Called from framework
         //------------------------------------------------------------
 

@@ -98,14 +98,12 @@ package krewfw.core_internal {
                                              fileNameList:Array, onLoadProgress:Function,
                                              onLoadComplete:Function):void
         {
-            if (_chapterResources[chapter]) {
-                krew.fwlog("[Error] [KRM] Chapter-scope resources are already exists.");
-                krew.fwlog('   - class: ' + getQualifiedClassName(chapter));
+            var resource:KrewResource = _chapterResources[chapter];
+            if (!resource) {
+                resource = new KrewResource("Chapter");
+                _chapterResources[chapter] = resource;
+                ++_numActiveChapter;
             }
-
-            var resource:KrewResource = new KrewResource("Chapter");
-            _chapterResources[chapter] = resource;
-            ++_numActiveChapter;
 
             var suitablePathList:Array = _mapToSuitablePath(fileNameList);
             resource.loadResources(suitablePathList, onLoadProgress, onLoadComplete);

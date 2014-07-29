@@ -7,6 +7,7 @@ package krewfw.core_internal {
 
     import starling.display.Image;
     import starling.textures.Texture;
+    import starling.textures.TextureAtlas;
     import starling.utils.AssetManager;
 
     import krewfw.KrewConfig;
@@ -162,6 +163,25 @@ package krewfw.core_internal {
             if (texture) { return texture; }
 
             krew.fwlog('[Error] [KRM] Texture not found: ' + fileName);
+            return null;
+        }
+
+        /** ロード済みの TextureAtlas を返す */
+        public function getTextureAtlas(fileName:String):TextureAtlas {
+            var textureAtlas:TextureAtlas = _sceneResource.getTextureAtlas(fileName);
+            if (textureAtlas) { return textureAtlas; }
+
+            if (_numActiveChapter > 0) {
+                for each (var chapterResource:KrewResource in _chapterResources) {
+                    textureAtlas = chapterResource.getTextureAtlas(fileName);
+                    if (textureAtlas) { return textureAtlas; }
+                }
+            }
+
+            textureAtlas = _globalResource.getTextureAtlas(fileName);
+            if (textureAtlas) { return textureAtlas; }
+
+            krew.fwlog('[Error] [KRM] TextureAtlas not found: ' + fileName);
             return null;
         }
 

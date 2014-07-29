@@ -5,6 +5,7 @@ package krewfw.core {
 
     import starling.display.Image;
     import starling.textures.Texture;
+    import starling.textures.TextureAtlas;
 
     import krewfw.core_internal.KrewSharedObjects;
 
@@ -72,12 +73,13 @@ package krewfw.core {
 
         public function get sharedObj():KrewSharedObjects { return _actor.sharedObj; }
 
-        public function getTexture  (fileName:String):Texture   { return _actor.getTexture  (fileName); }
-        public function getImage    (fileName:String):Image     { return _actor.getImage    (fileName); }
-        public function getSound    (fileName:String):Sound     { return _actor.getSound    (fileName); }
-        public function getXml      (fileName:String):XML       { return _actor.getXml      (fileName); }
-        public function getObject   (fileName:String):Object    { return _actor.getObject   (fileName); }
-        public function getByteArray(fileName:String):ByteArray { return _actor.getByteArray(fileName); }
+        public function getTexture     (fileName:String):Texture      { return _actor.getTexture     (fileName); }
+        public function getTextureAtlas(fileName:String):TextureAtlas { return _actor.getTextureAtlas(fileName); }
+        public function getImage       (fileName:String):Image        { return _actor.getImage       (fileName); }
+        public function getSound       (fileName:String):Sound        { return _actor.getSound       (fileName); }
+        public function getXml         (fileName:String):XML          { return _actor.getXml         (fileName); }
+        public function getObject      (fileName:String):Object       { return _actor.getObject      (fileName); }
+        public function getByteArray   (fileName:String):ByteArray    { return _actor.getByteArray   (fileName); }
 
         public function loadResources(fileNameList:Array, onLoadProgress:Function,
                                       onLoadComplete:Function):void

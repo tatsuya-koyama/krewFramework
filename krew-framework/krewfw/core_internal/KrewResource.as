@@ -6,6 +6,7 @@ package krewfw.core_internal {
 
     import starling.display.Image;
     import starling.textures.Texture;
+    import starling.textures.TextureAtlas;
     import starling.utils.AssetManager;
 
     import krewfw.KrewConfig;
@@ -41,6 +42,10 @@ package krewfw.core_internal {
 
         public function getTexture(fileName:String):Texture {
             return _assetManager.getTexture(fileName);
+        }
+
+        public function getTextureAtlas(fileName:String):TextureAtlas {
+            return _assetManager.getTextureAtlas(fileName);
         }
 
         public function getSound(fileName:String):Sound {

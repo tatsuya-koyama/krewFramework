@@ -7,6 +7,7 @@ package krewfw.core {
     import starling.display.Image;
     import starling.display.Sprite;
     import starling.textures.Texture;
+    import starling.textures.TextureAtlas;
 
     import krewfw.core_internal.IdGenerator;
     import krewfw.core_internal.KrewSharedObjects;
@@ -78,12 +79,13 @@ package krewfw.core {
 
         //----- Resource Accessor
 
-        public function getTexture  (fileName:String):Texture   { return sharedObj.resourceManager.getTexture  (fileName); }
-        public function getImage    (fileName:String):Image     { return sharedObj.resourceManager.getImage    (fileName); }
-        public function getSound    (fileName:String):Sound     { return sharedObj.resourceManager.getSound    (fileName); }
-        public function getXml      (fileName:String):XML       { return sharedObj.resourceManager.getXml      (fileName); }
-        public function getObject   (fileName:String):Object    { return sharedObj.resourceManager.getObject   (fileName); }
-        public function getByteArray(fileName:String):ByteArray { return sharedObj.resourceManager.getByteArray(fileName); }
+        public function getTexture     (fileName:String):Texture      { return sharedObj.resourceManager.getTexture     (fileName); }
+        public function getTextureAtlas(fileName:String):TextureAtlas { return sharedObj.resourceManager.getTextureAtlas(fileName); }
+        public function getImage       (fileName:String):Image        { return sharedObj.resourceManager.getImage       (fileName); }
+        public function getSound       (fileName:String):Sound        { return sharedObj.resourceManager.getSound       (fileName); }
+        public function getXml         (fileName:String):XML          { return sharedObj.resourceManager.getXml         (fileName); }
+        public function getObject      (fileName:String):Object       { return sharedObj.resourceManager.getObject      (fileName); }
+        public function getByteArray   (fileName:String):ByteArray    { return sharedObj.resourceManager.getByteArray   (fileName); }
 
         public function loadResources(fileNameList:Array, onLoadProgress:Function,
                                       onLoadComplete:Function):void

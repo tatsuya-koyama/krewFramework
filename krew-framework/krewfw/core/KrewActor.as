@@ -233,7 +233,6 @@ package krewfw.core {
         /** @private */
         protected function _disposeImageTextures():void {
             for (var i:uint=0;  i < _imageList.length;  ++i) {
-                _imageList[i].texture.dispose();
                 _imageList[i].dispose();
             }
         }

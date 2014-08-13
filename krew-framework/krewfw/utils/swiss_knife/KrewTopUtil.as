@@ -192,15 +192,18 @@ package krewfw.utils.swiss_knife {
          * </pre>
          */
         public function range(first:Number, last:Number=NaN, step:Number=NaN):Array {
+            var isOneArg:Boolean = false;
+
             // 1 argument
             if (isNaN(last)) {
                 last  = first;
                 first = 0;
+                isOneArg = true;
             }
 
             // 2 arguments
             if (isNaN(step)) {
-                step = (first < last) ? 1 : -1;
+                step = (first <= last) ? 1 : -1;
             }
             if (step == 0) { step = 1; }
 
@@ -212,13 +215,17 @@ package krewfw.utils.swiss_knife {
             var iter:Number = first;
             var range:Array = [];
             if (first <= last) {
-                while(iter < last) {
+                while(iter <= last) {
                     range.push(iter);  iter += step;
                 }
             } else {
-                while(iter > last) {
+                while(iter >= last) {
                     range.push(iter);  iter += step;
                 }
+            }
+
+            if (isOneArg) {
+                range.pop();
             }
             return range;
         }

@@ -1,5 +1,7 @@
 package krewfw.utils.swiss_knife {
 
+    import flash.utils.Dictionary;
+
     import krewfw.utils.krew;
 
     /**
@@ -76,6 +78,59 @@ package krewfw.utils.swiss_knife {
                 if (iterator(item)) { return item; }
             }
             return null;
+        }
+
+        /**
+         * Removes all duplicate elements in the array.
+         * Non-destructive, and order is maintained.
+         * <pre>
+         * Example:
+         *     [3, 1, 2, 2, 4, 1, 3]  ->  [3, 1, 2, 4]
+         *     ["Apple", "Apple", "Orange", "Grape", "Orange"]  ->  ["Apple", "Orange", "Grape"]
+         *     [1, 1, "BBB", 3, "AAA", 3, null, 2, "AAA", 2, null, 1, 1]  ->  [1, "BBB", 3, "AAA", null, 2]
+         *     []  ->  []
+         * </pre>
+         */
+        public function unique(list:Array):Array {
+            var known:Dictionary = new Dictionary();
+            var result:Array = [];
+            for each (var item:* in list) {
+                if (!known[item]) {
+                    result.push(item);
+                    known[item] = true;
+                }
+            }
+            return result;
+        }
+
+        /**
+         * Sort and removes all duplicate elements in the array.
+         * Non-destructive. Sort method is default of AS3's Array class.
+         * <pre>
+         * Example:
+         *     [3, 1, 2, 2, 4, 1, 3]  ->  [1, 2, 3, 4]
+         *     ["Banana", "Apple", "Apple", "Orange", "Grape", "Orange"]  ->  ["Apple", "Banana", "Grape", "Orange"]
+         *     ["Banana", 1, "Apple", 3, "1", "Banana", 3, "2.4", 2.4]  ->  ["1", 1, "2.4", 2.4, 3, "Apple", "Banana"]
+         *     []  ->  []
+         * </pre>
+         */
+        public function sortedUnique(srcList:Array):Array {
+            if (srcList.length == 0) { return []; }
+
+            var list:Array = srcList.slice();  // duplicate
+            list.sort();
+
+            var result:Array = [];
+            var prev:* = null;
+            if (list[0] == null) { prev = false; }
+
+            for each (var item:* in list) {
+                if (item !== prev) {
+                    result.push(item);
+                    prev = item;
+                }
+            }
+            return result;
         }
 
     }

@@ -3,6 +3,7 @@ package {
     import krewfw.core.KrewScene;
     import krewfw.core.KrewGameDirector;
 
+    import krewdemo.GameStatic;
     import krewdemo.scene.LoadScene;
 
     //------------------------------------------------------------
@@ -10,6 +11,8 @@ package {
 
         //------------------------------------------------------------
         public function KrewDemoDirector() {
+            GameStatic.init();
+
             var firstScene:KrewScene = new LoadScene();
             startGame(firstScene);
         }

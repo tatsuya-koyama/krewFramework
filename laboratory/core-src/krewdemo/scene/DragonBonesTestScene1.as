@@ -8,7 +8,6 @@ package krewdemo.scene {
 
     import dragonBones.Armature;
     import dragonBones.animation.WorldClock;
-    import dragonBones.factorys.StarlingFactory;
 
     import krewfw.core.KrewBlendMode;
     import krewfw.core.KrewScene;
@@ -19,6 +18,7 @@ package krewdemo.scene {
     import krewfw.utils.starling.TextFactory;
 
     import krewdemo.GameEvent;
+    import krewdemo.GameStatic;
     import krewdemo.actor.common.ScreenFilter;
     import krewdemo.actor.feature_test.*;
     import krewdemo.actor.title.TileEffect;
@@ -26,7 +26,6 @@ package krewdemo.scene {
     //------------------------------------------------------------
     public class DragonBonesTestScene1 extends FeatureTestSceneBase {
 
-        private var _factory:StarlingFactory;
         private var _armature:Armature;
         private var _armatureSprite:Sprite;
 
@@ -44,16 +43,17 @@ package krewdemo.scene {
         }
 
         protected override function onDispose():void {
-            if (_factory) {
-                _factory.dispose();
-            }
+            GameStatic.boneFactories.dispose();
+
             if (_armature) {
                 _armature.dispose();
             }
         }
 
         public override function hookBeforeInit(onComplete:Function):void {
-            onComplete();
+            GameStatic.boneFactories.initFactories(
+                ["db_robot"], onComplete
+            );
         }
 
         public override function initAfterLoad():void {
@@ -79,7 +79,7 @@ package krewdemo.scene {
 
             listen(SimpleVirtualJoystick.UPDATE_JOYSTICK, _onUpdateJoystick);
 
-            _initDragonBones();
+            _initArmature();
         }
 
         private function _makeText(str:String="", fontName:String="tk_courier"):TextField {
@@ -91,14 +91,8 @@ package krewdemo.scene {
             return text;
         }
 
-        private function _initDragonBones():void {
-            _factory = new StarlingFactory();
-            _factory.addEventListener(Event.COMPLETE, _onDBLoadComplete);
-            _factory.parseData(getByteArray("db_robot"));
-        }
-
-        private function _onDBLoadComplete(event:Event):void {
-            _armature = _factory.buildArmature("Robot");
+        private function _initArmature():void {
+            _armature = GameStatic.boneFactories.makeArmature("db_robot", "Robot");
 
             _armatureSprite = _armature.display as Sprite;
             _armatureSprite.x = 240;

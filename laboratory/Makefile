@@ -22,6 +22,7 @@ debug:
 	mxmlc -incremental=true \
 	      -library-path+="lib/" \
 	      -library-path+="../lib/" \
+	      -library-path+="../lib-ex/" \
 	      -source-path+="core-src/" \
 	      -source-path+="../krew-framework/" \
 	      -swf-version=25 \
@@ -42,6 +43,7 @@ flash:
 	mxmlc -incremental=true \
 	      -library-path+="lib/" \
 	      -library-path+="../lib/" \
+	      -library-path+="../lib-ex/" \
 	      -source-path+="core-src/" \
 	      -source-path+="../krew-framework/" \
 	      -swf-version=25 \
@@ -60,6 +62,7 @@ air-android:
 	rm -f build/krewdemo-AIR.swf
 	amxmlc -library-path+="lib/" \
 	       -library-path+="../lib/" \
+	       -library-path+="../lib-ex/" \
 	       -source-path+="core-src/" \
 	       -source-path+="../krew-framework/" \
 	       -swf-version=25 \

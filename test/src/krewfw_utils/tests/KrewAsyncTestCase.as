@@ -79,11 +79,12 @@ package krewfw_utils.tests {
                         trail += "c";
                         async.done();
                     }
-                ]
+                ],
+                success: function():void { trail += "s"; }
             });
             async.go();
 
-            Assert.assertEquals("abc", trail);
+            Assert.assertEquals("abcs", trail);
         }
 
 
@@ -112,6 +113,7 @@ package krewfw_utils.tests {
                                 async.done();
                             }
                         ],
+                        success: function():void { trail += "s1"; },
                         anyway: function():void {
                             trail += "w1"
                         }
@@ -121,13 +123,14 @@ package krewfw_utils.tests {
                         async.done();
                     }
                 ],
+                success: function():void { trail += "s2"; },
                 anyway: function():void {
                     trail += "w2";
                 }
             });
             async.go();
 
-            Assert.assertEquals("abABw1cw2", trail);
+            Assert.assertEquals("abABs1w1cs2w2", trail);
         }
 
 
@@ -150,6 +153,7 @@ package krewfw_utils.tests {
                         async.done();
                     }
                 ],
+                success: function():void { trail += "s"; },
                 error: function():void {
                     trail += "_e_"
                 },
@@ -188,6 +192,7 @@ package krewfw_utils.tests {
                                 async.done();
                             }
                         ],
+                        success: function():void { trail += "s1"; },
                         error: function():void {
                             trail += "E";
                         },
@@ -200,6 +205,7 @@ package krewfw_utils.tests {
                         async.done();
                     }
                 ],
+                success: function():void { trail += "s2"; },
                 error: function():void {
                     trail += "e"
                 },
@@ -269,6 +275,7 @@ package krewfw_utils.tests {
                         });
                     }
                 ],
+                success: function():void { trail += "s"; },
                 anyway: function():void {
                     trail += "d";
                 }
@@ -283,7 +290,7 @@ package krewfw_utils.tests {
                 }
             }
 
-            Assert.assertEquals("acbde", trail);
+            Assert.assertEquals("acbsde", trail);
         }
 
 
@@ -317,6 +324,7 @@ package krewfw_utils.tests {
                                 });
                             }
                         ],
+                        success: function():void { trail += "s1"; },
                         anyway: function():void {
                             trail += "e";
                         }
@@ -327,6 +335,7 @@ package krewfw_utils.tests {
                         });
                     }
                 ],
+                success: function():void { trail += "s2"; },
                 anyway: function():void {
                     trail += "g";
                 }
@@ -341,12 +350,12 @@ package krewfw_utils.tests {
                 }
             }
 
-            Assert.assertEquals("cafdebgh", trail);
+            Assert.assertEquals("cafds1ebs2gh", trail);
         }
 
 
         [Test]
-        public function test_parallel_fail():void {
+        public function test_parallel_fail_1():void {
             var trail:String = "";
             var onTickHandlers:Array = [];
 
@@ -375,6 +384,7 @@ package krewfw_utils.tests {
                                 });
                             }
                         ],
+                        success: function():void { trail += "s1"; },
                         error: function():void {
                             trail += "E1";
                         },
@@ -388,6 +398,7 @@ package krewfw_utils.tests {
                         });
                     }
                 ],
+                success: function():void { trail += "s2"; },
                 error: function():void {
                     trail += "E2";
                 },
@@ -406,6 +417,64 @@ package krewfw_utils.tests {
             }
 
             Assert.assertEquals("cafdE1eE2ghb", trail);
+        }
+
+
+        [Test]
+        public function test_parallel_fail_2():void {
+            var trail:String = "";
+            var onTickHandlers:Array = [];
+
+            var async:KrewAsync = new KrewAsync({
+                parallel: [
+                    function(async:KrewAsync):void {
+                        onTickHandlers.push(function(count:int):void {
+                            if (count == 3) { trail += "a";  async.done(); }
+                        });
+                    },
+                    function(async:KrewAsync):void {
+                        onTickHandlers.push(function(count:int):void {
+                            if (count == 19) { trail += "b";  async.done(); }
+                        });
+                    },
+                    {
+                        parallel: [
+                            function(async:KrewAsync):void {
+                                onTickHandlers.push(function(count:int):void {
+                                    if (count == 15) { trail += "c";  async.fail(); }
+                                });
+                            },
+                            function(async:KrewAsync):void {
+                                onTickHandlers.push(function(count:int):void {
+                                    if (count == 6) { trail += "d";  async.fail(); }
+                                });
+                            }
+                        ],
+                        success: function():void { trail += "s1"; },
+                        error : function():void { trail += "E1"; },
+                        anyway: function():void { trail += "e"; }
+                    },
+                    function(async:KrewAsync):void {
+                        onTickHandlers.push(function(count:int):void {
+                            if (count == 9) { trail += "f";  async.done(); }
+                        });
+                    }
+                ],
+                success: function():void { trail += "s2"; },
+                error : function():void { trail += "E2"; },
+                anyway: function():void { trail += "g"; }
+            });
+            async.go(function():void {
+                trail += "h";
+            });
+
+            for (var i:int = 0;  i < 20;  ++i) {
+                for each (var handler:Function in onTickHandlers) {
+                    handler(i);
+                }
+            }
+
+            Assert.assertEquals("adE1eE2ghfcb", trail);
         }
 
 
@@ -604,6 +673,58 @@ package krewfw_utils.tests {
             }
 
             Assert.assertEquals("124536", trail);
+        }
+
+
+        [Test]
+        public function test_serial_and_parallel_2_fail():void {
+            var trail:String = "";
+            var onTickHandlers:Array = [];
+
+            /**
+             *   1 -> 2 -> |3 -------[!] | -> 6
+             *             |             |
+             *             |4 -> 5 ->....|
+             */
+            var async:KrewAsync = new KrewAsync({
+                serial: [
+                    function(async:KrewAsync):void { trail += "1";  async.done(); },
+                    function(async:KrewAsync):void { trail += "2";  async.done(); },
+                    {
+                        parallel: [
+                            function(async:KrewAsync):void {
+                                onTickHandlers.push(function(count:int):void {
+                                    if (count == 9) { trail += "3";  async.fail(); }
+                                });
+                            },
+                            {
+                                serial: [
+                                    function(async:KrewAsync):void { trail += "4";  async.done(); },
+                                    function(async:KrewAsync):void { trail += "5";  async.done(); }
+                                ],
+                                success: function():void { trail += "s1"; },
+                                error: function():void { trail += "E1"; }
+                            }
+                        ],
+                        success: function():void { trail += "s2"; },
+                        error: function():void { trail += "E2"; }
+                    },
+                    function(async:KrewAsync):void {
+                        trail += "6";  async.done();
+                    }
+                ],
+                success: function():void { trail += "s3"; },
+                error: function():void { trail += "E3"; }
+            });
+            async.go();
+
+            for (var i:int = 0;  i < 10;  ++i) {
+                for each (var handler:Function in onTickHandlers) {
+                    handler(i);
+                }
+            }
+
+            Assert.assertEquals("1245s13E2E3", trail);
         }
 
 

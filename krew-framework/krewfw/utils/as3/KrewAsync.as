@@ -112,6 +112,7 @@ package krewfw.utils.as3 {
 
         private var _myTask:Function;
         private var _errorHandler:Function;
+        private var _successHandler:Function;
         private var _finallyHandler:Function;
 
         private var _serialTasks  :Vector.<KrewAsync>;
@@ -125,6 +126,10 @@ package krewfw.utils.as3 {
         public static const REJECTED:int = 3;
 
         private var _state:int = KrewAsync.UNDEF;
+
+        private var _isResolved :Boolean = false;
+        private var _isRejected :Boolean = false;
+        private var _isFinalized:Boolean = false;
 
         //------------------------------------------------------------
         public function KrewAsync(asyncDef:*) {
@@ -152,6 +157,7 @@ package krewfw.utils.as3 {
 
         public function get myTask()        :Function { return _myTask; }
         public function get errorHandler()  :Function { return _errorHandler; }
+        public function get successHandler():Function { return _successHandler; }
         public function get finallyHandler():Function { return _finallyHandler; }
 
         public function get serialTasks()  :Vector.<KrewAsync> { return _serialTasks; }
@@ -205,6 +211,7 @@ package krewfw.utils.as3 {
             if (asyncDef.serial   != null) { _serialTasks   = _makeChildren(asyncDef.serial); }
             if (asyncDef.parallel != null) { _parallelTasks = _makeChildren(asyncDef.parallel); }
 
+            if (asyncDef.success  != null) { _successHandler = asyncDef.success; }
             if (asyncDef.error    != null) { _errorHandler   = asyncDef.error; }
             if (asyncDef.anyway   != null) { _finallyHandler = asyncDef.anyway; }
         }
@@ -244,6 +251,7 @@ package krewfw.utils.as3 {
 
         private function _initWithKrewAsync(asyncDef:KrewAsync):void {
             _myTask         = asyncDef.myTask;
+            _successHandler = asyncDef.successHandler;
             _errorHandler   = asyncDef.errorHandler;
             _finallyHandler = asyncDef.finallyHandler;
             _serialTasks    = asyncDef.serialTasks;
@@ -256,7 +264,7 @@ package krewfw.utils.as3 {
 
         private function _kickNextSerialTask():void {
             if (_serialTaskIndex >= _serialTasks.length) {
-                done();
+                _onResolve();
                 return;
             }
 
@@ -272,20 +280,6 @@ package krewfw.utils.as3 {
             });
         }
 
-        private function _onReject():void {
-            if (_errorHandler != null) {
-                _errorHandler();
-            }
-            _finalize();
-        }
-
-        private function _finalize():void {
-            if (_finallyHandler != null) {
-                _finallyHandler();
-            }
-            _onComplete(this);
-        }
-
         private function _kickParallelTasks():void {
             var doneCount:int = 0;
 
@@ -294,13 +288,47 @@ package krewfw.utils.as3 {
                     if (async.state == KrewAsync.RESOLVED) {
                         ++doneCount;
                         if (doneCount == _parallelTasks.length) {
-                            done();
+                            _onResolve();
                         }
                     } else {
                         _onReject();
                     }
                 });
             }
+        }
+
+        //------------------------------------------------------------
+        // result handler
+        //------------------------------------------------------------
+
+        private function _onResolve():void {
+            if (_isResolved) { return; }
+            _isResolved = true;
+
+            if (_successHandler != null) {
+                _successHandler();
+            }
+            done();
+        }
+
+        private function _onReject():void {
+            if (_isRejected) { return; }
+            _isRejected = true;
+
+            if (_errorHandler != null) {
+                _errorHandler();
+            }
+            fail();
+        }
+
+        private function _finalize():void {
+            if (_isFinalized) { return; }
+            _isFinalized = true;
+
+            if (_finallyHandler != null) {
+                _finallyHandler();
+            }
+            _onComplete(this);
         }
 
     }

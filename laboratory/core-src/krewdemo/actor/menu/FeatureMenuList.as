@@ -60,8 +60,9 @@ package krewdemo.actor.menu {
                 ,{ text: "18.Object Pooling test 3",      scene: ObjectPoolingTestScene4 }
                 ,{ text: "19.Tween test",                 scene: TweenTestScene }
                 ,{ text: "20.Bone Animation test",        scene: DragonBonesTestScene1 }
-                ,{ text: "21.----", scene: null }
+                ,{ text: "21.Huge world test 1",          scene: HugeWorldTestScene1 }
                 ,{ text: "22.----", scene: null }
+                ,{ text: "23.----", scene: null }
             ];
         }
 

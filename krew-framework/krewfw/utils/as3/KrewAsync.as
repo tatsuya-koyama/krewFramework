@@ -2,6 +2,7 @@ package krewfw.utils.as3 {
 
     /**
      * Flexible asynchronous tasker.
+     * @see http://docs.tatsuya-koyama.com/krew-framework/samples/krewasync/
      *
      * Usage:
      * <pre>
@@ -56,6 +57,7 @@ package krewfw.utils.as3 {
      *             ]},
      *             function_7
      *         ],
+     *         success: _onSuccessHandler,
      *         error  : _onErrorHandler,
      *         anyway : _onFinallyHandler
      *     });
@@ -64,8 +66,8 @@ package krewfw.utils.as3 {
      *     [Sequence]:
      *                   |3 ------>|
      *                   |         |
-     *         1 -> 2 -> |4 ------>| -> 7 -> anyway
-     *                   |         |
+     *         1 -> 2 -> |4 ------>| -> 7 -> success -> anyway
+     *                   |         |        (or error)
      *                   |5 -> 6 ->|
      *
      * </pre>
@@ -81,6 +83,7 @@ package krewfw.utils.as3 {
      *         // OR
      *         parallel: [<asyncDef>, ... ]
      *
+     *         success : function():void {},  // optional
      *         error   : function():void {},  // optional
      *         anyway  : function():void {}   // optional
      *     }

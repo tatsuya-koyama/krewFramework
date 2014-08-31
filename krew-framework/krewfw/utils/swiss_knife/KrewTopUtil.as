@@ -377,6 +377,55 @@ package krewfw.utils.swiss_knife {
             );
         }
 
+        /**
+         * Get hue from RGB color. For example, red = 0, green = 120, and blue = 240.
+         */
+        public function getHue(color:uint):Number {
+            var red  :int = getRed  (color);
+            var green:int = getGreen(color);
+            var blue :int = getBlue (color);
+            var max:int = max(red, green, blue);
+            var min:int = min(red, green, blue);
+
+            if (max == min) {
+                return 0;
+            }
+            else if (max == red) {
+                return (60 * (green - blue) / (max - min) + 360) % 360;
+            }
+            else if (max == green) {
+                return (60 * (blue - red) / (max - min)) + 120;
+            }
+            return (60 * (red - green) / (max - min)) + 240;
+        }
+
+        /**
+         * Get saturation from RGB color. 0 is achromatic, 1 is colorful.
+         */
+        public function getSaturation(color:uint):Number {
+            var red  :int = getRed  (color);
+            var green:int = getGreen(color);
+            var blue :int = getBlue (color);
+            var max:int = max(red, green, blue);
+            var min:int = min(red, green, blue);
+
+            if (max == 0) { return 0; }
+            return ((max - min) / max);
+        }
+
+        /**
+         * Get brightness (Value of HSV) from RGB color.
+         * 0 is darkness, 1 is bright.
+         */
+        public function getBrightness(color:uint):Number {
+            var red  :int = getRed  (color);
+            var green:int = getGreen(color);
+            var blue :int = getBlue (color);
+            var max:int = max(red, green, blue);
+
+            return max / 255;
+        }
+
         //------------------------------------------------------------
         // Math utils
         //------------------------------------------------------------
@@ -446,20 +495,40 @@ package krewfw.utils.swiss_knife {
             return deg / 180.0 * Math.PI;
         }
 
+        /**
+         * Return the maximum value in the variable arguments.
+         */
+        public function max(...args):Number {
+            if (args.length == 0) { return 0; }
+
+            var currentMax:Number = args[0];
+            for (var i:int=1;  i < args.length;  ++i) {
+                if (args[i] != null  &&  currentMax < args[i]) {
+                    currentMax = args[i];
+                }
+            }
+            return currentMax;
+        }
+
+        /**
+         * Return the minimum value in the variable arguments.
+         */
+        public function min(...args):Number {
+            if (args.length == 0) { return 0; }
+
+            var currentMin:Number = args[0];
+            for (var i:int=1;  i < args.length;  ++i) {
+                if (args[i] != null  &&  currentMin > args[i]) {
+                    currentMin = args[i];
+                }
+            }
+            return currentMin;
+        }
+
         public function within(value:Number, min:Number, max:Number):Number {
             if (value < min) { return min; }
             if (value > max) { return max; }
             return value;
-        }
-
-        // ToDo: 可変長引数で書きなおす
-        public function min(a:Number, b:Number):Number {
-            return (a < b) ? a : b;
-        }
-
-        // ToDo: 可変長引数で書きなおす
-        public function max(a:Number, b:Number):Number {
-            return (a > b) ? a : b;
         }
 
         public function distance(x1:Number, y1:Number, x2:Number, y2:Number):Number {

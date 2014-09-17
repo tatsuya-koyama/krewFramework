@@ -122,7 +122,7 @@ package krewfw.utils.as3 {
         private var _parallelTasks:Vector.<KrewAsync>;
 
         private var _serialTaskIndex:int = 0;
-        private var _onComplete:Function = function():void {};
+        private var _onComplete:Function = null;
 
         public static const UNDEF   :int = 1;
         public static const RESOLVED:int = 2;
@@ -331,7 +331,9 @@ package krewfw.utils.as3 {
             if (_finallyHandler != null) {
                 _finallyHandler();
             }
-            _onComplete(this);
+            if (_onComplete != null) {
+                _onComplete(this);
+            }
         }
 
     }

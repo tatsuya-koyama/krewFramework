@@ -11,6 +11,8 @@ package krewfw.builtin_actor.ui {
     //------------------------------------------------------------
     public class SimpleButton extends KrewActor {
 
+        public var moveTolerance:Number = 35;
+
         private var _onTouchEndInside:Function;
         private var _onTouchEndOutside:Function;
         private var _onTouchBegan:Function = null;
@@ -58,7 +60,7 @@ package krewfw.builtin_actor.ui {
             }
 
             var touchMoved:Touch = event.getTouch(this, TouchPhase.MOVED);
-            if (touchMoved) {
+            if (touchMoved  &&  !_allowMoveMode) {
                 var movement:Point = touchMoved.getMovement(this);
                 _addMovement(movement);
             }
@@ -101,7 +103,7 @@ package krewfw.builtin_actor.ui {
         }
 
         private function _addMovement(mv:Point):void {
-            _movements += (mv.x * mv.x) + (mv.y * mv.y);
+            _movements += Math.sqrt((mv.x * mv.x) + (mv.y * mv.y));
         }
 
         private function _resetMovement():void {
@@ -112,8 +114,7 @@ package krewfw.builtin_actor.ui {
         private function _isMovedMeaningly():Boolean {
             if (_allowMoveMode) { return false; }
 
-            var tolerance:Number = 40;
-            return (_movements > tolerance * tolerance);
+            return (_movements > moveTolerance);
         }
     }
 }

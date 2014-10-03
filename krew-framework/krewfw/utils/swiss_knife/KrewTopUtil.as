@@ -541,6 +541,33 @@ package krewfw.utils.swiss_knife {
             return (dx * dx) + (dy * dy);
         }
 
+        /**
+         * Map number to rescaled range.
+         *
+         * <pre>
+         *   normalize(0, -1, 1)        -> 0.5  // Default target range is 0 to 1.
+         *   normalize(0.3, 0, 1, 2, 4) -> 2.6  // Map 0.3 from 0..1 to 2..4
+         *
+         *   normalize(1.5, -3, 3)            ->   0.75  // Minus is OK.
+         *   normalize(1.5, -3, 3,   50, 100) ->  87.5
+         *   normalize(1.5, -3, 3, -100, -50) -> -62.5
+         *   normalize(1.5, -3, 3,  100,  50) ->  62.5   // Reversed range is OK.
+         *
+         *   * Round out of range numbers.
+         *       normalize(1.9, 2, 4) -> 0
+         *       normalize(4.1, 2, 4) -> 1
+         *
+         *   * [Note] Somtimes results include calculation error.
+         *       normalize(2.6, 2, 4) -> 0.30000000000000004
+         * </pre>
+         */
+        public function normalize(value:Number, srcMin:Number, srcMax:Number,
+                                  destMin:Number=0, destMax:Number=1.0):Number
+        {
+            value = within(value, srcMin, srcMax);
+            return (value - srcMin) / (srcMax - srcMin) * (destMax - destMin) + destMin;
+        }
+
         //------------------------------------------------------------
         // Date utils
         //------------------------------------------------------------

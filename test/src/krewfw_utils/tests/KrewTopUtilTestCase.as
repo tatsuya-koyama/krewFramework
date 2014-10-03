@@ -108,5 +108,20 @@ package krewfw_utils.tests {
             assertThat(0.50, closeTo(krew.getBrightness(0x808080), 0.01));
         }
 
+        [Test]
+        public function test_normalize():void {
+            Assert.assertEquals(0.5  , krew.normalize(0, -1, 1));
+            Assert.assertEquals(2.6  , krew.normalize(0.3, 0, 1, 2, 4));
+            Assert.assertEquals(3    , krew.normalize(0.3, 1, 2, 3, 5));
+            Assert.assertEquals(0    , krew.normalize(1.9, 2, 4));
+            Assert.assertEquals(1    , krew.normalize(4.1, 2, 4));
+            Assert.assertEquals(0.75 , krew.normalize(1.5, -3, 3));
+            Assert.assertEquals(87.5 , krew.normalize(1.5, -3, 3, 50, 100));
+            Assert.assertEquals(62.5 , krew.normalize(1.5, -3, 3, 100, 50));
+            Assert.assertEquals(-62.5, krew.normalize(1.5, -3, 3, -100, -50));
+
+            assertThat(0.3, closeTo(krew.normalize(2.6, 2, 4), 0.0001));
+        }
+
     }
 }

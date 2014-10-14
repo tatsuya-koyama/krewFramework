@@ -11,7 +11,7 @@ package krewdemo.scene {
     import krewdemo.actor.world_test.*;
 
     //------------------------------------------------------------
-    public class HugeWorldTestScene1 extends FeatureTestSceneBase {
+    public class HugeWorldTestScene2 extends FeatureTestSceneBase {
 
         //------------------------------------------------------------
         public override function getRequiredAssets():Array {
@@ -36,25 +36,37 @@ package krewdemo.scene {
             _bgColor = 0xffffff;
             super.initAfterLoad();
 
-            setUpActor('l-ground', new HugeWorldTester1());
-            setUpActor('l-ground', new WorldCameraPrototype());
+            setUpActor('l-ground', new HugeWorldTester2());
             setUpActor('l-front',  new BlueBird());
             setUpActor('l-filter', new ScreenFilter(1.0));
             setUpActor('l-ui',     new VirtualJoystick());
 
             var zoomButton:ImageButton = new ImageButton(
                 'red_button', function():void { sendMessage(GameEvent.TRIGGER_ZOOM); },
-                50, 50, 60, 60, 440, 230, Keyboard.SPACE
+                50, 50, 60, 60, 440, 210, Keyboard.SPACE
             );
             setUpActor('l-ui', zoomButton);
 
+            var debugViewButton:ImageButton = new ImageButton(
+                'red_button', _onClickDebugViewButton,
+                50, 50, 60, 60, 440, 130, Keyboard.Z
+            );
+            setUpActor('l-ui', debugViewButton);
+
             setUpActor('l-ui', new InfoPopUp(
-                  "- Huge world performance test 1.\n"
-                + "- Not optimized and flattened sprites.\n"
+                  "- Huge world performance test 2.\n"
+                + "- (in progress)\n"
                 + "\n"
                 + "- Arrow: move camera\n"
                 + "- Space: change zoom scale\n"
+                + "- Z    : toggle debug view\n"
             ));
+        }
+
+        private var _debugViewMode:Boolean = true;
+        private function _onClickDebugViewButton():void {
+            _debugViewMode = !_debugViewMode;
+            sendMessage(GameEvent.TOGGLE_DEBUG_VIEW, {debugViewMode: _debugViewMode});
         }
 
         protected override function onDispose():void {

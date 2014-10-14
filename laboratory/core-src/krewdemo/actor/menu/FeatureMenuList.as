@@ -61,8 +61,9 @@ package krewdemo.actor.menu {
                 ,{ text: "19.Tween test",                 scene: TweenTestScene }
                 ,{ text: "20.Bone Animation test",        scene: DragonBonesTestScene1 }
                 ,{ text: "21.Huge world test 1",          scene: HugeWorldTestScene1 }
-                ,{ text: "22.----", scene: null }
+                ,{ text: "22.Huge world test 2",          scene: HugeWorldTestScene2 }
                 ,{ text: "23.----", scene: null }
+                ,{ text: "24.----", scene: null }
             ];
         }
 

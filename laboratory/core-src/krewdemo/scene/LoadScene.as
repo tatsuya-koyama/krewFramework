@@ -30,8 +30,7 @@ package krewdemo.scene {
         }
 
         public override function getDefaultNextScene():KrewScene {
-            //return new TitleScene();
-            return new HugeWorldTestScene1();
+            return new TitleScene();
         }
     }
 }

@@ -406,8 +406,8 @@ package krewfw.utils.swiss_knife {
             var red  :int = getRed  (color);
             var green:int = getGreen(color);
             var blue :int = getBlue (color);
-            var max:int = max(red, green, blue);
-            var min:int = min(red, green, blue);
+            var max:int = this.max(red, green, blue);
+            var min:int = this.min(red, green, blue);
 
             if (max == 0) { return 0; }
             return ((max - min) / max);
@@ -421,7 +421,7 @@ package krewfw.utils.swiss_knife {
             var red  :int = getRed  (color);
             var green:int = getGreen(color);
             var blue :int = getBlue (color);
-            var max:int = max(red, green, blue);
+            var max:int = this.max(red, green, blue);
 
             return max / 255;
         }

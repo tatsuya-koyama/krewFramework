@@ -10,16 +10,21 @@ package krewdemo.actor.world_test {
     import starling.text.TextField;
 
     import krewfw.core.KrewActor;
+    import krewfw.core.KrewBlendMode;
     import krewfw.utils.starling.TextFactory;
 
+    import krewdemo.GameConst;
+
     //------------------------------------------------------------
-    public class HugeWorldTester1 extends KrewActor {
+    public class HugeWorldTester2 extends KrewActor {
 
         private var _colorMap:BitmapData;
         private var _densityMap:BitmapData;
 
         private var _numObject:int = 0;
         private var _textField:TextField;
+
+        private var _world:KrewWorld;
 
         //------------------------------------------------------------
         public override function init():void {
@@ -31,14 +36,23 @@ package krewdemo.actor.world_test {
             _densityMap.perlinNoise(128, 128, 4, 87654321, true, true, 7, true, [new Point(50, 50)]);
             _setContrastFilter(_densityMap, 0.5);
 
+            _world = new KrewWorld(
+                10000, 10000,
+                GameConst.SCREEN_WIDTH  * 0.5,
+                GameConst.SCREEN_HEIGHT * 0.5,
+                6, 0.2,
+                GameConst.SCREEN_WIDTH  * 0.25,
+                GameConst.SCREEN_HEIGHT * 0.25
+            );
+            addActor(_world);
+
+            var cameraController:WorldCameraController = new WorldCameraController(_world);
+            createActor(cameraController);
+
             //_debugDisplay();
 
             _constructWorld(_colorMap, _densityMap);
-
-            _textField = _makeText("Sprite num: " + _numObject);
-            addText(_textField, -150, -100);
-
-            flatten();
+            _addDebugCoordInfo();
         }
 
         protected override function onDispose():void {
@@ -88,8 +102,8 @@ package krewdemo.actor.world_test {
         }
 
         private function _constructWorld(colorMap:BitmapData, densityMap:BitmapData):void {
-            for (var px:int=256 - 100;  px < 256 + 100;  px += 4) {
-                for (var py:int=256 - 100;  py < 256 + 100;  py += 4) {
+            for (var px:int=256 - 92;  px < 256 + 74;  px += 4) {
+                for (var py:int=256 - 88;  py < 256 + 78;  py += 4) {
                     _constructWorldGrid(
                         px, py,
                         colorMap  .getPixel(px, py),
@@ -102,8 +116,8 @@ package krewdemo.actor.world_test {
         private function _constructWorldGrid(gridX:int, gridY:int,
                                              colorPixel:uint, densityPixel:uint):void
         {
-            const WORLD_WIDTH :Number = 13000;
-            const WORLD_HEIGHT:Number = 13000;
+            const WORLD_WIDTH :Number = 23000;
+            const WORLD_HEIGHT:Number = 23000;
             const GRID_SIZE:int       = 512;
             const GRID_UNIT:int       = 4;
 
@@ -118,19 +132,48 @@ package krewdemo.actor.world_test {
             if (num <= 0) { num = 1; }
 
             while (num--) {
+                var actor:BGObjectActor = new BGObjectActor();
                 var image:Image = _getImage();
                 var randSize:Number = gridWidth * GRID_UNIT / 2;
                 var imageX:Number = 240 + gridCenterX + krew.rand(-randSize, randSize);
                 var imageY:Number = 160 + gridCenterY + krew.rand(-randSize, randSize);
-                var size:Number   = krew.rand(40, 120);
-                addImage(image, size, size, imageX, imageY);
+                var size:Number   = krew.rand(40, 180);
+                actor.addImage(image, size, size, 0, 0);
+                actor.x = imageX;
+                actor.y = imageY;
 
-                image.color    = colorPixel;
-                image.alpha    = krew.rand(0.7, 1.0);
-                image.rotation = krew.rand(0, 6.28);
+                image.blendMode = KrewBlendMode.SUB;
+                image.color     = 0xffffff - colorPixel;
+                image.alpha     = krew.rand(0.7, 1.0);
+                image.rotation  = krew.rand(0, 6.28);
 
+                //createActor(actor);
+                _world.registerActor(actor, size, size);
                 ++_numObject;
             }
+        }
+
+        private function _addDebugCoordInfo():void {
+            function makeText(x:Number, y:Number):void {
+                var text:TextField = TextFactory.makeText(
+                    180, 40, x + "," + y, 12, "tk_courier", 0x000000,
+                    0, 0, "left", "top", false
+                );
+                var actor:KrewActor = new KrewActor();
+                actor.addText(text, x + 16, y - 5);
+
+                var point:Image = getImage("circle_jiro");
+                point.color = 0x000000;
+                actor.addImage(point, 14, 14, x, y);
+
+                _world.registerDisplayObj(actor);
+            }
+
+            makeText(-480, -320);
+            makeText(-240, -160);
+            makeText(   0,    0);
+            makeText( 240,  160);
+            makeText( 480,  320);
         }
 
         private function _getImage():Image {

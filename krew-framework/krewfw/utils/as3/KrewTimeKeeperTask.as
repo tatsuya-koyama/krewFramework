@@ -45,5 +45,10 @@ package krewfw.utils.as3 {
         public function dispose():void {
             _task = null;
         }
+
+        public function isDead():Boolean {
+            return (_times == 0);
+        }
+
     }
 }

@@ -6,5 +6,7 @@ package krewfw.utils.as3 {
 
         function dispose():void;
 
+        function isDead():Boolean;
+
     }
 }

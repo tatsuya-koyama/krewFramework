@@ -69,8 +69,8 @@ package krewdemo.actor.world_test {
 
             // debug display ---------------
             var image:Image = krew.agent.getImage("debug_rect");
-            image.blendMode = KrewBlendMode.SUB;
-            image.color     = 0xffffff - 0x55aa00;
+            image.blendMode = KrewBlendMode.MULTIPLY;
+            image.color     = 0x55aa00;
             image.alpha     = 0.09;
             image.width     = width;
             image.height    = height;
@@ -85,10 +85,10 @@ package krewdemo.actor.world_test {
         // public
         //------------------------------------------------------------
 
-        public function addDisplayObj(dispObj:DisplayObject):void {
-            if (!_displayObjList) {
-                _displayObjList = new Vector.<DisplayObject>();
-            }
+        public function addDisplayObj(dispObj:DisplayObject,
+                                      objWidth:Number=NaN, objHeight:Number=NaN):void
+        {
+            addActor(dispObj, objWidth, objHeight);
         }
 
         /**
@@ -99,7 +99,7 @@ package krewdemo.actor.world_test {
          *
          * [Note] Actor の x, y 座標は AABB の中央にあることを想定している。
          */
-        public function addActor(actor:KrewActor,
+        public function addActor(actor:DisplayObject,
                                  actorWidth:Number=NaN, actorHeight:Number=NaN):void
         {
             // [Note] In Starling's Sprite, costs of width / height are too expensive.
@@ -109,7 +109,7 @@ package krewdemo.actor.world_test {
 
             // 自身が深さの limit に達しているなら自身に addChild
             if (_depthLevel == _maxDepth) {
-                _addActor(actor);
+                _addActorOrDisplayObj(actor);
                 return;
             }
 
@@ -153,7 +153,7 @@ package krewdemo.actor.world_test {
             }
 
             // 子 Node には収まらなかったので自身に足す
-            _addActor(actor);
+            _addActorOrDisplayObj(actor);
         }
 
         public function updateVisibility(viewport:Rectangle):void {
@@ -210,6 +210,15 @@ package krewdemo.actor.world_test {
         // private
         //------------------------------------------------------------
 
+        private function _addActorOrDisplayObj(obj:DisplayObject):void {
+            if (obj is KrewActor) {
+                _addActor(obj as KrewActor);
+            }
+            else {
+                _addDisplayObj(obj);
+            }
+        }
+
         private function _addActor(actor:KrewActor):void {
             if (!_actorList) {
                 _actorList = new Vector.<KrewActor>();
@@ -219,7 +228,16 @@ package krewdemo.actor.world_test {
             addChild(actor);
         }
 
-        private function _addActorToNorthWest(actor:KrewActor,
+        public function _addDisplayObj(dispObj:DisplayObject):void {
+            if (!_displayObjList) {
+                _displayObjList = new Vector.<DisplayObject>();
+            }
+            _displayObjList.push(dispObj);
+
+            addChild(dispObj);
+        }
+
+        private function _addActorToNorthWest(actor:DisplayObject,
                                               actorWidth:Number, actorHeight:Number):void
         {
             if (!_northWest) {
@@ -234,7 +252,7 @@ package krewdemo.actor.world_test {
             _northWest.addActor(actor, actorWidth, actorHeight);
         }
 
-        private function _addActorToNorthEast(actor:KrewActor,
+        private function _addActorToNorthEast(actor:DisplayObject,
                                               actorWidth:Number, actorHeight:Number):void
         {
             if (!_northEast) {
@@ -249,7 +267,7 @@ package krewdemo.actor.world_test {
             _northEast.addActor(actor, actorWidth, actorHeight);
         }
 
-        private function _addActorToSouthWest(actor:KrewActor,
+        private function _addActorToSouthWest(actor:DisplayObject,
                                               actorWidth:Number, actorHeight:Number):void
         {
             if (!_southWest) {
@@ -264,7 +282,7 @@ package krewdemo.actor.world_test {
             _southWest.addActor(actor, actorWidth, actorHeight);
         }
 
-        private function _addActorToSouthEast(actor:KrewActor,
+        private function _addActorToSouthEast(actor:DisplayObject,
                                               actorWidth:Number, actorHeight:Number):void
         {
             if (!_southEast) {

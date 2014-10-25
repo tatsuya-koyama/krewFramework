@@ -14,7 +14,7 @@ package krewdemo.actor.common {
         public function ScreenFilter(alpha:Number=0.6, imageName:String="screen_filter") {
             addInitializer(function():void {
                 var image:Image = getImage(imageName);
-                image.blendMode = KrewBlendMode.SUB;
+                image.blendMode = KrewBlendMode.MULTIPLY;
                 image.alpha = alpha;
 
                 addImage(

@@ -46,7 +46,7 @@ package krewdemo.actor.world_test {
             var actor:KrewActor = new KrewActor();
             _textField = _makeText("x, y: ");
             actor.addText(_textField, 58, 5);
-            createActor(actor, 'l-ui');
+            createActor(actor, 'l-front');
 
             _screenRect = _addScreenSizeRect();
         }
@@ -115,10 +115,10 @@ package krewdemo.actor.world_test {
 
         private function _makeText(str:String="", fontName:String="tk_courier"):TextField {
             var text:TextField = TextFactory.makeText(
-                360, 80, str, 14, fontName, 0xffffff - 0x558800,
+                360, 80, str, 14, fontName, 0x558800,
                 15, 35, "left", "top", false
             );
-            text.blendMode = KrewBlendMode.SUB;
+            text.blendMode = KrewBlendMode.MULTIPLY;
             return text;
         }
 

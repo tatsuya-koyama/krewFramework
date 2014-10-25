@@ -21,10 +21,10 @@ package krewdemo.actor.title {
 
         private function _makeTitleLogo():TextField {
             var text:TextField = TextFactory.makeText(
-                480, 100, "krewFramework\nLaboratory", 40, "tk_courier", 0xffffff - 0xaa6611,
+                480, 100, "krewFramework\nLaboratory", 40, "tk_courier", 0xcc9911,
                 0, 0, "center", "top", false
             );
-            text.blendMode = KrewBlendMode.SUB;
+            text.blendMode = KrewBlendMode.MULTIPLY;
             return text;
         }
     }

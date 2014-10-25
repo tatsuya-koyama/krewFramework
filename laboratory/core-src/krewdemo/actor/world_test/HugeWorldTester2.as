@@ -104,6 +104,7 @@ package krewdemo.actor.world_test {
         private function _constructWorld(colorMap:BitmapData, densityMap:BitmapData):void {
             for (var px:int=256 - 92;  px < 256 + 74;  px += 4) {
                 for (var py:int=256 - 88;  py < 256 + 78;  py += 4) {
+
                     _constructWorldGrid(
                         px, py,
                         colorMap  .getPixel(px, py),
@@ -138,16 +139,16 @@ package krewdemo.actor.world_test {
                 var imageX:Number = 240 + gridCenterX + krew.rand(-randSize, randSize);
                 var imageY:Number = 160 + gridCenterY + krew.rand(-randSize, randSize);
                 var size:Number   = krew.rand(40, 180);
+                if (krew.rand(100) < 7) { size = krew.rand(280, 460); }
                 actor.addImage(image, size, size, 0, 0);
                 actor.x = imageX;
                 actor.y = imageY;
 
-                image.blendMode = KrewBlendMode.SUB;
-                image.color     = 0xffffff - colorPixel;
+                image.blendMode = KrewBlendMode.MULTIPLY;
+                image.color     = colorPixel;
                 image.alpha     = krew.rand(0.7, 1.0);
                 image.rotation  = krew.rand(0, 6.28);
 
-                //createActor(actor);
                 _world.registerActor(actor, size, size);
                 ++_numObject;
             }
@@ -159,14 +160,18 @@ package krewdemo.actor.world_test {
                     180, 40, x + "," + y, 12, "tk_courier", 0x000000,
                     0, 0, "left", "top", false
                 );
-                var actor:KrewActor = new KrewActor();
-                actor.addText(text, x + 16, y - 5);
+                text.x = x + 16;
+                text.y = y - 5;
 
                 var point:Image = getImage("circle_jiro");
-                point.color = 0x000000;
-                actor.addImage(point, 14, 14, x, y);
+                point.color  = 0x000000;
+                point.width  = 14;
+                point.height = 14;
+                point.x      = x - 7;
+                point.y      = y - 7;
 
-                _world.registerDisplayObj(actor);
+                _world.registerDisplayObj(text);
+                _world.registerDisplayObj(point);
             }
 
             makeText(-480, -320);

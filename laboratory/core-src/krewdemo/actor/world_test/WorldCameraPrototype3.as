@@ -48,7 +48,7 @@ package krewdemo.actor.world_test {
             var actor:KrewActor = new KrewActor();
             _textField = _makeText("x, y: ");
             actor.addText(_textField, 58, 5);
-            createActor(actor, 'l-front');
+            createActor(actor, 'l-ui');
 
             _screenRect = _addScreenSizeRect();
         }
@@ -101,17 +101,33 @@ package krewdemo.actor.world_test {
         }
 
         private function _updateDebugPrint():void {
-            _textField.text = "x, y: " + Math.round(_focusX)
-                            + ", "     + Math.round(_focusY) + "\n"
-                            + "zoom: " + Math.round(_zoomScale * 100) / 100 + "\n"
+            _textField.text =
+                  "x, y: " + Math.round(_focusX)
+                + ", "     + Math.round(_focusY) + "\n"
+                + "zoom: " + Math.round(_zoomScale * 100) / 100 + "\n"
+                + "back : " + _getLayerInfo("back",   false)
+                + "mid  : " + _getLayerInfo("ground", true)
+                + "front: " + _getLayerInfo("front",  false);
+        }
+
+        private function _getLayerInfo(label:String, actorMode:Boolean):String {
+            var countDraw:int = 0;
+            if (actorMode) {
+                countDraw = _world.debug_getCountDrawActor(label);
+            } else {
+                countDraw = _world.debug_getCountDrawDObj(label);
+            }
+
+            var numObjects:Array = _world.debug_getNumObjects(label);
+            var numEnabled:int = _world.debug_getCountVisible(label);
+            return numEnabled + " - " + countDraw + " / " + numObjects + "\n";
         }
 
         private function _makeText(str:String="", fontName:String="tk_courier"):TextField {
             var text:TextField = TextFactory.makeText(
-                360, 80, str, 14, fontName, 0x558800,
+                360, 80, str, 14, fontName, 0xffffff,
                 15, 35, "left", "top", false
             );
-            text.blendMode = KrewBlendMode.MULTIPLY;
             return text;
         }
 

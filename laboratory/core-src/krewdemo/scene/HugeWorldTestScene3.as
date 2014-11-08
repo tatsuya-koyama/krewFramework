@@ -23,7 +23,7 @@ package krewdemo.scene {
         }
 
         public override function getLayerList():Array {
-            return ['l-back', 'l-ground', 'l-front', 'l-ui', 'l-filter'];
+            return ['l-back', 'l-ground', 'l-front', 'l-ui', 'l-info', 'l-filter'];
         }
 
         public override function hookBeforeInit(onComplete:Function):void {
@@ -53,7 +53,7 @@ package krewdemo.scene {
             );
             setUpActor('l-ui', debugViewButton);
 
-            setUpActor('l-ui', new InfoPopUp(
+            setUpActor('l-info', new InfoPopUp(
                   "- Huge world performance test 3.\n"
                 + "- Viewport culling with krewFramework components.\n"
                 + "\n"

@@ -63,10 +63,15 @@ package krewfw.builtin_actor.world {
         }
 
         public override function onUpdate(passedTime:Number):void {
+            if (QuadTreeSprite.debugMode) {
+                _startRecDebugStat();
+            }
+
             for each (var layer:KrewWorldLayer in _layers) {
                 layer.setFocusPos(_focusX, _focusY);
                 layer.setZoomScale(_zoomScale);
                 layer.updateViewport();
+                layer.updateWorld(passedTime);
             }
         }
 
@@ -95,7 +100,7 @@ package krewfw.builtin_actor.world {
         {
             var worldLayer:KrewWorldLayer = new KrewWorldLayer(
                 worldWidth, worldHeight, _screenWidth, _screenHeight, baseZoomScale,
-                maxQuadTreeDepth, subNodeMargin, _screenOriginX, _screenOriginY
+                maxQuadTreeDepth, subNodeMargin, _screenOriginX, _screenOriginY, label
             );
             _layers.push(worldLayer);
             _layerIndex[label] = worldLayer;
@@ -138,6 +143,36 @@ package krewfw.builtin_actor.world {
             for each (var layer:KrewWorldLayer in _layers) {
                 layer.updateScreenSize(screenWidth, screenHeight, screenOriginX, screenOriginY);
             }
+        }
+
+        //------------------------------------------------------------
+        // debug
+        //------------------------------------------------------------
+
+        public function setDebugEnabled(enabled:Boolean):void {
+            QuadTreeSprite.debugMode = enabled;
+        }
+
+        private function _startRecDebugStat():void {
+            for each (var layer:KrewWorldLayer in _layers) {
+                layer.startRecDebugStat();
+            }
+        }
+
+        public function debug_getNumObjects(label:String):Array {
+            return _getLayerWith(label).debug_numObjectByDepth;
+        }
+
+        public function debug_getCountDrawActor(label:String):int {
+            return _getLayerWith(label).debug_countDrawActorPrev;
+        }
+
+        public function debug_getCountDrawDObj(label:String):int {
+            return _getLayerWith(label).debug_countDrawDObjPrev;
+        }
+
+        public function debug_getCountVisible(label:String):int {
+            return _getLayerWith(label).debug_countVisiblePrev;
         }
 
         //------------------------------------------------------------

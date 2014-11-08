@@ -3,7 +3,6 @@ package krewfw.builtin_actor.world {
     import flash.geom.Rectangle;
 
     import starling.display.DisplayObject;
-    import starling.display.Image;
     import starling.display.Sprite;
 
     import krewfw.core.KrewActor;
@@ -34,23 +33,39 @@ package krewfw.builtin_actor.world {
         private var _halfWidth:Number;
         private var _halfHeight:Number;
 
+        /** Tree の深さ。最も根元の大きいノードから 0, 1, 2, ...  */
         private var _depthLevel:int;
         private var _maxDepth:int;
+
+        private var _label:String;
 
         private var _displayObjList:Vector.<DisplayObject> = null;
         private var _actorList:Vector.<KrewActor> = null;
 
-        // debug view
-        private var _debugRect:Image = null;
+        //------------------------------------------------------------
+        // debug
+        //------------------------------------------------------------
 
-        // debug info
-        public static var stat_countActorUpdate:int;
+        /** true にすると actor 登録時や update 時に集計用のイベントを投げる */
+        public static var debugMode:Boolean = false;
+
+        /** args: {label:<String>, depth:<int>} */
+        public static const DEBUG_EVENT_ADD:String = "qtsDebugAdd";
+
+        /** args: {label:<String>, num:<int>} */
+        public static const DEBUG_EVENT_DRAW_ACTOR:String = "qtsDebugDrawActor";
+
+        /** args: {label:<String>, num:<int>} */
+        public static const DEBUG_EVENT_DRAW_DOBJ:String = "qtsDebugDrawDObj";
+
+        /** args: {label:<String>} */
+        public static const DEBUG_EVENT_ENABLE_NODE:String = "qtsDebugEnableNode";
 
         //------------------------------------------------------------
         public function QuadTreeSprite(width:Number, height:Number,
                                        centerX:Number=0, centerY:Number=0,
                                        depthLevel:int=0, maxDepth:int=6,
-                                       subNodeMargin:Number=0.25)
+                                       subNodeMargin:Number=0.25, label:String="")
         {
             _halfWidth  = width  / 2;
             _halfHeight = height / 2;
@@ -59,28 +74,36 @@ package krewfw.builtin_actor.world {
 
             _depthLevel = depthLevel;
             _maxDepth   = maxDepth;
+            _label      = label;
 
             _subNodeMargin = subNodeMargin;
             _scaleConvergence = _getTreeScaleConvergence(_subNodeMargin);
-
-            // debug display ---------------
-            // var image:Image = krew.agent.getImage("debug_rect");
-            // image.blendMode = KrewBlendMode.MULTIPLY;
-            // image.color     = 0x55aa00;
-            // image.alpha     = 0.09;
-            // image.width     = width;
-            // image.height    = height;
-            // image.x         = centerX - _halfWidth;
-            // image.y         = centerY - _halfHeight;
-            // addChild(image);
-            // _debugRect = image;
-            //------------------------------
         }
 
         public override function dispose():void {
+            if (_northWest) { _northWest.dispose();  _northWest = null; }
+            if (_northEast) { _northEast.dispose();  _northEast = null; }
+            if (_southWest) { _southWest.dispose();  _southWest = null; }
+            if (_southEast) { _southEast.dispose();  _southEast = null; }
+
             super.dispose();
-            // ToDo
+
+            for each (var dObj:DisplayObject in _displayObjList) {
+                dObj.dispose();
+            }
+            _displayObjList = null;
+
+            for each (var actor:KrewActor in _actorList) {
+                actor.dispose();
+            }
+            _actorList = null;
         }
+
+        //------------------------------------------------------------
+        // accessors
+        //------------------------------------------------------------
+
+        public function get maxDepth():int { return _maxDepth; }
 
         //------------------------------------------------------------
         // public
@@ -165,6 +188,10 @@ package krewfw.builtin_actor.world {
 
             visible = true;
 
+            if (debugMode) {
+                krew.agent.sendMessage(DEBUG_EVENT_ENABLE_NODE, {label: _label});
+            }
+
             if (_northWest) { _northWest.updateVisibility(viewport); }
             if (_northEast) { _northEast.updateVisibility(viewport); }
             if (_southWest) { _southWest.updateVisibility(viewport); }
@@ -176,32 +203,14 @@ package krewfw.builtin_actor.world {
 
             for each (var actor:KrewActor in _actorList) {
                 actor.onUpdate(passedTime);
-                ++stat_countActorUpdate;
             }
+
+            _debug_sendCountDrawEvent();
 
             if (_northWest) { _northWest.updateActors(passedTime); }
             if (_northEast) { _northEast.updateActors(passedTime); }
             if (_southWest) { _southWest.updateActors(passedTime); }
             if (_southEast) { _southEast.updateActors(passedTime); }
-        }
-
-        //------------------------------------------------------------
-        // debug
-        //------------------------------------------------------------
-
-        public function startRecDebugStat():void {
-            stat_countActorUpdate = 0;
-        }
-
-        public function setDebugRectVisible(visible:Boolean):void {
-            if (_debugRect) {
-                _debugRect.visible = visible;
-            }
-
-            if (_northWest) { _northWest.setDebugRectVisible(visible); }
-            if (_northEast) { _northEast.setDebugRectVisible(visible); }
-            if (_southWest) { _southWest.setDebugRectVisible(visible); }
-            if (_southEast) { _southEast.setDebugRectVisible(visible); }
         }
 
         //------------------------------------------------------------
@@ -214,6 +223,10 @@ package krewfw.builtin_actor.world {
             }
             else {
                 _addDisplayObj(obj);
+            }
+
+            if (debugMode) {
+                krew.agent.sendMessage(DEBUG_EVENT_ADD, {label: _label, depth: _depthLevel});
             }
         }
 
@@ -243,7 +256,7 @@ package krewfw.builtin_actor.world {
                     _halfWidth * _subNodeScale, _halfHeight * _subNodeScale,
                     _centerX - (_halfWidth  / 2),
                     _centerY - (_halfHeight / 2),
-                    _depthLevel + 1, _maxDepth, _subNodeMargin
+                    _depthLevel + 1, _maxDepth, _subNodeMargin, _label
                 );
                 addChild(_northWest);
             }
@@ -258,7 +271,7 @@ package krewfw.builtin_actor.world {
                     _halfWidth * _subNodeScale, _halfHeight * _subNodeScale,
                     _centerX + (_halfWidth  / 2),
                     _centerY - (_halfHeight / 2),
-                    _depthLevel + 1, _maxDepth, _subNodeMargin
+                    _depthLevel + 1, _maxDepth, _subNodeMargin, _label
                 );
                 addChild(_northEast);
             }
@@ -273,7 +286,7 @@ package krewfw.builtin_actor.world {
                     _halfWidth * _subNodeScale, _halfHeight * _subNodeScale,
                     _centerX - (_halfWidth  / 2),
                     _centerY + (_halfHeight / 2),
-                    _depthLevel + 1, _maxDepth, _subNodeMargin
+                    _depthLevel + 1, _maxDepth, _subNodeMargin, _label
                 );
                 addChild(_southWest);
             }
@@ -288,7 +301,7 @@ package krewfw.builtin_actor.world {
                     _halfWidth * _subNodeScale, _halfHeight * _subNodeScale,
                     _centerX + (_halfWidth  / 2),
                     _centerY + (_halfHeight / 2),
-                    _depthLevel + 1, _maxDepth, _subNodeMargin
+                    _depthLevel + 1, _maxDepth, _subNodeMargin, _label
                 );
                 addChild(_southEast);
             }
@@ -321,6 +334,27 @@ package krewfw.builtin_actor.world {
                 return true;
             }
             return false;
+        }
+
+        //------------------------------------------------------------
+        // debug
+        //------------------------------------------------------------
+
+        private function _debug_sendCountDrawEvent():void {
+            if (!debugMode) { return; }
+
+            if (_displayObjList) {
+                krew.agent.sendMessage(
+                    DEBUG_EVENT_DRAW_DOBJ,
+                    {label: _label, num: _displayObjList.length}
+                );
+            }
+            if (_actorList) {
+                krew.agent.sendMessage(
+                    DEBUG_EVENT_DRAW_ACTOR,
+                    {label: _label, num: _actorList.length}
+                );
+            }
         }
 
     }

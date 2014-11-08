@@ -58,16 +58,18 @@ package krewdemo.actor.world_test {
             );
             addActor(_world);
 
-            var cameraController:WorldCameraPrototype3 = new WorldCameraPrototype3(_world);
-            createActor(cameraController);
+            _world.setDebugEnabled(true);
 
-            _world.addLayer("back",   "l-back",   20000, 20000, 0.5, 6, 0.2);
-            _world.addLayer("ground", "l-ground", 20000, 20000, 1.0, 6, 0.2);
-            _world.addLayer("front",  "l-front",  40000, 40000, 2.0, 6, 0.2);
+            _world.addLayer("back",   "l-back",   20000, 20000, 0.5, 7, 0.2);
+            _world.addLayer("ground", "l-ground", 20000, 20000, 1.0, 7, 0.2);
+            _world.addLayer("front",  "l-front",  40000, 40000, 2.0, 8, 0.2);
 
             _constructWorld("back",   _colorMap, _densityMap, false, 2.0, _getImage);
             _constructWorld("ground", _colorMap, _densityMap, true,  1.0, _getOutlineImage);
             _constructWorld("front",  _colorMap, _densityMap, false, 1.0, _getImage);
+
+            var cameraController:WorldCameraPrototype3 = new WorldCameraPrototype3(_world);
+            createActor(cameraController);
         }
 
         protected override function onDispose():void {
@@ -75,17 +77,7 @@ package krewdemo.actor.world_test {
             _densityMap.dispose();
         }
 
-        public override function onUpdate(passedTime:Number):void {
-
-        }
-
-        private function _makeText(str:String="", fontName:String="tk_courier"):TextField {
-            var text:TextField = TextFactory.makeText(
-                360, 80, str, 14, fontName, 0x000000,
-                15, 35, "left", "top", false
-            );
-            return text;
-        }
+        public override function onUpdate(passedTime:Number):void {}
 
         /**
          * @param level from -1.0 to 1.0

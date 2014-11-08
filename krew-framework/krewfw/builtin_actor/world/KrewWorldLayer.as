@@ -15,6 +15,7 @@ package krewfw.builtin_actor.world {
         private var _halfScreenHeight:Number;
         private var _screenOriginX:Number;
         private var _screenOriginY:Number;
+        private var _label:String;
 
         private var _tree:QuadTreeSprite;
 
@@ -24,21 +25,33 @@ package krewfw.builtin_actor.world {
         private var _zoomScale:Number     = 1.0;
         private var _viewport:Rectangle;
 
+        //----- debug stat
+        public var debug_numObjectByDepth:Array;
+        public var debug_countDrawActor:int;
+        public var debug_countDrawActorPrev:int;
+        public var debug_countDrawDObj:int;
+        public var debug_countDrawDObjPrev:int;
+        public var debug_countVisiblePrev:int;
+        public var debug_countVisible:int;
+
         //------------------------------------------------------------
         public function KrewWorldLayer(worldWidth:Number, worldHeight:Number,
                                        screenWidth:Number, screenHeight:Number,
                                        baseZoomScale:Number=1.0,
                                        maxQuadTreeDepth:int=6, subNodeMargin:Number=0.2,
-                                       screenOriginX:Number=0, screenOriginY:Number=0)
+                                       screenOriginX:Number=0, screenOriginY:Number=0,
+                                       label:String="")
         {
             _halfScreenWidth  = screenWidth  / 2;
             _halfScreenHeight = screenHeight / 2;
             _screenOriginX    = screenOriginX;
             _screenOriginY    = screenOriginY;
             _baseZoomScale    = baseZoomScale;
+            _label = label;
 
             _tree = new QuadTreeSprite(
-                worldWidth, worldHeight, 0, 0, 0, maxQuadTreeDepth, subNodeMargin
+                worldWidth, worldHeight, 0, 0, 0,
+                maxQuadTreeDepth, subNodeMargin, label
             );
             super.addChild(_tree);
 
@@ -49,14 +62,20 @@ package krewfw.builtin_actor.world {
         // Actor's event handlers
         //------------------------------------------------------------
 
+        public override function init():void {
+            listen(QuadTreeSprite.DEBUG_EVENT_ADD, _debug_onObjAdd);
+            listen(QuadTreeSprite.DEBUG_EVENT_DRAW_ACTOR, _debug_onActorDraw);
+            listen(QuadTreeSprite.DEBUG_EVENT_DRAW_DOBJ, _debug_onDObjDraw);
+            listen(QuadTreeSprite.DEBUG_EVENT_ENABLE_NODE, _debug_onNodeEnabled);
+        }
+
         protected override function onDispose():void {
             _tree.dispose();
             _tree     = null;
             _viewport = null;
         }
 
-        public override function onUpdate(passedTime:Number):void {
-            _tree.startRecDebugStat();
+        public function updateWorld(passedTime:Number):void {
             _tree.updateActors(passedTime);
         }
 
@@ -128,6 +147,47 @@ package krewfw.builtin_actor.world {
             _halfScreenHeight = screenHeight / 2;
             _screenOriginX    = screenOriginX;
             _screenOriginY    = screenOriginY;
+        }
+
+        //------------------------------------------------------------
+        // debug
+        //------------------------------------------------------------
+
+        public function startRecDebugStat():void {
+            debug_countDrawActorPrev = debug_countDrawActor;
+            debug_countDrawDObjPrev  = debug_countDrawDObj;
+            debug_countVisiblePrev   = debug_countVisible;
+            debug_countDrawActor = 0;
+            debug_countDrawDObj  = 0;
+            debug_countVisible   = 0;
+        }
+
+        private function _debug_onObjAdd(args:Object):void {
+            if (args.label != _label) { return; }
+
+            if (!debug_numObjectByDepth) {
+                debug_numObjectByDepth = [];
+                for (var i:int = 0;  i <= _tree.maxDepth;  ++i) {
+                    debug_numObjectByDepth[i] = 0;
+                }
+            }
+
+            debug_numObjectByDepth[args.depth] += 1;
+        }
+
+        private function _debug_onActorDraw(args:Object):void {
+            if (args.label != _label) { return; }
+            debug_countDrawActor += args.num;
+        }
+
+        private function _debug_onDObjDraw(args:Object):void {
+            if (args.label != _label) { return; }
+            debug_countDrawDObj += args.num;
+        }
+
+        private function _debug_onNodeEnabled(args:Object):void {
+            if (args.label != _label) { return; }
+            debug_countVisible += 1;
         }
 
     }

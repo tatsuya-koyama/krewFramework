@@ -1,17 +1,13 @@
-package krewdemo.actor.world_test {
+package krewfw.builtin_actor.world {
 
     import flash.geom.Rectangle;
 
     import starling.display.DisplayObject;
+    import starling.display.Image;
     import starling.display.Sprite;
 
     import krewfw.core.KrewActor;
     import krewfw.utils.krew;
-
-    // debug -----------
-    import starling.display.Image;
-    import krewfw.core.KrewBlendMode;
-    //------------------
 
     /**
      * Loose QuadTree で空間分割し Culling を行う Sprite.
@@ -68,17 +64,22 @@ package krewdemo.actor.world_test {
             _scaleConvergence = _getTreeScaleConvergence(_subNodeMargin);
 
             // debug display ---------------
-            var image:Image = krew.agent.getImage("debug_rect");
-            image.blendMode = KrewBlendMode.MULTIPLY;
-            image.color     = 0x55aa00;
-            image.alpha     = 0.09;
-            image.width     = width;
-            image.height    = height;
-            image.x         = centerX - _halfWidth;
-            image.y         = centerY - _halfHeight;
-            addChild(image);
-            _debugRect = image;
+            // var image:Image = krew.agent.getImage("debug_rect");
+            // image.blendMode = KrewBlendMode.MULTIPLY;
+            // image.color     = 0x55aa00;
+            // image.alpha     = 0.09;
+            // image.width     = width;
+            // image.height    = height;
+            // image.x         = centerX - _halfWidth;
+            // image.y         = centerY - _halfHeight;
+            // addChild(image);
+            // _debugRect = image;
             //------------------------------
+        }
+
+        public override function dispose():void {
+            super.dispose();
+            // ToDo
         }
 
         //------------------------------------------------------------

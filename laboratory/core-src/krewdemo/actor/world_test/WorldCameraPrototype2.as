@@ -14,9 +14,9 @@ package krewdemo.actor.world_test {
     import krewdemo.GameEvent;
 
     //------------------------------------------------------------
-    public class WorldCameraController extends KrewActor {
+    public class WorldCameraPrototype2 extends KrewActor {
 
-        private var _world:KrewWorld;
+        private var _world:KrewWorldPrototype;
 
         private var _focusX:Number = 0;
         private var _focusY:Number = 0;
@@ -30,7 +30,7 @@ package krewdemo.actor.world_test {
         private var _screenRect:KrewActor;
 
         //------------------------------------------------------------
-        public function WorldCameraController(world:KrewWorld) {
+        public function WorldCameraPrototype2(world:KrewWorldPrototype) {
             displayable = false;
             _world = world;
         }

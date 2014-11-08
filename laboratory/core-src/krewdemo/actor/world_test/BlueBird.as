@@ -55,11 +55,11 @@ package krewdemo.actor.world_test {
         private function _onUpdateJoystick(args:Object):void {
             if (args.velocityX > 0) {
                 scaleX = 1.0;
-                _sprite.x = 12;
+                _sprite.x = 4;
             }
             if (args.velocityX < 0) {
                 scaleX = -1.0;
-                _sprite.x = -12;
+                _sprite.x = -8;
             }
 
             if (Math.abs(args.velocityX) > 0.5  &&  args.velocityY > -0.5) {

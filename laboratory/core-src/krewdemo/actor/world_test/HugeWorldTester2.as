@@ -24,7 +24,7 @@ package krewdemo.actor.world_test {
         private var _numObject:int = 0;
         private var _textField:TextField;
 
-        private var _world:KrewWorld;
+        private var _world:KrewWorldPrototype;
 
         //------------------------------------------------------------
         public override function init():void {
@@ -36,7 +36,7 @@ package krewdemo.actor.world_test {
             _densityMap.perlinNoise(128, 128, 4, 87654321, true, true, 7, true, [new Point(50, 50)]);
             _setContrastFilter(_densityMap, 0.5);
 
-            _world = new KrewWorld(
+            _world = new KrewWorldPrototype(
                 10000, 10000,
                 GameConst.SCREEN_WIDTH  * 0.5,
                 GameConst.SCREEN_HEIGHT * 0.5,
@@ -46,7 +46,7 @@ package krewdemo.actor.world_test {
             );
             addActor(_world);
 
-            var cameraController:WorldCameraController = new WorldCameraController(_world);
+            var cameraController:WorldCameraPrototype2 = new WorldCameraPrototype2(_world);
             createActor(cameraController);
 
             //_debugDisplay();
@@ -58,10 +58,6 @@ package krewdemo.actor.world_test {
         protected override function onDispose():void {
             _colorMap.dispose();
             _densityMap.dispose();
-        }
-
-        public override function onUpdate(passedTime:Number):void {
-
         }
 
         private function _makeText(str:String="", fontName:String="tk_courier"):TextField {

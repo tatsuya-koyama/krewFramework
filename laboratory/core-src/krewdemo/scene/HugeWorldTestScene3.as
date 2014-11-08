@@ -11,7 +11,7 @@ package krewdemo.scene {
     import krewdemo.actor.world_test.*;
 
     //------------------------------------------------------------
-    public class HugeWorldTestScene2 extends FeatureTestSceneBase {
+    public class HugeWorldTestScene3 extends FeatureTestSceneBase {
 
         //------------------------------------------------------------
         public override function getRequiredAssets():Array {
@@ -36,7 +36,7 @@ package krewdemo.scene {
             _bgColor = 0xffffff;
             super.initAfterLoad();
 
-            setUpActor('l-ground', new HugeWorldTester2());
+            setUpActor('l-ground', new HugeWorldTester3());
             setUpActor('l-front',  new BlueBird());
             setUpActor('l-filter', new ScreenFilter(1.0));
             setUpActor('l-ui',     new VirtualJoystick());
@@ -54,8 +54,8 @@ package krewdemo.scene {
             setUpActor('l-ui', debugViewButton);
 
             setUpActor('l-ui', new InfoPopUp(
-                  "- Huge world performance test 2.\n"
-                + "- Viewport culling test.\n"
+                  "- Huge world performance test 3.\n"
+                + "- Viewport culling with krewFramework components.\n"
                 + "\n"
                 + "- Arrow: move camera\n"
                 + "- Space: change zoom scale\n"

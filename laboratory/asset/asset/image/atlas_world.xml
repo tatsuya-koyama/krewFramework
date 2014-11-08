@@ -1,10 +1,16 @@
 <TextureAtlas imagePath='atlas_world.png'>
   <SubTexture name='screen_filter' x='0' y='0' width='480.0' height='320.0'/>
-  <SubTexture name='leaf_2' x='0' y='322' width='128.0' height='128.0'/>
+  <SubTexture name='outline_feather' x='0' y='322' width='128.0' height='128.0'/>
   <SubTexture name='feather' x='130' y='322' width='128.0' height='128.0'/>
   <SubTexture name='leaf_1' x='260' y='322' width='128.0' height='128.0'/>
-  <SubTexture name='apple' x='482' y='0' width='128.0' height='128.0'/>
-  <SubTexture name='rock' x='482' y='130' width='128.0' height='128.0'/>
-  <SubTexture name='leaf_3' x='482' y='260' width='128.0' height='128.0'/>
+  <SubTexture name='leaf_2' x='482' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='leaf_3' x='482' y='130' width='128.0' height='128.0'/>
+  <SubTexture name='outline_apple' x='482' y='260' width='128.0' height='128.0'/>
+  <SubTexture name='apple' x='612' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='rock' x='742' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='outline_leaf_2' x='872' y='0' width='128.0' height='128.0'/>
+  <SubTexture name='outline_leaf_3' x='612' y='130' width='128.0' height='128.0'/>
+  <SubTexture name='outline_rock' x='612' y='260' width='128.0' height='128.0'/>
+  <SubTexture name='outline_leaf_1' x='742' y='130' width='128.0' height='128.0'/>
   <SubTexture name='debug_rect' x='482' y='390' width='114.0' height='114.0'/>
 </TextureAtlas>

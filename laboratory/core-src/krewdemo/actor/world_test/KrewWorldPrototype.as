@@ -8,7 +8,7 @@ package krewdemo.actor.world_test {
     import krewfw.core.KrewActor;
 
     //------------------------------------------------------------
-    public class KrewWorld extends KrewActor {
+    public class KrewWorldPrototype extends KrewActor {
 
         private var _halfScreenWidth:Number;
         private var _halfScreenHeight:Number;
@@ -23,10 +23,10 @@ package krewdemo.actor.world_test {
         private var _viewport:Rectangle;
 
         //------------------------------------------------------------
-        public function KrewWorld(worldWidth:Number, worldHeight:Number,
-                                  screenWidth:Number, screenHeight:Number,
-                                  maxQuadTreeDepth:int=6, subNodeMargin:Number=0.2,
-                                  screenOriginX:Number=0, screenOriginY:Number=0)
+        public function KrewWorldPrototype(worldWidth:Number, worldHeight:Number,
+                                           screenWidth:Number, screenHeight:Number,
+                                           maxQuadTreeDepth:int=6, subNodeMargin:Number=0.2,
+                                           screenOriginX:Number=0, screenOriginY:Number=0)
         {
             _halfScreenWidth  = screenWidth  / 2;
             _halfScreenHeight = screenHeight / 2;
@@ -114,10 +114,6 @@ package krewdemo.actor.world_test {
             _screenOriginX    = screenOriginX;
             _screenOriginY    = screenOriginY;
         }
-
-        //------------------------------------------------------------
-        // private
-        //------------------------------------------------------------
 
     }
 }

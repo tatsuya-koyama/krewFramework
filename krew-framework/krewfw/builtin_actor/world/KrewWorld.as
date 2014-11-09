@@ -79,6 +79,10 @@ package krewfw.builtin_actor.world {
         // accessors
         //------------------------------------------------------------
 
+        public function getWorldLayer(label:String):KrewWorldLayer {
+            return _getLayerWith(label);
+        }
+
         public function getTreeRoot(label:String):QuadTreeSprite {
             var worldLayer:KrewWorldLayer = _getLayerWith(label);
             return worldLayer.treeRoot;

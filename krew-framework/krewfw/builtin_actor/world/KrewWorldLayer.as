@@ -124,11 +124,11 @@ package krewfw.builtin_actor.world {
 
         public function updateViewport():void {
             var zoomScale:Number = _zoomScale * _baseZoomScale;
-            _tree.x = -(_focusX * zoomScale) + _screenOriginX + _halfScreenWidth;
-            _tree.y = -(_focusY * zoomScale) + _screenOriginY + _halfScreenHeight;
+            x = -(_focusX * zoomScale) + _screenOriginX + _halfScreenWidth;
+            y = -(_focusY * zoomScale) + _screenOriginY + _halfScreenHeight;
 
-            _tree.scaleX = zoomScale;
-            _tree.scaleY = zoomScale;
+            scaleX = zoomScale;
+            scaleY = zoomScale;
 
             _viewport.setTo(
                 _focusX - (_halfScreenWidth  / zoomScale),

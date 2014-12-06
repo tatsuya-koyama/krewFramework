@@ -38,5 +38,10 @@
 			<type>2</type>
 			<locationURI>KREW_ROOT/krew-framework</locationURI>
 		</link>
+		<link>
+			<name>[source path] lib-src</name>
+			<type>2</type>
+			<locationURI>KREW_ROOT/laboratory/lib-src</locationURI>
+		</link>
 	</linkedResources>
 </projectDescription>

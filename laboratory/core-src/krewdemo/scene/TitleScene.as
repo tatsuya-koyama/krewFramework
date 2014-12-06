@@ -31,6 +31,7 @@ package krewdemo.scene {
             setUpActor('l-front',  new TileEffect());
             setUpActor('l-ui',     new TitleLogo());
             setUpActor('l-ui',     new StartButton());
+            setUpActor('l-ui',     new ToggleStatsButton());
             setUpActor('l-filter', new ScreenFilter());
 
             blackIn(0.3);

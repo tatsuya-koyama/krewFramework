@@ -24,6 +24,7 @@ debug:
 	      -library-path+="../lib/" \
 	      -library-path+="../lib-ex/" \
 	      -source-path+="core-src/" \
+	      -source-path+="lib-src/" \
 	      -source-path+="../krew-framework/" \
 	      -swf-version=25 \
 	      -output="build/DebugMain.swf" \
@@ -45,6 +46,7 @@ flash:
 	      -library-path+="../lib/" \
 	      -library-path+="../lib-ex/" \
 	      -source-path+="core-src/" \
+	      -source-path+="lib-src/" \
 	      -source-path+="../krew-framework/" \
 	      -swf-version=25 \
 	      -output="build/krewdemo.swf" \
@@ -64,6 +66,7 @@ air-android:
 	       -library-path+="../lib/" \
 	       -library-path+="../lib-ex/" \
 	       -source-path+="core-src/" \
+	       -source-path+="lib-src/" \
 	       -source-path+="../krew-framework/" \
 	       -swf-version=25 \
 	       -output="build/AndroidMain.swf" \

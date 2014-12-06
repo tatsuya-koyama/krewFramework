@@ -10,7 +10,7 @@ list:
 
 run:
 	ln -s -f ../asset/asset ./build/
-	adl projects/debug-project/src/DebugMain-app.xml build/ -screensize 480x720:480x720
+	adl projects/debug-project/src/DebugMain-app.xml build/ -screensize 640x960:640x960
 
 # [Required] colorline command:
 #     https://github.com/tatsuya-koyama/MyScript/blob/master/colorline

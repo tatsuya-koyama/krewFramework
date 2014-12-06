@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application xmlns="http://ns.adobe.com/air/application/14.0">
+<application xmlns="http://ns.adobe.com/air/application/15.0">
     <id>com.tatsuyakoyama.krewdemo</id>
     <versionNumber>1.0</versionNumber>
     <filename>KrewDemo</filename>
@@ -10,6 +10,12 @@
         <fullScreen>true</fullScreen>
         <renderMode>direct</renderMode>
         <depthAndStencil>false</depthAndStencil>
+        <width>640</width>
+        <height>960</height>
+        <minimizable>true</minimizable>
+        <maximizable>true</maximizable>
+        <resizable>true</resizable>
+        <visible>true</visible>
     </initialWindow>
     <supportedProfiles>mobileDevice</supportedProfiles>
 </application>

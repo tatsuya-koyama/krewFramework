@@ -15,7 +15,7 @@ package krewdemo.actor.ui {
         private var _onPress:Function = null;
 
         //------------------------------------------------------------
-        public function TextButton(left:Number, top:Number, text:String, fontSize:int=16,
+        public function TextButton(buttonX:Number, buttonY:Number, text:String, fontSize:int=16,
                                    paddingH:Number=10, paddingV:Number=5)
         {
             touchable = true;
@@ -35,11 +35,11 @@ package krewdemo.actor.ui {
                 button.defaultSkin = _getColorImage(0xee9999);
                 button.upSkin      = _getColorImage(0xeeeeee);
                 button.hoverSkin   = _getColorImage(0xeeee99);
-                button.downSkin    = _getColorImage(0x9999ee);
+                button.downSkin    = _getColorImage(0x9999aa);
 
                 addChild(button);
-                x = left;
-                y = top;
+                x = buttonX;
+                y = buttonY;
 
                 // centering
                 button.validate();

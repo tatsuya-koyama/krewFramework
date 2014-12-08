@@ -54,6 +54,25 @@ package krewfw.data_structure {
         }
 
         /**
+         * Clear the queue.
+         */
+        public function clear():void {
+            for (var i:int = 0;  i < _queue.length; ++i) {
+                _queue[i] = null;
+            }
+            _queue.length = 0;
+            _isDirty      = false;
+        }
+
+        /**
+         * Kill reference for GC.
+         */
+        public function dispose():void {
+            clear();
+            _queue = null;
+        }
+
+        /**
          * Get the number of elements of queue.
          */
         public function get length():int {

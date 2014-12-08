@@ -102,5 +102,23 @@ package krewfw_data_structure.tests {
             Assert.assertEquals(pq.length, 1);  // [4]
         }
 
+        [Test]
+        public function test_clear():void {
+            var pq:PriorityQueue = new PriorityQueue();
+            pq.enqueue(7, "item_1");
+            pq.enqueue(1, "item_2");
+            pq.enqueue(4, "item_3");
+
+            pq.clear();
+            Assert.assertEquals(pq.peek(), null);
+            Assert.assertEquals(pq.length, 0);
+
+            pq.enqueue(9, "item_4");
+            pq.enqueue(2, "item_5");
+
+            Assert.assertEquals(pq.peek(), "item_5");
+            Assert.assertEquals(pq.length, 2);
+        }
+
     }
 }

@@ -17,6 +17,7 @@
         import krewfw_core.KrewCoreTestSuite;
         import krewfw_core_internal.KrewCoreInternalTestSuite;
         import krewfw_utils.KrewTopUtilTestSuite;
+        import krewfw_data_structure.KrewDataStructureTestSuite;
 
         private var core:FlexUnitCore;
 
@@ -28,6 +29,7 @@
                 ,KrewBuiltinActorTestSuite
                 ,KrewCoreTestSuite
                 ,KrewCoreInternalTestSuite
+                ,KrewDataStructureTestSuite
                 ,KrewTopUtilTestSuite
             );
         }

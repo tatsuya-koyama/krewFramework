@@ -10,7 +10,7 @@ package krewfw.data_structure {
 
         //------------------------------------------------------------
         public function KrewLine2D(xFrom:Number=0, yFrom:Number=0,
-                                 xTo:Number=0, yTo:Number=0) {
+                                   xTo:Number=0, yTo:Number=0) {
             this.xFrom = xFrom;
             this.yFrom = yFrom;
             this.xTo   = xTo;

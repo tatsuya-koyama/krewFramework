@@ -10,6 +10,8 @@ package krewfw.data_structure {
         private var _queue:Vector.<PriorityNode>;
         private var _isDirty:Boolean;
 
+        public var verbose:Boolean = false;
+
         //------------------------------------------------------------
         public function PriorityQueue() {
             _queue   = new Vector.<PriorityNode>();
@@ -27,6 +29,11 @@ package krewfw.data_structure {
             var pNode:PriorityNode = new PriorityNode(priority, item);
             _queue.push(pNode);
             _isDirty = true;
+
+            if (verbose) {
+                trace("[PriorityQueue :: enqueue] priority:", priority);
+                dumpPriority();
+            }
         }
 
         /**
@@ -35,10 +42,16 @@ package krewfw.data_structure {
          * If queue is empty, return null.
          */
         public function dequeue():* {
+            if (verbose) {
+                trace("[PriorityQueue :: dequeue] length:", _queue.length);
+            }
             if (!_queue.length) { return null; }
 
             if (_isDirty) { _sort(); }
-            return _queue.pop().item;
+            var topItem:* = _queue.pop().item;
+
+            if (verbose) { dumpPriority(); }
+            return topItem;
         }
 
         /**
@@ -94,6 +107,18 @@ package krewfw.data_structure {
         private function _sortFunc(a:PriorityNode, b:PriorityNode):int {
             if (a.priority == b.priority) { return 0; }
             return (a.priority > b.priority) ? -1 : 1;
+        }
+
+        //------------------------------------------------------------
+        // debug
+        //------------------------------------------------------------
+
+        public function dumpPriority():void {
+            var priorities:Array = [];
+            for each (var item:PriorityNode in _queue) {
+                priorities.push(item.priority);
+            }
+            trace(" -", priorities);
         }
 
     }

@@ -64,7 +64,7 @@ package krewfw.builtin_actor.ui {
 
                 // touch margin
                 if (width < touchWidth  ||  height < touchHeight) {
-                    addTouchMarginNode(touchWidth, touchHeight);
+                    _button.addTouchMarginNode(touchWidth, touchHeight);
                 }
 
                 addActor(_button);

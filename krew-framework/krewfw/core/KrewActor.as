@@ -7,6 +7,7 @@ package krewfw.core {
     import starling.animation.Tween;
     import starling.display.DisplayObject;
     import starling.display.Image;
+    import starling.display.Quad;
     import starling.text.TextField;
     import starling.textures.Texture;
 
@@ -374,12 +375,11 @@ package krewfw.core {
          * [CAUTION] You should call this after actor's init (setUpActor or addActor).
          */
         public function addTouchMarginNode(touchWidth:Number=0, touchHeight:Number=0):void {
-            var margin:ColorRect = new ColorRect(touchWidth, touchHeight);
-            margin.touchable = true;
+            var margin:Quad = new Quad(touchWidth, touchHeight);
             margin.alpha = 0;
             margin.x = -touchWidth  / 2;
             margin.y = -touchHeight / 2;
-            addActor(margin);
+            addChild(margin);
         }
 
         /**

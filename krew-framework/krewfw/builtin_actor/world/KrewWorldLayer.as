@@ -86,6 +86,9 @@ package krewfw.builtin_actor.world {
         public function get treeRoot():QuadTreeSprite { return _tree; }
         public function get viewport():Rectangle { return _viewport; }
 
+        public function get baseZoomScale():Number { return _baseZoomScale; }
+        public function set baseZoomScale(scale:Number):void { _baseZoomScale = scale; }
+
         //------------------------------------------------------------
         // public
         //------------------------------------------------------------
